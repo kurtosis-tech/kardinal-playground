@@ -1,3 +1,11 @@
 {
-    "postCreateCommand": "chmod +x scripts/startup.sh && scripts/startup.sh"
+    "postCreateCommand": "chmod +x scripts/startup.sh && chmod +x scripts/forward.sh && scripts/startup.sh",
+    "portsAttributes": {
+        "8080": {
+            "label": "voting-app-v1"
+        },
+        "8081": {
+            "label": "voting-app-v2"
+        }
+    }
 }

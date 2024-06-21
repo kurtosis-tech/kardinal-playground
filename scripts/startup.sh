@@ -40,9 +40,6 @@ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.22/samp
 kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.22/samples/addons/kiali.yaml
 kubectl rollout status deployment/kiali -n istio-system
 
-# Add hostnames to /etc/hosts
-echo "127.0.0.1 voting-app.localhost" | sudo tee -a /etc/hosts
-echo "127.0.0.1 dev.voting-app.localhost" | sudo tee -a /etc/hosts
 
 echo "Installing Kardinal..."
 git clone https://github.com/kurtosis-tech/kardinal-demo-script.git
