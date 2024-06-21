@@ -1,3 +1,3 @@
 {
-    "postCreateCommand": "echo 'Container created successfully'"
+    "postCreateCommand": "chmod +x scripts/startup.sh"
 }
