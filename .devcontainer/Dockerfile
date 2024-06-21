@@ -27,7 +27,7 @@ RUN curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.22.1 sh - && \
     rm -rf istio-1.22.1
 
 # Copy scripts
-COPY ../scripts/install.sh /usr/local/bin/install.sh
-COPY ../scripts/startup.sh /usr/local/bin/startup.sh
+COPY scripts/install.sh /usr/local/bin/install.sh
+COPY scripts/startup.sh /usr/local/bin/startup.sh
 
 RUN chmod +x /usr/local/bin/install.sh /usr/local/bin/startup.sh

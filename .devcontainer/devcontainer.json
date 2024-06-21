@@ -1,6 +1,7 @@
 {
     "name": "Minikube Codespace",
     "dockerFile": "Dockerfile",
+    "context": "..",
     "runArgs": ["--privileged"],
     "overrideCommand": false,
     "remoteUser": "vscode",
