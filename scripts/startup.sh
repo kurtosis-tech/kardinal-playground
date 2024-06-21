@@ -45,7 +45,4 @@ echo 'export PATH=$PATH:'"$PWD" >> ~/.bashrc
 cd ..
 
 echo "Startup completed. Minikube, Istio, and Kardinal are ready."
-echo "A new terminal tab will open with the updated environment."
-
-# Open a new terminal tab and source the install.sh script
-gnome-terminal --tab --command="bash -c 'source ~/.bashrc; exec bash'"
+echo "Run source ./bashrc"
