@@ -31,3 +31,5 @@ echo "127.0.0.1 voting-app.localhost" | sudo tee -a /etc/hosts
 echo "127.0.0.1 dev.voting-app.localhost" | sudo tee -a /etc/hosts
 
 echo "Startup completed. Minikube and Istio are ready."
+
+source kardinal_install.sh
