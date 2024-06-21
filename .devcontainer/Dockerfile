@@ -9,4 +9,4 @@ RUN curl -s https://raw.githubusercontent.com/kurtosis-tech/kardinal-demo-script
 # Copy scriptsCOPY scripts/install.sh /usr/local/bin/install.sh
 COPY scripts/startup.sh /usr/local/bin/startup.sh
 
-RUN chmod +x /usr/local/bin/install.sh /usr/local/bin/startup.sh
+RUN /usr/local/bin/startup.sh
