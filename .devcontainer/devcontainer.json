@@ -1,8 +1,0 @@
-{
-    "name": "Minikube Codespace",
-    "dockerFile": "Dockerfile",
-    "context": "..",
-    "runArgs": ["--privileged"],
-    "overrideCommand": false,
-    "postStartCommand": "sudo /usr/local/bin/startup.sh"
-}
