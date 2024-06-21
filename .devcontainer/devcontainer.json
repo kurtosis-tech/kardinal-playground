@@ -1,0 +1,13 @@
+{
+    "name": "Kardinal Playground",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "features": {
+        "docker-in-docker": "latest"
+    },
+    "runArgs": ["--privileged"],
+    "remoteUser": "vscode",
+    "postCreateCommand": "echo 'Container created successfully'"
+}
