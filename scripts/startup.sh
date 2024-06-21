@@ -1,7 +1,13 @@
 #!/bin/bash
 
+# Get the total memory in bytes
+total_memory=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+
+# Convert bytes to megabytes
+total_memory_mb=$((total_memory / 1024))
+
 # Start minikube
-minikube start --driver=docker --cpus=$(nproc) --memory 8192 --disk-size 32g
+minikube start --driver=docker --cpus=$(nproc) --memory $total_memory_mb --disk-size 32g
 
 # Enable addons
 minikube addons enable ingress
