@@ -12,5 +12,6 @@
         "ms-azuretools.vscode-docker"
     ],
     "forwardPorts": [8001],
-    "postCreateCommand": "sudo chown vscode:vscode /var/run/docker.sock"
+    "postCreateCommand": "sudo chown vscode:vscode /var/run/docker.sock && sudo /usr/local/bin/startup.sh",
+    "postStartCommand": "sudo /usr/local/bin/startup.sh"
 }
