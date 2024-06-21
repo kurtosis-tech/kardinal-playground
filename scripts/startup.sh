@@ -16,8 +16,12 @@ minikube addons enable metrics-server
 # Set kubectl context
 kubectl config set-context minikube
 
-# Install Istio
+# Install Istio 1.22.1
+curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.22.1 TARGET_ARCH=x86_64 sh -
+cd istio-1.22.1
+export PATH=$PWD/bin:$PATH
 istioctl install --set profile=demo -y
+cd ..
 
 # Install Kiali and other addons
 kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.22/samples/addons/prometheus.yaml
@@ -36,6 +40,7 @@ istioctl dashboard kiali &
 echo "127.0.0.1 voting-app.localhost" | sudo tee -a /etc/hosts
 echo "127.0.0.1 dev.voting-app.localhost" | sudo tee -a /etc/hosts
 
-echo "Startup completed. Minikube and Istio are ready."
+echo "Installing Kurtosis..."
+curl -s https://raw.githubusercontent.com/kurtosis-tech/kardinal-demo-script/master/install.sh -o install.sh && source install.sh
 
-source kardinal_install.sh
+echo "Startup completed. Minikube, Istio, and Kurtosis are ready."
