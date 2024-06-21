@@ -1,0 +1,16 @@
+{
+    "name": "Minikube Codespace",
+    "dockerFile": "Dockerfile",
+    "runArgs": ["--privileged"],
+    "overrideCommand": false,
+    "remoteUser": "vscode",
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": [
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "ms-azuretools.vscode-docker"
+    ],
+    "forwardPorts": [8001],
+    "postCreateCommand": "sudo chown vscode:vscode /var/run/docker.sock"
+}
