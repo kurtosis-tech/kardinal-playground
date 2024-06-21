@@ -31,22 +31,21 @@ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.22/samp
 kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.22/samples/addons/kiali.yaml
 kubectl rollout status deployment/kiali -n istio-system
 
-# Start Minikube dashboard
-minikube dashboard &
-
-# Start Kiali dashboard
-istioctl dashboard kiali &
-
 # Add hostnames to /etc/hosts
 echo "127.0.0.1 voting-app.localhost" | sudo tee -a /etc/hosts
 echo "127.0.0.1 dev.voting-app.localhost" | sudo tee -a /etc/hosts
 
-echo "Installing Kurtosis..."
+echo "Installing Kardinal..."
 git clone https://github.com/kurtosis-tech/kardinal-demo-script.git
 cd kardinal-demo-script
-chmod u+x kardinal-cli
+/usr/bin/python3 -m pip install click
+mv kardinal-cli kardinal
+chmod u+x kardinal
 echo 'export PATH=$PATH:'"$PWD" >> ~/.bashrc
 cd ..
 
-echo "Startup completed. Minikube, Istio, and Kurtosis are ready."
-echo "Please run 'source ~/.bashrc' or start a new terminal session for the changes to take effect."
+echo "Startup completed. Minikube, Istio, and Kardinal are ready."
+echo "A new terminal tab will open with the updated environment."
+
+# Open a new terminal tab and source the install.sh script
+gnome-terminal --tab --command="bash -c 'source ~/.bashrc; exec bash'"
