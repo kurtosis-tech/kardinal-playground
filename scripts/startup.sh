@@ -2,6 +2,13 @@
 
 set -euo pipefail
 
+# Wait for Docker to start
+echo "Waiting for Docker to start..."
+while ! docker info >/dev/null 2>&1; do
+    sleep 1
+done
+echo "Docker is running."
+
 # Get the total memory in bytes
 total_memory=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
 
@@ -46,12 +53,12 @@ chmod u+x kardinal
 echo 'export PATH=$PATH:'"$PWD" >> ~/.bashrc
 cd ..
 
-# # Create voting-app namespace and enable Istio injection
-# minikube image build -t voting-app-ui -f ./Dockerfile ./voting-app-demo/voting-app-ui/
-# minikube image build -t voting-app-ui-v2 -f ./Dockerfile-v2 ./voting-app-demo/voting-app-ui/
-# kubectl create namespace voting-app
-# kubectl label namespace voting-app istio-injection=enabled
-# kubectl apply -n voting-app -f ./voting-app-demo/manifests/prod-only-demo.yaml
+# Create voting-app namespace and enable Istio injection
+minikube image build -t voting-app-ui -f ./Dockerfile ./voting-app-demo/voting-app-ui/
+minikube image build -t voting-app-ui-v2 -f ./Dockerfile-v2 ./voting-app-demo/voting-app-ui/
+kubectl create namespace voting-app
+kubectl label namespace voting-app istio-injection=enabled
+kubectl apply -n voting-app -f ./voting-app-demo/manifests/prod-only-demo.yaml
 
 echo "Startup completed. Minikube, Istio, and Kardinal are ready."
 echo "Run source ~/.bashrc"
