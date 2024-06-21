@@ -7,5 +7,6 @@
         "8081": {
             "label": "voting-app-v2"
         }
-    }
+    },
+    "postStartCommand": "bash -c 'source ~/.bashrc; exec bash'"
 }

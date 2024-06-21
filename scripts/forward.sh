@@ -1,10 +1,10 @@
     #!/bin/bash
 
 # Function to port-forward the non-dev version
-forward_non_dev() {
-    echo "Port-forwarding the non-dev version (voting-app-ui)..."
+forward_prod() {
+    echo "Port-forwarding the prod version (voting-app-ui)..."
     kubectl port-forward -n voting-app svc/voting-app-ui 8080:80 &
-    echo "Non-dev version available at: http://localhost:8080"
+    echo "Prod version available at: http://localhost:8080"
 }
 
 # Function to port-forward the dev version
@@ -18,8 +18,7 @@ forward_dev() {
 if [ "$1" == "dev" ]; then
     forward_dev
 else
-    forward_non_dev
-    forward_dev
+    forward_prod
 fi
 
 echo "Port-forwarding initiated."
