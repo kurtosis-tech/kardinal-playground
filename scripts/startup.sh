@@ -40,7 +40,7 @@ istioctl dashboard kiali &
 echo "127.0.0.1 voting-app.localhost" | sudo tee -a /etc/hosts
 echo "127.0.0.1 dev.voting-app.localhost" | sudo tee -a /etc/hosts
 
-echo "Installing Kurtosis..."
+echo "Installing Kardinal..."
 curl -s https://raw.githubusercontent.com/kurtosis-tech/kardinal-demo-script/master/install.sh -o install.sh && source install.sh
 
 echo "Startup completed. Minikube, Istio, and Kurtosis are ready."
