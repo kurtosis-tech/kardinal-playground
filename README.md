@@ -22,3 +22,10 @@ This repository contains a GitHub Codespace with Kardinal up and running out of 
 - Minikube dashboard is automatically started and can be accessed via port forwarding.
 - Kiali dashboard is also started and can be accessed for observing your Istio service mesh.
 - The hostnames `voting-app.localhost` and `dev.voting-app.localhost` are automatically added to `/etc/hosts`.
+
+
+## TODO
+
+- [ ] do setup in a separate tab
+- [ ] make larger dev container default
+- [ ] get the whole flow to run
