@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Get the total memory in bytes
 total_memory=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
@@ -21,6 +20,7 @@ kubectl config set-context minikube
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.22.1 TARGET_ARCH=x86_64 sh -
 cd istio-1.22.1
 export PATH=$PWD/bin:$PATH
+echo 'export PATH=$PATH:'"$PWD/bin" >> ~/.bashrc
 istioctl install --set profile=demo -y
 cd ..
 
@@ -31,11 +31,22 @@ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.22/samp
 kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.22/samples/addons/kiali.yaml
 kubectl rollout status deployment/kiali -n istio-system
 
+# Start Minikube dashboard
+minikube dashboard &
+
+# Start Kiali dashboard
+istioctl dashboard kiali &
+
 # Add hostnames to /etc/hosts
 echo "127.0.0.1 voting-app.localhost" | sudo tee -a /etc/hosts
 echo "127.0.0.1 dev.voting-app.localhost" | sudo tee -a /etc/hosts
 
-echo "Installing Kardinal..."
-curl -s https://raw.githubusercontent.com/kurtosis-tech/kardinal-demo-script/master/install.sh -o install.sh && source install.sh
+echo "Installing Kurtosis..."
+git clone https://github.com/kurtosis-tech/kardinal-demo-script.git
+cd kardinal-demo-script
+chmod u+x kardinal-cli
+echo 'export PATH=$PATH:'"$PWD" >> ~/.bashrc
+cd ..
 
 echo "Startup completed. Minikube, Istio, and Kurtosis are ready."
+echo "Please run 'source ~/.bashrc' or start a new terminal session for the changes to take effect."
