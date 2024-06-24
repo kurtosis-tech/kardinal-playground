@@ -22,16 +22,14 @@ forward_dev() {
 
 main() {
     if [ "$#" -eq 0 ]; then
+        forward_prod
+    elif [ "$1" == "dev" ]; then
+        forward_dev
+    else
         echo "ℹ️ Usage: $0 [dev]"
         echo "   Run without arguments to forward prod version"
         echo "   Run with 'dev' argument to forward dev version"
-        exit 0
-    fi
-
-    if [ "$1" == "dev" ]; then
-        forward_dev
-    else
-        forward_prod
+        exit 1
     fi
 
     echo "🎉 Port-forwarding initiated successfully!"

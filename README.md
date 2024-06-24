@@ -28,7 +28,7 @@ Follow these steps to explore the Kardinal Playground:
    ```
    Wait for it to complete. For verbose output, use `./scripts/startup.sh --verbose`.
 
-2. 🚀 Forward the prod version of the voting app:
+2. 🚀 Forward the prod version of the voting app (ideally in a new terminal tab):
    ```
    ./scripts/forward.sh
    ```
@@ -48,12 +48,18 @@ Follow these steps to explore the Kardinal Playground:
    kardinal create-dev-flow voting-app
    ```
 
-6. 🧪 Play with voting-app-v2 (dev version)
+6. 🚀 Forward the dev version of the voting app (ideally in a new terminal tab):
+   ```
+   ./scripts/forward.sh dev
+   ```
+   ⚠️ if the forwarded port doesn't open, run this again.
+
+7. 🧪 Play with voting-app-v2 (dev version)
    - Check the "Ports" tab in the Codespaces UI
    - Look for the port labelled "voting-app-v2" and open it in your browser
    - This version talks to a proxied Redis with prod data in real time!
 
-7. 🧹 Clean up when you're done:
+8. 🧹 Clean up when you're done:
    ```
    kardinal delete-dev-flow voting-app
    ```
