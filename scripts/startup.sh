@@ -91,7 +91,8 @@ setup_voting_app() {
 }
 
 main() {
-    if [ "$1" = "--verbose" ]; then
+    # Check if an argument is provided
+    if [ $# -gt 0 ] && [ "$1" = "--verbose" ]; then
         VERBOSE=true
         log "Verbose mode enabled."
     fi
