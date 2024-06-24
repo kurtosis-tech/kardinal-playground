@@ -121,7 +121,14 @@ main() {
     setup_voting_app
 
     log "✅ Startup completed! Minikube, Istio, and Kardinal are ready."
-    log "🔄 Please run: source ~/.bashrc"
+    echo ""
+    echo "=================================================================="
+    echo "🚨 IMPORTANT: You MUST run the following command to update your PATH:"
+    echo ""
+    echo "    source ~/.bashrc"
+    echo ""
+    echo "Failure to do so may result in commands not being found."
+    echo "=================================================================="
 }
 
 main "$@"
