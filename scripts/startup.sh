@@ -40,7 +40,10 @@ run_command_with_spinner() {
         "$@"
     else
         "$@" >/dev/null 2>&1 &
-        spinner $!
+        local pid=$!
+        spinner $pid
+        wait $pid
+        return $?
     fi
 }
 
@@ -50,6 +53,7 @@ setup_docker() {
         sleep 1
     done
     log_verbose "Docker is running."
+    sleep 3
 }
 
 start_minikube() {
