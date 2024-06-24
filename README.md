@@ -1,31 +1,79 @@
-# Kardinal Playground
+# 🎡 Kardinal Playground
 
-This repository contains a GitHub Codespace with Kardinal up and running out of the box
+Welcome to the Kardinal Playground! This GitHub Codespace comes with Kardinal and all necessary tools pre-installed and ready to go. 🚀
 
-## Features
+## 🛠 Features
 
-- Kardinal
-- Minikube
-- kubectl
-- Istio
-- Kiali
+- 🐦 Kardinal
+- 🚙 Minikube
+- 🎛 kubectl
+- 🌐 Istio
+- 📊 Kiali
 
+## 🚀 Getting Started
 
-## Getting Started
+1. 🏗 Create a new Codespace from this repository.
+2. ⏳ Wait for the Codespace to finish setting up. This includes installing all necessary tools and starting Minikube.
+3. 🎉 Once setup is complete, you're ready to start your Kardinal adventure!
 
-1. Create a new Codespace from this repository.
-2. Wait for the Codespace to finish setting up. This includes installing all necessary tools and starting Minikube.
-3. Once setup is complete, you can start using kubectl, istioctl, and other installed tools.
+## 🗺 Usage Guide
 
-## Usage
+Follow these steps to explore the Kardinal Playground:
 
-- Minikube dashboard is automatically started and can be accessed via port forwarding.
-- Kiali dashboard is also started and can be accessed for observing your Istio service mesh.
-- The hostnames `voting-app.localhost` and `dev.voting-app.localhost` are automatically added to `/etc/hosts`.
+1. 🏁 Run the startup script:
+   ```
+   ./scripts/startup.sh
+   ```
+   Wait for it to complete. For verbose output, use `./scripts/startup.sh --verbose`.
 
+2. 🚀 Forward the prod version of the voting app:
+   ```
+   ./scripts/forward.sh
+   ```
 
-## TODO
+3. 🏗 Build the necessary images:
+   ```
+   minikube image build -t voting-app-ui -f ./Dockerfile ./voting-app-demo/voting-app-ui/
+   minikube image build -t voting-app-ui-v2 -f ./Dockerfile-v2 ./voting-app-demo/voting-app-ui/
+   ```
 
-- [ ] do setup in a separate tab
-- [ ] make larger dev container default
-- [ ] get the whole flow to run
+4. 🗳 Play with voting-app-v1 (prod version)
+   - Check the "Ports" tab in the Codespaces UI
+   - Look for the port labelled "voting-app-v1" and open it in your browser
+
+5. 🔧 Set up the dev flow:
+   ```
+   kardinal create-dev-flow voting-app
+   ```
+
+6. 🧪 Play with voting-app-v2 (dev version)
+   - Check the "Ports" tab in the Codespaces UI
+   - Look for the port labelled "voting-app-v2" and open it in your browser
+   - This version talks to a proxied Redis with prod data in real time!
+
+7. 🧹 Clean up when you're done:
+   ```
+   kardinal delete-dev-flow voting-app
+   ```
+
+## 🔍 Exploring Further
+
+- 📊 Launch the Minikube dashboard:
+  ```
+  minikube dashboard
+  ```
+  This will start the dashboard and open it in your default web browser.
+
+- 📈 Access the Kiali dashboard:
+  ```
+  istioctl dashboard kiali
+  ```
+  This command will start the Kiali dashboard and provide a URL to access it.
+
+- 🕸 Viewing the Network Graph in Kiali:
+  1. Once in the Kiali dashboard, navigate to the "Graph" section in the left sidebar.
+  2. In the namespace dropdown, select "voting-app".
+  3. You'll now see a visual representation of the network traffic and relationships between services in the voting-app namespace.
+  4. Experiment with different graph options to gain insights into your service mesh!
+
+These dashboards provide powerful visualization and management tools for your Kubernetes cluster and Istio service mesh. Happy exploring in the Kardinal Playground! 🎉🚀

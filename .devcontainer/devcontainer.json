@@ -1,5 +1,5 @@
 {
-    "postCreateCommand": "chmod +x scripts/startup.sh && chmod +x scripts/forward.sh && scripts/startup.sh",
+    "postCreateCommand": "chmod +x scripts/startup.sh && chmod +x scripts/forward.sh",
     "portsAttributes": {
         "8080": {
             "label": "voting-app-v1"
@@ -8,5 +8,5 @@
             "label": "voting-app-v2"
         }
     },
-    "postStartCommand": "bash -c 'source ~/.bashrc; exec bash'"
+    "postStartCommand": "echo 'Welcome to the Kardinal Playground 🐧!'"
 }
