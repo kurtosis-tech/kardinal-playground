@@ -6,6 +6,9 @@
         },
         "8081": {
             "label": "voting-app-v2"
+        },
+        "20001": {
+            "label": "kiali"
         }
     }
 }

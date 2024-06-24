@@ -65,7 +65,7 @@ start_minikube() {
 
 install_istio() {
     log "🌐 Installing Istio..."
-    run_command_with_spinner curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.22.1 TARGET_ARCH=x86_64 sh - || log_error "Failed to download Istio"
+    run_command_with_spinner sh -c 'curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.22.1 TARGET_ARCH=x86_64 sh -' || log_error "Failed to download Istio"
     cd istio-1.22.1
     export PATH=$PWD/bin:$PATH
     echo 'export PATH=$PATH:'"$PWD/bin" >> ~/.bashrc
