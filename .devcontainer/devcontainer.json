@@ -1,5 +1,5 @@
 {
-    "postCreateCommand": "echo 'Welcome to the Kardinal Playground 🐧!'",
+    "postStartCommand": "echo 'Welcome to the Kardinal Playground 🐧!'",
     "portsAttributes": {
         "8080": {
             "label": "voting-app-v1"
