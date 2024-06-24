@@ -12,7 +12,9 @@ Welcome to the Kardinal Playground! This GitHub Codespace comes with Kardinal an
 
 ## 🚀 Getting Started
 
-1. 🏗 Create a new Codespace from this repository.
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=818205437&skip_quickstart=true)
+
+1. 🏗 Create a new Codespace from this repository. We recommend selecting "4-core" under Machine type.
 2. ⏳ Wait for the Codespace to finish setting up. This includes installing all necessary tools and starting Minikube.
 3. 🎉 Once setup is complete, you're ready to start your Kardinal adventure!
 
