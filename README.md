@@ -33,33 +33,27 @@ Follow these steps to explore the Kardinal Playground:
    ./scripts/forward.sh
    ```
 
-3. 🏗 Build the necessary images:
-   ```
-   minikube image build -t voting-app-ui -f ./Dockerfile ./voting-app-demo/voting-app-ui/
-   minikube image build -t voting-app-ui-v2 -f ./Dockerfile-v2 ./voting-app-demo/voting-app-ui/
-   ```
-
-4. 🗳 Play with voting-app-v1 (prod version)
+3. 🗳 Play with voting-app-v1 (prod version)
    - Check the "Ports" tab in the Codespaces UI
    - Look for the port labelled "voting-app-v1" and open it in your browser
 
-5. 🔧 Set up the dev flow:
+4. 🔧 Set up the dev flow:
    ```
    kardinal create-dev-flow voting-app
    ```
 
-6. 🚀 Forward the dev version of the voting app (ideally in a new terminal tab):
+5. 🚀 Forward the dev version of the voting app (ideally in a new terminal tab):
    ```
    ./scripts/forward.sh dev
    ```
    ⚠️ if the forwarded port doesn't open, run this again.
 
-7. 🧪 Play with voting-app-v2 (dev version)
+6. 🧪 Play with voting-app-v2 (dev version)
    - Check the "Ports" tab in the Codespaces UI
    - Look for the port labelled "voting-app-v2" and open it in your browser
    - This version talks to a proxied Redis with prod data in real time!
 
-8. 🧹 Clean up when you're done:
+7. 🧹 Clean up when you're done:
    ```
    kardinal delete-dev-flow voting-app
    ```
