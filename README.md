@@ -26,8 +26,10 @@ Follow these steps to explore the Kardinal Playground:
    ```
    ./scripts/startup.sh
    ```
-   Wait for it to complete. For verbose output, use `./scripts/startup.sh --verbose`.
+   This will setup Docker, Minikube, Istio, Kiali and Kardinal for you!
+   It will also deploy the voting-app namespace to the Minikube cluster.
    🕰️ This can take around 3 minutes! Familiarize yourself with the repository while this happens
+   The script also supports a `--verbose` mode if  you want to see what its doing in detail.
 
 2. 🚀 Forward the prod version of the voting app (ideally in a new terminal tab):
    ```
