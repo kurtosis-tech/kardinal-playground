@@ -102,6 +102,7 @@ install_kardinal() {
 
 # Function to forward dev version
 forward_dev() {
+    sleep 3 # we sleep for a bit as the service can take a few seconds to come alive
     echo "🛠️ Port-forwarding the dev version (voting-app-dev)..."
     nohup kubectl port-forward -n voting-app deploy/voting-app-ui-v2 8081:80 > /dev/null 2>&1 &
     echo "✅ Dev version available at: http://localhost:8081"
@@ -110,7 +111,7 @@ forward_dev() {
 # Check if the command is create-dev-flow
 if [ "\$1" = "create-dev-flow" ]; then
     # Run the original kardinal command
-    ./kardinal-original "\$@"
+    kardinal-original "\$@"
     
     # If kardinal command was successful, run forward_dev
     if [ \$? -eq 0 ]; then
@@ -118,7 +119,7 @@ if [ "\$1" = "create-dev-flow" ]; then
     fi
 else
     # For all other commands, just pass through to kardinal-original
-    ./kardinal-original "\$@"
+    kardinal-original "\$@"
 fi
 EOL
 
@@ -139,6 +140,7 @@ setup_voting_app() {
 }
 
 forward_prod() {
+    sleep 3 # we sleep for a bit as the service can take a few seconds to come alive
     log "⏭️ Port-forwarding the prod version (voting-app-ui)..."
     nohup kubectl port-forward -n voting-app svc/voting-app-ui 8080:80 > /dev/null 2>&1 &
     log "✅ Prod version available at: http://localhost:8080"
