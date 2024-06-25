@@ -102,10 +102,10 @@ install_kardinal() {
 
 # Function to forward dev version
 forward_dev() {
-    echo "🛠️ Waiting for the dev version (voting-app-ui-v2) to be ready..."
+    echo "🛠️ Waiting for the dev version (voting-app-dev) to be ready..."
 
     # Wait for the deployment to be available
-    kubectl wait --for=condition=available --timeout=60s deployment/voting-app-ui-v2 -n voting-app || { echo "❌ Error: Timeout waiting for voting-app-ui-v2 deployment"; return 1; }
+    kubectl wait --for=condition=available --timeout=60s deployment/voting-app-ui-v2 -n voting-app || { echo "❌ Error: Timeout waiting for voting-app-dev deployment"; return 1; }
 
     # Wait for the pod to be created and running
     local timeout=120
@@ -115,10 +115,10 @@ forward_dev() {
     while [ "$pod_running" = false ]; do
         if kubectl get pods -A | grep "voting-app-ui-v2" | grep "Running" > /dev/null; then
             pod_running=true
-            echo "✅ voting-app-ui-v2 pod is running."
+            echo "✅ voting-app-dev pod is running."
         else
             if [ $(($(date +%s) - start_time)) -ge ${timeout} ]; then
-                echo "❌ Error: Timeout waiting for voting-app-ui-v2 pod to be running"
+                echo "❌ Error: Timeout waiting for voting-app-dev pod to be running"
                 echo "Debugging information:"
                 echo "Deployment status:"
                 kubectl describe deployment voting-app-ui-v2 -n voting-app
@@ -129,7 +129,7 @@ forward_dev() {
                 return 1
             fi
 
-            echo "Waiting for voting-app-ui-v2 pod to be running... ($(( $timeout - $(date +%s) + $start_time )) seconds left)"
+            echo "Waiting for voting-app-dev pod to be running... ($(( $timeout - $(date +%s) + $start_time )) seconds left)"
             sleep 5
         fi
     done
@@ -149,7 +149,7 @@ forward_dev() {
         return 1
     fi
 
-    echo "🛠️ Port-forwarding the dev version (voting-app-ui-v2)..."
+    echo "🛠️ Port-forwarding the dev version (voting-app-dev)..."
 
     # Check if port 8081 is already in use
     if lsof -i :8081 > /dev/null 2>&1; then
@@ -208,8 +208,8 @@ EOL
 
 setup_voting_app() {
     log "🗳️ Setting up voting app..."
-    run_command_with_spinner minikube image build -t voting-app-ui -f ./Dockerfile ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-ui image"
-    run_command_with_spinner minikube image build -t voting-app-ui-v2 -f ./Dockerfile-v2 ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-ui-v2 image"
+    run_command_with_spinner minikube image build -t voting-app-ui -f ./Dockerfile ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-prod image"
+    run_command_with_spinner minikube image build -t voting-app-ui-v2 -f ./Dockerfile-v2 ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-dev image"
     run_command_with_spinner kubectl create namespace voting-app
     run_command_with_spinner kubectl label namespace voting-app istio-injection=enabled
     run_command_with_spinner kubectl apply -n voting-app -f ./voting-app-demo/manifests/prod-only-demo.yaml || log_error "Failed to apply voting app manifests"
@@ -280,7 +280,6 @@ main() {
     start_kiali_dashboard
 
     log "✅ Startup completed! Minikube, Istio, and Kardinal are ready."
-    echo "🚨 IMPORTANT: You may need to run 'source ~/.bashrc' to update your PATH. Otherwise, commands might not be found."
     exec bash
 }
 

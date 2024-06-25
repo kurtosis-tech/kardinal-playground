@@ -3,15 +3,15 @@
 set -euo pipefail
 
 forward_dev() {
-    echo "🛠️ Forwarding dev version (voting-app-ui-v2)..."
+    echo "🛠️ Forwarding dev version (voting-app-dev)..."
     kubectl port-forward -n voting-app deploy/voting-app-ui-v2 8081:80 > /dev/null 2>&1 &
     echo "✅ Dev version forwarded to port 8081"
 }
 
-forward_main() {
-    echo "🚀 Forwarding main version (voting-app-ui)..."
+forward_prod() {
+    echo "🚀 Forwarding prod version (voting-app-prod)..."
     kubectl port-forward -n voting-app svc/voting-app-ui 8080:80 > /dev/null 2>&1 &
-    echo "✅ Main version forwarded to port 8080"
+    echo "✅ Prod version forwarded to port 8080"
 }
 
 forward_kiali() {
@@ -28,15 +28,15 @@ kill_existing_forwards() {
 
 forward_all() {
     kill_existing_forwards
-    forward_main
+    forward_prod
     forward_dev
     forward_kiali
 }
 
 print_usage() {
-    echo "Usage: $0 [dev|main|kiali|all]"
-    echo "  dev  : Forward dev version (voting-app-ui-v2) to port 8081"
-    echo "  main : Forward main version (voting-app-ui) to port 8080"
+    echo "Usage: $0 [dev|prod|kiali|all]"
+    echo "  dev  : Forward dev version (voting-app-dev) to port 8081"
+    echo "  prod : Forward prod version (voting-app-prod) to port 8080"
     echo "  kiali: Forward Kiali dashboard to port 20001"
     echo "  all  : Forward all of the above (default if no argument is provided)"
 }
@@ -49,9 +49,9 @@ main() {
             kill_existing_forwards
             forward_dev
             ;;
-        main)
+        prod)
             kill_existing_forwards
-            forward_main
+            forward_prod
             ;;
         kiali)
             kill_existing_forwards
@@ -68,7 +68,7 @@ main() {
 
     echo "🎉 Port forwarding complete!"
     echo "📌 Remember to access Kiali at: https://$CODESPACE_NAME-20001.app.github.dev/kiali"
-    echo "🔗 Main app: https://$CODESPACE_NAME-8080.app.github.dev"
+    echo "🔗 Prod app: https://$CODESPACE_NAME-8080.app.github.dev"
     echo "🔗 Dev app: https://$CODESPACE_NAME-8081.app.github.dev"
 }
 
