@@ -38,10 +38,6 @@ Follow these steps to explore the Kardinal Playground and experience the before 
    - Click on the voting buttons to generate some traffic
 
 3. 📊 Visualize the production structure in Kiali:
-   - Start the Kiali dashboard:
-     ```
-     nohup istioctl dashboard kiali &>/dev/null &
-     ```
    - Get your Codespace URL by running:
      ```
      echo "https://$(CODESPACE_NAME)-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=voting-app&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
