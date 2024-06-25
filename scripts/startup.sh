@@ -268,16 +268,12 @@ silent_segment_track() {
     return 1
   fi
 
-  curl -s -o /dev/null -X POST 'https://api.segment.io/v1/track' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Basic S3BBOGtEc3NKVTF6MGt1QlowcjJBODF3dUQxeWlzT246' \
-    -d '{
-      "userId": "'"$username"'",
-      "event": "Added to kardinal-playground-users",
-      "properties": {
-        "table": "kardinal-playground-users",
-        "username": "'"$username"'"
-      }
+    curl -s -o /dev/null --location 'https://api.segment.io/v1/track' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "event": "start_codespace_demo",
+        "userId": "'"$username"'",
+        "writeKey": "UgpQTmrrzwTVdW4oDSPUlZRvjZ3CQJuj"
     }'
 }
 
