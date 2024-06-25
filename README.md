@@ -24,7 +24,7 @@ Follow these steps to explore the Kardinal Playground:
 
 1. 🏁 Run the startup script:
    ```
-   ./scripts/startup.sh
+   source ./scripts/startup.sh
    ```
    This will setup Docker, Minikube, Istio, Kiali and Kardinal for you!
 
