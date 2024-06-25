@@ -1,6 +1,22 @@
 # 🎡 Kardinal Playground
 
-[... keep the existing content up to the Usage Guide ...]
+Welcome to the Kardinal Playground! This GitHub Codespace comes with Kardinal and all necessary tools pre-installed and ready to go. 🚀
+
+## 🛠 Features
+
+- 🐦 Kardinal
+- 🚙 Minikube
+- 🎛 kubectl
+- 🌐 Istio
+- 📊 Kiali
+
+## 🚀 Getting Started
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=818205437&skip_quickstart=true&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json)
+
+1. 🏗 Create a new Codespace from this repository.
+2. ⏳ Wait for the Codespace to finish setting up. This includes installing all necessary tools and starting Minikube.
+3. 🎉 Once setup is complete, you're ready to start your Kardinal adventure!
 
 ## 🗺 Usage Guide
 
