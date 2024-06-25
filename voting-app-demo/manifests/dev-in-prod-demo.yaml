@@ -22,7 +22,7 @@ metadata:
   labels:
     app: redis
     version: prod
-  name: redis
+  name: redis-prod
   namespace: voting-app
 spec:
   replicas: 1
@@ -323,7 +323,7 @@ metadata:
     app: voting-app-ui
     version: dev
     type: dev
-  name: voting-app-dev
+  name: voting-app-ui-dev
   namespace: voting-app
 spec:
   replicas: 1

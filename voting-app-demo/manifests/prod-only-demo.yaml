@@ -22,7 +22,7 @@ metadata:
   labels:
     app: redis
     version: prod
-  name: redis
+  name: redis-prod
   namespace: voting-app
 spec:
   replicas: 1
