@@ -263,13 +263,13 @@ start_kiali_dashboard() {
 }
 
 silent_segment_track() {
-  local username="${GITHUB_USERNAME}"
+  local username="${GITHUB_USER}"
   if [ -z "$username" ]; then
-    echo "Error: GITHUB_USERNAME environment variable is not set" >&2
+    echo "Error: GITHUB_USER environment variable is not set" >&2
     return 1
   fi
 
-  curl -s -o /dev/null -w "%{http_code}" -X POST 'https://api.segment.io/v1/track' \
+  curl -s -o /dev/null -X POST 'https://api.segment.io/v1/track' \
     -H 'Content-Type: application/json' \
     -H 'Authorization: Basic S3BBOGtEc3NKVTF6MGt1QlowcjJBODF3dUQxeWlzT246' \
     -d '{
