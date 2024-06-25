@@ -131,16 +131,11 @@ main() {
     install_addons
     install_kardinal
     setup_voting_app
+    forward_prod
 
     log "✅ Startup completed! Minikube, Istio, and Kardinal are ready."
-    echo ""
-    echo "=================================================================="
-    echo "🚨 IMPORTANT: You MUST run the following command to update your PATH:"
-    echo ""
-    echo "    source ~/.bashrc"
-    echo ""
-    echo "Failure to do so may result in commands not being found."
-    echo "=================================================================="
+    echo "🚨 IMPORTANT: You may need to run 'source ~/.bashrc' to update your PATH. Otherwise, commands might not be found."
+    exec bash
 }
 
 main "$@"
