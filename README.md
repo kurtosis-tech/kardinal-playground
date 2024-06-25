@@ -80,7 +80,8 @@ This guide showcases the power of Kardinal by demonstrating the seamless creatio
 
 ## ⏩ Whats Next?
 
-We are working with a small but selective set of initial users, join the beta [here](https://kardinal.dev/).
+We are working with a small but selective set of initial users, join the beta [here](https://kardinal.dev/). Or even better
+email us at `hello@kardinal.dev`.
 
 ## Issues
 
