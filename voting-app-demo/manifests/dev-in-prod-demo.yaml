@@ -346,7 +346,7 @@ spec:
     spec:
       containers:
         - name: azure-vote-front
-          image: voting-app-ui-v2
+          image: voting-app-ui-dev
           imagePullPolicy: IfNotPresent
           resources:
             requests:

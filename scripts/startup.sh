@@ -106,7 +106,7 @@ forward_dev() {
     echo "🛠️ Waiting for the dev version (voting-app-dev) to be ready..."
 
     # Wait for the deployment to be available
-    kubectl wait --for=condition=available --timeout=60s deployment/voting-app-ui-v2 -n voting-app || { echo "❌ Error: Timeout waiting for voting-app-dev deployment"; return 1; }
+    kubectl wait --for=condition=available --timeout=60s deployment/voting-app-ui-dev -n voting-app || { echo "❌ Error: Timeout waiting for voting-app-dev deployment"; return 1; }
 
     # Wait for the pod to be created and running
     local timeout=120
@@ -114,7 +114,7 @@ forward_dev() {
     local pod_running=false
 
     while [ "$pod_running" = false ]; do
-        if kubectl get pods -A | grep "voting-app-ui-v2" | grep "Running" > /dev/null; then
+        if kubectl get pods -A | grep "voting-app-ui-dev" | grep "Running" > /dev/null; then
             pod_running=true
             echo "✅ voting-app-dev pod is running."
         else
@@ -122,7 +122,7 @@ forward_dev() {
                 echo "❌ Error: Timeout waiting for voting-app-dev pod to be running"
                 echo "Debugging information:"
                 echo "Deployment status:"
-                kubectl describe deployment voting-app-ui-v2 -n voting-app
+                kubectl describe deployment voting-app-ui-dev -n voting-app
                 echo "Pods in all namespaces:"
                 kubectl get pods -A
                 echo "Events in the voting-app namespace:"
@@ -136,7 +136,7 @@ forward_dev() {
     done
 
     # Get the full pod name
-    local pod_name=$(kubectl get pods -A | grep "voting-app-ui-v2" | grep "Running" | awk '{print $2}')
+    local pod_name=$(kubectl get pods -A | grep "voting-app-ui-dev" | grep "Running" | awk '{print $2}')
     echo "Pod $pod_name is running. Checking readiness..."
 
     # Check if all containers in the pod are ready
@@ -162,7 +162,7 @@ forward_dev() {
     sleep 7
 
     # Start port-forwarding
-    kubectl port-forward -n voting-app deploy/voting-app-ui-v2 8081:80 > /dev/null 2>&1 &
+    kubectl port-forward -n voting-app deploy/voting-app-ui-dev 8081:80 > /dev/null 2>&1 &
 
     # Save the PID of the port-forward process
     local port_forward_pid=$!
@@ -179,7 +179,7 @@ forward_dev() {
         echo "Port 8081 status:"
         lsof -i :8081
         echo "Recent kubectl logs:"
-        kubectl logs deployment/voting-app-ui-v2 -n voting-app --tail=50
+        kubectl logs deployment/voting-app-ui-dev -n voting-app --tail=50
         return 1
     fi
 
@@ -210,7 +210,7 @@ EOL
 setup_voting_app() {
     log "🗳️ Setting up voting app..."
     run_command_with_spinner minikube image build -t voting-app-ui -f ./Dockerfile ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-prod image"
-    run_command_with_spinner minikube image build -t voting-app-ui-v2 -f ./Dockerfile-v2 ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-dev image"
+    run_command_with_spinner minikube image build -t voting-app-ui-dev -f ./Dockerfile-v2 ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-dev image"
     run_command_with_spinner kubectl create namespace voting-app
     run_command_with_spinner kubectl label namespace voting-app istio-injection=enabled
     run_command_with_spinner kubectl apply -n voting-app -f ./voting-app-demo/manifests/prod-only-demo.yaml || log_error "Failed to apply voting app manifests"
