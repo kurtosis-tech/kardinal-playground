@@ -3,9 +3,9 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: redis-prod
+    app: redis
     version: prod
-  name: redis-prod
+  name: redis
   namespace: voting-app
 spec:
   ports:
@@ -14,21 +14,21 @@ spec:
       protocol: TCP
       targetPort: 6379
   selector:
-    app: redis-prod
+    app: redis
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: redis-prod
+    app: redis
     version: prod
-  name: redis-prod-prod
+  name: redis
   namespace: voting-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: redis-prod
+      app: redis
       version: prod
   strategy:
     rollingUpdate:
@@ -40,11 +40,11 @@ spec:
       annotations:
         sidecar.istio.io/inject: "true"
       labels:
-        app: redis-prod
+        app: redis
         version: prod
     spec:
       containers:
-        - name: redis-prod
+        - name: redis
           image: bitnami/redis:6.0.8
           env:
             - name: ALLOW_EMPTY_PASSWORD
@@ -85,7 +85,7 @@ metadata:
   labels:
     app: voting-app-ui
     version: prod
-  name: voting-app-prod
+  name: voting-app-ui-prod
   namespace: voting-app
 spec:
   replicas: 1
@@ -121,7 +121,7 @@ spec:
             - containerPort: 80
           env:
             - name: REDIS
-              value: "redis-prod"
+              value: "redis"
 
 ---
 apiVersion: networking.istio.io/v1alpha3
@@ -173,7 +173,7 @@ kind: VirtualService
 metadata:
   labels:
     type: dev
-  name: voting-app-dev
+  name: voting-app-ui-dev
   namespace: voting-app
 spec:
   hosts:
@@ -209,17 +209,17 @@ spec:
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: redis-prod
+  name: redis
   namespace: voting-app
 spec:
   hosts:
-    - redis-prod
+    - redis
   tcp:
     - match:
         - port: 6379
       route:
         - destination:
-            host: redis-prod
+            host: redis
             port:
               number: 6379
           weight: 100
@@ -270,7 +270,7 @@ spec:
             - containerPort: 6379
           env:
             - name: REDIS_ADDR
-              value: "redis-prod:6379"
+              value: "redis:6379"
             - name: PORT
               value: "6379"
           readinessProbe:

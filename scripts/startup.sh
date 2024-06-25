@@ -91,8 +91,8 @@ install_addons() {
 install_kardinal() {
     log "🐦 Installing Kardinal..."
     run_command_with_spinner git clone https://github.com/kurtosis-tech/kardinal-demo-script.git || log_error "Failed to clone Kardinal demo script"
-    git checkout gyani/readme
     cd kardinal-demo-script
+    git checkout gyani/rename
     run_command_with_spinner /usr/bin/python3 -m pip install click || log_error "Failed to install click"
     mv kardinal-cli kardinal-original
     chmod u+x kardinal-original
