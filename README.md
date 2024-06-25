@@ -4,11 +4,11 @@ Welcome to the Kardinal Playground! This GitHub Codespace comes with Kardinal an
 
 ## 🛠 Features
 
-- 🐦 Kardinal
-- 🚙 Minikube
-- 🎛 kubectl
-- 🌐 Istio
-- 📊 Kiali
+- 🐦 Kardinal: Our platform that allows you to dev on prod safely
+- 🚙 Minikube: A tool that lets you run Kubernetes locally
+- 🎛 kubectl: The command-line tool for interacting with Kubernetes clusters
+- 🌐 Istio: An open-source service mesh that layers transparently onto existing distributed applications
+- 📊 Kiali: A management console for Istio-based service mesh
 
 ## 🚀 Getting Started
 
@@ -18,6 +18,15 @@ Welcome to the Kardinal Playground! This GitHub Codespace comes with Kardinal an
 2. ⏳ Wait for the Codespace to finish setting up. This includes installing all necessary tools and starting Minikube.
 3. 🎉 Once setup is complete, you're ready to start your Kardinal adventure!
 
+## 📊 About the Voting App
+
+The voting app is a simple application composed of two main components:
+
+1. A Python Flask web application that allows users to vote between two options.
+2. A Redis database that stores the votes.
+
+This setup demonstrates a basic microservices architecture, making it an ideal example for showcasing Kardinal's capabilities in managing development environments.
+
 ## 🗺 Usage Guide
 
 Follow these steps to explore the Kardinal Playground and experience the before → after progression:
@@ -26,9 +35,9 @@ Follow these steps to explore the Kardinal Playground and experience the before 
    ```
    ./scripts/startup.sh
    ```
-   This will set up Docker, Minikube, Istio, Kiali, and Kardinal for you, and deploy the voting-app namespace to the Minikube cluster.
+   This will set up Docker, Minikube, Istio, Kiali, and Kardinal for you, and deploy the voting-app namespace to the Minikube cluster. 
 
-   This can take around 3 minutes 🕰️. Familiarize yourself with the repository while this happens.
+   This can take around 3 minutes 🕰️. Familiarize yourself with the repository while this happens. 
 
    The script also supports a `--verbose` mode if you want to see what it's doing in detail.
 
@@ -44,6 +53,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
      ```
    - Open the URL provided by the command above in your browser
    - Observe the current structure of the production environment
+   - Note: If you're having trouble viewing Kiali, refer to the "Screenshots" section at the end of this README to see what the production environment should look like
 
 4. 🔧 Set up the dev flow:
    ```
@@ -62,6 +72,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
      - A dev version is now deployed
      - Dev traffic is routed to the dev version, with a database sidecar protecting the data layer
      - Prod still works independently - go to the prod version and click, it goes to the prod version and speaks to the DB directly
+   - If Kiali isn't displaying correctly, check the "Screenshots" section at the end of this README to see what the development environment should look like
 
 7. 🔄 Verify prod functionality:
    - Return to the production voting app URL
@@ -75,15 +86,34 @@ Follow these steps to explore the Kardinal Playground and experience the before 
 9. 🔎 Final Kiali check:
    - Return to the Kiali dashboard one last time
    - Observe that the environment has been cleaned up and returned to its original state
+   - If you can't access Kiali, refer to the production environment screenshot in the "Screenshots" section to see what the final state should resemble
 
 This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your production setup. You'll experience firsthand how Kardinal enables isolated development without risking production data or disrupting the live environment. 🚀
 
-## ⏩ Whats Next?
+## 🔗 Port Forwarding Explanation
 
-We are working with a small but selective set of initial users, join the beta [here](https://kardinal.dev/). Or even better
-email us at `hello@kardinal.dev`.
+We're using port forwarding in this Codespace setup to make the various services accessible to you. Since the Minikube cluster is running inside the Codespace, we need to forward specific ports to allow you to interact with the applications and dashboards through your browser. This is why you'll see multiple forwarded ports in the "Ports" tab of the Codespace UI.
 
-## Issues
+If you encounter any issues with port forwarding, you can reset it by running:
+```
+./scripts/forward.sh
+```
+
+## 📸 Screenshots
+
+### Production Environment
+![Production Kiali Graph](static/prod.png)
+*This image shows the Kiali graph for the production environment, demonstrating the direct connection between the voting app and the Redis database.*
+
+### Development Environment
+![Development Kiali Graph](static/dev.png)
+*This image displays the Kiali graph for the development environment, showcasing the additional components introduced by Kardinal, including the dev version of the app and the database sidecar.*
+
+## ⏩ What's Next?
+
+We are working with a small but selective set of initial users, join the beta [here](https://kardinal.dev/). Or even better email us at `hello@kardinal.dev`.
+
+## 🐛 Issues
 
 If you run into any issues with this playground please create an issue here or email us at `hello@kardinal.dev`.
 
