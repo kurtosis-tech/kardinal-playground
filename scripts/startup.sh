@@ -181,6 +181,15 @@ forward_prod() {
     return 0
 }
 
+start_kiali_dashboard() {
+    log "📊 Starting Kiali dashboard..."
+    nohup istioctl dashboard kiali &>/dev/null &
+    log "Kiali dashboard started."
+
+    # Print the Kiali URL
+    echo "Access Kiali at: https://$CODESPACE_NAME-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=voting-app&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
+}
+
 main() {
     # Check if an argument is provided
     if [ $# -gt 0 ] && [ "$1" = "--verbose" ]; then
@@ -197,6 +206,7 @@ main() {
     install_kardinal
     setup_voting_app
     forward_prod
+    start_kiali_dashboard
 
     log "✅ Startup completed! Minikube, Istio, and Kardinal are ready."
     echo "🚨 IMPORTANT: You may need to run 'source ~/.bashrc' to update your PATH. Otherwise, commands might not be found."
