@@ -63,7 +63,7 @@ Follow these steps to explore the Kardinal Playground:
 
 - 📈 Access the Kiali dashboard:
   ```
-  istioctl dashboard kiali
+  nohup istioctl dashboard kiali &>/dev/null &
   ```
   This command will start the Kiali dashboard and provide a URL to access it.
 
