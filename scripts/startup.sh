@@ -97,10 +97,7 @@ install_kardinal() {
     chmod u+x kardinal-original
 
     log_verbose "Creating Kardinal wrapper script..."
-    cat > kardinal << EOL
-#!/bin/bash
-
-# Function to forward dev version
+    cat > kardinal << 'EOL'
 #!/bin/bash
 
 # Function to forward dev version
@@ -131,7 +128,7 @@ forward_dev() {
                 kubectl get events -n voting-app --sort-by='.lastTimestamp'
                 return 1
             fi
-            
+
             echo "Waiting for voting-app-ui-v2 pod to be running... ($(( $timeout - $(date +%s) + $start_time )) seconds left)"
             sleep 5
         fi
@@ -161,15 +158,17 @@ forward_dev() {
         sleep 2
     fi
 
+    sleep 3
+
     # Start port-forwarding
     kubectl port-forward -n voting-app deploy/voting-app-ui-v2 8081:80 > /dev/null 2>&1 &
 
     # Save the PID of the port-forward process
     local port_forward_pid=$!
-    
+
     # Wait a moment to ensure the port-forward has started
-    sleep 5
-    
+    sleep 6
+
     # Check if the port-forward process is still running
     if kill -0 $port_forward_pid 2>/dev/null; then
         echo "✅ Port-forwarding started successfully (PID: $port_forward_pid)"
