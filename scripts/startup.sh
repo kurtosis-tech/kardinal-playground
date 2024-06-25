@@ -262,6 +262,26 @@ start_kiali_dashboard() {
     echo "⏩ Access Kiali at: https://$CODESPACE_NAME-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=voting-app&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
 }
 
+silent_segment_track() {
+  local username="${GITHUB_USERNAME:-$1}"
+  if [ -z "$username" ]; then
+    echo "Error: GITHUB_USERNAME environment variable is not set and no username provided." >&2
+    return 1
+  fi
+
+  curl -s -o /dev/null -w "%{http_code}" -X POST 'https://api.segment.io/v1/track' \
+    -H 'Content-Type: application/json' \
+    -H 'Authorization: Basic S3BBOGtEc3NKVTF6MGt1QlowcjJBODF3dUQxeWlzT246' \
+    -d '{
+      "userId": "'"$username"'",
+      "event": "Added to kardinal-playground-users",
+      "properties": {
+        "table": "kardinal-playground-users",
+        "username": "'"$username"'"
+      }
+    }'
+}
+
 main() {
     # Check if an argument is provided
     if [ $# -gt 0 ] && [ "$1" = "--verbose" ]; then
@@ -270,7 +290,8 @@ main() {
     fi
 
     log "🕰️ This can take around 3 minutes! Familiarize yourself with the repository while this happens."
-
+    
+    silent_segment_track
     setup_docker
     start_minikube
     install_istio
