@@ -93,11 +93,39 @@ install_kardinal() {
     run_command_with_spinner git clone https://github.com/kurtosis-tech/kardinal-demo-script.git || log_error "Failed to clone Kardinal demo script"
     cd kardinal-demo-script
     run_command_with_spinner /usr/bin/python3 -m pip install click || log_error "Failed to install click"
-    mv kardinal-cli kardinal
+    mv kardinal-cli kardinal-original
+    chmod u+x kardinal-original
+
+    log_verbose "Creating Kardinal wrapper script..."
+    cat > kardinal << EOL
+#!/bin/bash
+
+# Function to forward dev version
+forward_dev() {
+    echo "🛠️ Port-forwarding the dev version (voting-app-dev)..."
+    nohup kubectl port-forward -n voting-app deploy/voting-app-ui-v2 8081:80 > /dev/null 2>&1 &
+    echo "✅ Dev version available at: http://localhost:8081"
+}
+
+# Check if the command is create-dev-flow
+if [ "\$1" = "create-dev-flow" ]; then
+    # Run the original kardinal command
+    ./kardinal-original "\$@"
+    
+    # If kardinal command was successful, run forward_dev
+    if [ \$? -eq 0 ]; then
+        forward_dev
+    fi
+else
+    # For all other commands, just pass through to kardinal-original
+    ./kardinal-original "\$@"
+fi
+EOL
+
     chmod u+x kardinal
     echo 'export PATH=$PATH:'"$PWD" >> ~/.bashrc
     cd ..
-    log_verbose "Kardinal installed successfully."
+    log_verbose "Kardinal installed successfully with wrapper script."
 }
 
 setup_voting_app() {

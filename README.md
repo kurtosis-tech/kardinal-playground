@@ -43,12 +43,6 @@ Follow these steps to explore the Kardinal Playground:
    kardinal create-dev-flow voting-app
    ```
 
-1. 🚀 Forward the dev version of the voting app (ideally in a new terminal tab):
-   ```
-   ./scripts/forward.sh dev
-   ```
-   ⚠️ if the forwarded port doesn't open, run this again.
-
 1. 🧪 Play with voting-app-dev
    - Check the "Ports" tab in the Codespaces UI
    - Look for the port labelled "voting-app-dev" and open it in your browser
