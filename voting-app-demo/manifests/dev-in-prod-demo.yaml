@@ -4,7 +4,7 @@ kind: Service
 metadata:
   labels:
     app: redis-prod
-    version: v1
+    version: prod
   name: redis-prod
   namespace: voting-app
 spec:
@@ -21,15 +21,15 @@ kind: Deployment
 metadata:
   labels:
     app: redis-prod
-    version: v1
-  name: redis-prod-v1
+    version: prod
+  name: redis-prod-prod
   namespace: voting-app
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: redis-prod
-      version: v1
+      version: prod
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -41,7 +41,7 @@ spec:
         sidecar.istio.io/inject: "true"
       labels:
         app: redis-prod
-        version: v1
+        version: prod
     spec:
       containers:
         - name: redis-prod
@@ -84,15 +84,15 @@ kind: Deployment
 metadata:
   labels:
     app: voting-app-ui
-    version: v1
-  name: voting-app-ui-v1
+    version: prod
+  name: voting-app-prod
   namespace: voting-app
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: voting-app-ui
-      version: v1
+      version: prod
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -104,7 +104,7 @@ spec:
         sidecar.istio.io/inject: "true"
       labels:
         app: voting-app-ui
-        version: v1
+        version: prod
     spec:
       containers:
         - name: azure-vote-front
@@ -131,7 +131,7 @@ metadata:
   namespace: voting-app
   labels:
     app: voting-app
-    version: v1
+    version: prod
 spec:
   selector:
     istio: ingressgateway
@@ -159,11 +159,11 @@ spec:
     - route:
         - destination:
             host: voting-app-ui
-            subset: v1
+            subset: prod
           weight: 100
       mirror:
         host: voting-app-ui
-        subset: v2
+        subset: dev
       mirrorPercentage:
         value: 10.
 
@@ -173,7 +173,7 @@ kind: VirtualService
 metadata:
   labels:
     type: dev
-  name: voting-app-ui-v2
+  name: voting-app-dev
   namespace: voting-app
 spec:
   hosts:
@@ -184,7 +184,7 @@ spec:
     - route:
         - destination:
             host: voting-app-ui
-            subset: v2
+            subset: dev
           weight: 100
 
 ---
@@ -198,12 +198,12 @@ metadata:
 spec:
   host: voting-app-ui
   subsets:
-    - name: v1
+    - name: prod
       labels:
-        version: v1
-    - name: v2
+        version: prod
+    - name: dev
       labels:
-        version: v2
+        version: dev
 
 ---
 apiVersion: networking.istio.io/v1beta1
@@ -231,7 +231,7 @@ metadata:
   labels:
     type: dev
     app: kardinal-db-sidecar
-    version: v1
+    version: dev
   name: kardinal-db-sidecar
   namespace: voting-app
 spec:
@@ -250,17 +250,17 @@ metadata:
   labels:
     type: dev
     app: kardinal-db-sidecar
-    version: v1
+    version: dev
 spec:
   selector:
     matchLabels:
       app: kardinal-db-sidecar
-      version: v1
+      version: dev
   template:
     metadata:
       labels:
         app: kardinal-db-sidecar
-        version: v1
+        version: dev
     spec:
       containers:
         - name: proxy
@@ -321,16 +321,16 @@ kind: Deployment
 metadata:
   labels:
     app: voting-app-ui
-    version: v2
+    version: dev
     type: dev
-  name: voting-app-ui-v2
+  name: voting-app-dev
   namespace: voting-app
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: voting-app-ui
-      version: v2
+      version: dev
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -342,7 +342,7 @@ spec:
         sidecar.istio.io/inject: "true"
       labels:
         app: voting-app-ui
-        version: v2
+        version: dev
     spec:
       containers:
         - name: azure-vote-front

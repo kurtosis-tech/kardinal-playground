@@ -4,7 +4,7 @@ kind: Service
 metadata:
   labels:
     app: redis-prod
-    version: v1
+    version: prod
   name: redis-prod
   namespace: voting-app
 spec:
@@ -21,15 +21,15 @@ kind: Deployment
 metadata:
   labels:
     app: redis-prod
-    version: v1
-  name: redis-prod-v1
+    version: prod
+  name: redis-prod-prod
   namespace: voting-app
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: redis-prod
-      version: v1
+      version: prod
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -41,7 +41,7 @@ spec:
         sidecar.istio.io/inject: "true"
       labels:
         app: redis-prod
-        version: v1
+        version: prod
     spec:
       containers:
         - name: redis-prod
@@ -68,8 +68,8 @@ kind: Service
 metadata:
   labels:
     app: voting-app-ui
-    version: v1
-  name: voting-app-ui
+    version: prod
+  name: voting-app-prod
   namespace: voting-app
 spec:
   ports:
@@ -85,15 +85,15 @@ kind: Deployment
 metadata:
   labels:
     app: voting-app-ui
-    version: v1
-  name: voting-app-ui-v1
+    version: prod
+  name: voting-app-prod
   namespace: voting-app
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: voting-app-ui
-      version: v1
+      version: prod
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -105,7 +105,7 @@ spec:
         sidecar.istio.io/inject: "true"
       labels:
         app: voting-app-ui
-        version: v1
+        version: prod
     spec:
       containers:
         - name: azure-vote-front
