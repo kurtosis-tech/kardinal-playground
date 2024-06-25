@@ -93,11 +93,46 @@ install_kardinal() {
     run_command_with_spinner git clone https://github.com/kurtosis-tech/kardinal-demo-script.git || log_error "Failed to clone Kardinal demo script"
     cd kardinal-demo-script
     run_command_with_spinner /usr/bin/python3 -m pip install click || log_error "Failed to install click"
-    mv kardinal-cli kardinal
+    mv kardinal-cli kardinal-original
+    chmod u+x kardinal-original
+
+    log_verbose "Creating Kardinal wrapper script..."
+    cat > kardinal << EOL
+#!/bin/bash
+
+# Function to forward dev version
+forward_dev() {
+    echo "🛠️ Waiting for the dev version (voting-app-ui-v2) to be ready..."
+
+    # Wait for the deployment to be available
+    kubectl wait --for=condition=available --timeout=60s deployment/voting-app-ui-v2 -n voting-app || { echo "❌ Error: Timeout waiting for voting-app-ui-v2 deployment"; return 1; }
+
+    echo "🛠️ Port-forwarding the dev version (voting-app-ui-v2)..."
+    sleep 6
+    nohup kubectl port-forward -n voting-app deploy/voting-app-ui-v2 8081:80 > /dev/null 2>&1 &
+
+    return 0
+}
+
+# Check if the command is create-dev-flow
+if [ "\$1" = "create-dev-flow" ]; then
+    # Run the original kardinal command
+    kardinal-original "\$@"
+    
+    # If kardinal command was successful, run forward_dev
+    if [ \$? -eq 0 ]; then
+        forward_dev
+    fi
+else
+    # For all other commands, just pass through to kardinal-original
+    kardinal-original "\$@"
+fi
+EOL
+
     chmod u+x kardinal
     echo 'export PATH=$PATH:'"$PWD" >> ~/.bashrc
     cd ..
-    log_verbose "Kardinal installed successfully."
+    log_verbose "Kardinal installed successfully with wrapper script."
 }
 
 setup_voting_app() {
@@ -111,9 +146,48 @@ setup_voting_app() {
 }
 
 forward_prod() {
+    log "⏭️ Waiting for the prod version (voting-app-ui) to be ready..."
+
+    local service_name="voting-app-ui"
+    local namespace="voting-app"
+    local timeout=120  # timeout in seconds
+
+    local start_time=$(date +%s)
+    while true; do
+        # Check if the pod is running
+        local pod_status=$(kubectl get pods -n ${namespace} -l app=${service_name} -o jsonpath='{.items[0].status.phase}')
+        
+        # Check if the service has endpoints
+        local endpoint_ip=$(kubectl get endpoints -n ${namespace} ${service_name} -o jsonpath='{.subsets[0].addresses[0].ip}')
+
+        if [ "${pod_status}" = "Running" ] && [ -n "${endpoint_ip}" ]; then
+            log_verbose "Service ${service_name} is ready and has a running pod with endpoints"
+            break
+        fi
+
+        if [ $(($(date +%s) - start_time)) -ge ${timeout} ]; then
+            log_error "Timeout waiting for service ${service_name} to be ready. Pod status: ${pod_status}, Endpoint IP: ${endpoint_ip}"
+            return 1
+        fi
+
+        log_verbose "Waiting for service and pod to be ready..."
+        sleep 5
+    done
+
     log "⏭️ Port-forwarding the prod version (voting-app-ui)..."
+    sleep 4
     nohup kubectl port-forward -n voting-app svc/voting-app-ui 8080:80 > /dev/null 2>&1 &
-    log "✅ Prod version available at: http://localhost:8080"
+
+    return 0
+}
+
+start_kiali_dashboard() {
+    log "📊 Starting Kiali dashboard..."
+    nohup istioctl dashboard kiali &>/dev/null &
+    log "✅ Kiali dashboard started."
+
+    # Print the Kiali URL
+    echo "⏩ Access Kiali at: https://$CODESPACE_NAME-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=voting-app&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
 }
 
 main() {
@@ -132,6 +206,7 @@ main() {
     install_kardinal
     setup_voting_app
     forward_prod
+    start_kiali_dashboard
 
     log "✅ Startup completed! Minikube, Istio, and Kardinal are ready."
     echo "🚨 IMPORTANT: You may need to run 'source ~/.bashrc' to update your PATH. Otherwise, commands might not be found."
