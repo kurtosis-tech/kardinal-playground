@@ -27,6 +27,7 @@ Follow these steps to explore the Kardinal Playground:
    ./scripts/startup.sh
    ```
    Wait for it to complete. For verbose output, use `./scripts/startup.sh --verbose`.
+   🕰️ This can take around 3 minutes! Familiarize yourself with the repository while this happens
 
 2. 🚀 Forward the prod version of the voting app (ideally in a new terminal tab):
    ```

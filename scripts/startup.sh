@@ -117,6 +117,8 @@ main() {
         log "Verbose mode enabled."
     fi
 
+    log "🕰️ This can take around 3 minutes! Familiarize yourself with the repository while this happens."
+
     setup_docker
     start_minikube
     install_istio
