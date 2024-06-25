@@ -40,7 +40,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
 3. 📊 Visualize the production structure in Kiali:
    - Get your Codespace URL by running:
      ```
-     echo "https://$(CODESPACE_NAME)-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=voting-app&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
+     echo "https://$CODESPACE_NAME-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=voting-app&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
      ```
    - Open the URL provided by the command above in your browser
    - Observe the current structure of the production environment

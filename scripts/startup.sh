@@ -108,7 +108,7 @@ forward_dev() {
     kubectl wait --for=condition=available --timeout=60s deployment/voting-app-ui-v2 -n voting-app || { echo "❌ Error: Timeout waiting for voting-app-ui-v2 deployment"; return 1; }
 
     echo "🛠️ Port-forwarding the dev version (voting-app-ui-v2)..."
-    sleep 4
+    sleep 6
     nohup kubectl port-forward -n voting-app deploy/voting-app-ui-v2 8081:80 > /dev/null 2>&1 &
 
     return 0
@@ -184,10 +184,10 @@ forward_prod() {
 start_kiali_dashboard() {
     log "📊 Starting Kiali dashboard..."
     nohup istioctl dashboard kiali &>/dev/null &
-    log "Kiali dashboard started."
+    log "✅ Kiali dashboard started."
 
     # Print the Kiali URL
-    echo "Access Kiali at: https://$CODESPACE_NAME-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=voting-app&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
+    echo "⏩ Access Kiali at: https://$CODESPACE_NAME-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=voting-app&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
 }
 
 main() {
