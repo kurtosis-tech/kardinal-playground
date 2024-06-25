@@ -77,3 +77,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
    - Observe that the environment has been cleaned up and returned to its original state
 
 This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your production setup. You'll experience firsthand how Kardinal enables isolated development without risking production data or disrupting the live environment. 🚀
+
+## ⏩ Whats Next?
+
+We are working with a small but selective set of initial users, join the beta [here](https://kardinal.dev/).
