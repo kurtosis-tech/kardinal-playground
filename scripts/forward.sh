@@ -4,7 +4,7 @@ set -euo pipefail
 
 forward_dev() {
     echo "🛠️ Forwarding dev version (voting-app-dev)..."
-    kubectl port-forward -n voting-app deploy/voting-app-ui-v2 8081:80 > /dev/null 2>&1 &
+    kubectl port-forward -n voting-app deploy/voting-app-ui-dev 8081:80 > /dev/null 2>&1 &
     echo "✅ Dev version forwarded to port 8081"
 }
 
