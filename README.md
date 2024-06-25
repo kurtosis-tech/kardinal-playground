@@ -34,7 +34,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
 
 2. 🗳 Explore the production voting app:
    - Check the "Ports" tab in the Codespaces UI
-   - Look for the port labelled "voting-app-main" and open it in your browser
+   - Look for the port labelled "voting-app-prod" and open it in your browser
    - Click on the voting buttons to generate some traffic
 
 3. 📊 Visualize the production structure in Kiali:
@@ -80,7 +80,8 @@ This guide showcases the power of Kardinal by demonstrating the seamless creatio
 
 ## ⏩ Whats Next?
 
-We are working with a small but selective set of initial users, join the beta [here](https://kardinal.dev/).
+We are working with a small but selective set of initial users, join the beta [here](https://kardinal.dev/). Or even better
+email us at `hello@kardinal.dev`.
 
 ## Issues
 

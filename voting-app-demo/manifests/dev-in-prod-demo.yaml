@@ -3,9 +3,9 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: redis-prod
-    version: v1
-  name: redis-prod
+    app: redis
+    version: prod
+  name: redis
   namespace: voting-app
 spec:
   ports:
@@ -14,22 +14,22 @@ spec:
       protocol: TCP
       targetPort: 6379
   selector:
-    app: redis-prod
+    app: redis
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: redis-prod
-    version: v1
-  name: redis-prod-v1
+    app: redis
+    version: prod
+  name: redis-prod
   namespace: voting-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: redis-prod
-      version: v1
+      app: redis
+      version: prod
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -40,11 +40,11 @@ spec:
       annotations:
         sidecar.istio.io/inject: "true"
       labels:
-        app: redis-prod
-        version: v1
+        app: redis
+        version: prod
     spec:
       containers:
-        - name: redis-prod
+        - name: redis
           image: bitnami/redis:6.0.8
           env:
             - name: ALLOW_EMPTY_PASSWORD
@@ -84,15 +84,15 @@ kind: Deployment
 metadata:
   labels:
     app: voting-app-ui
-    version: v1
-  name: voting-app-ui-v1
+    version: prod
+  name: voting-app-ui-prod
   namespace: voting-app
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: voting-app-ui
-      version: v1
+      version: prod
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -104,7 +104,7 @@ spec:
         sidecar.istio.io/inject: "true"
       labels:
         app: voting-app-ui
-        version: v1
+        version: prod
     spec:
       containers:
         - name: azure-vote-front
@@ -121,7 +121,7 @@ spec:
             - containerPort: 80
           env:
             - name: REDIS
-              value: "redis-prod"
+              value: "redis"
 
 ---
 apiVersion: networking.istio.io/v1alpha3
@@ -131,7 +131,7 @@ metadata:
   namespace: voting-app
   labels:
     app: voting-app
-    version: v1
+    version: prod
 spec:
   selector:
     istio: ingressgateway
@@ -159,11 +159,11 @@ spec:
     - route:
         - destination:
             host: voting-app-ui
-            subset: v1
+            subset: prod
           weight: 100
       mirror:
         host: voting-app-ui
-        subset: v2
+        subset: dev
       mirrorPercentage:
         value: 10.
 
@@ -173,7 +173,7 @@ kind: VirtualService
 metadata:
   labels:
     type: dev
-  name: voting-app-ui-v2
+  name: voting-app-ui-dev
   namespace: voting-app
 spec:
   hosts:
@@ -184,7 +184,7 @@ spec:
     - route:
         - destination:
             host: voting-app-ui
-            subset: v2
+            subset: dev
           weight: 100
 
 ---
@@ -198,28 +198,28 @@ metadata:
 spec:
   host: voting-app-ui
   subsets:
-    - name: v1
+    - name: prod
       labels:
-        version: v1
-    - name: v2
+        version: prod
+    - name: dev
       labels:
-        version: v2
+        version: dev
 
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: redis-prod
+  name: redis
   namespace: voting-app
 spec:
   hosts:
-    - redis-prod
+    - redis
   tcp:
     - match:
         - port: 6379
       route:
         - destination:
-            host: redis-prod
+            host: redis
             port:
               number: 6379
           weight: 100
@@ -231,7 +231,7 @@ metadata:
   labels:
     type: dev
     app: kardinal-db-sidecar
-    version: v1
+    version: dev
   name: kardinal-db-sidecar
   namespace: voting-app
 spec:
@@ -250,17 +250,17 @@ metadata:
   labels:
     type: dev
     app: kardinal-db-sidecar
-    version: v1
+    version: dev
 spec:
   selector:
     matchLabels:
       app: kardinal-db-sidecar
-      version: v1
+      version: dev
   template:
     metadata:
       labels:
         app: kardinal-db-sidecar
-        version: v1
+        version: dev
     spec:
       containers:
         - name: proxy
@@ -270,7 +270,7 @@ spec:
             - containerPort: 6379
           env:
             - name: REDIS_ADDR
-              value: "redis-prod:6379"
+              value: "redis:6379"
             - name: PORT
               value: "6379"
           readinessProbe:
@@ -321,16 +321,16 @@ kind: Deployment
 metadata:
   labels:
     app: voting-app-ui
-    version: v2
+    version: dev
     type: dev
-  name: voting-app-ui-v2
+  name: voting-app-ui-dev
   namespace: voting-app
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: voting-app-ui
-      version: v2
+      version: dev
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -342,11 +342,11 @@ spec:
         sidecar.istio.io/inject: "true"
       labels:
         app: voting-app-ui
-        version: v2
+        version: dev
     spec:
       containers:
         - name: azure-vote-front
-          image: voting-app-ui-v2
+          image: voting-app-ui-dev
           imagePullPolicy: IfNotPresent
           resources:
             requests:

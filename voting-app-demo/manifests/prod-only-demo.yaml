@@ -3,9 +3,9 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: redis-prod
-    version: v1
-  name: redis-prod
+    app: redis
+    version: prod
+  name: redis
   namespace: voting-app
 spec:
   ports:
@@ -14,22 +14,22 @@ spec:
       protocol: TCP
       targetPort: 6379
   selector:
-    app: redis-prod
+    app: redis
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: redis-prod
-    version: v1
-  name: redis-prod-v1
+    app: redis
+    version: prod
+  name: redis-prod
   namespace: voting-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: redis-prod
-      version: v1
+      app: redis
+      version: prod
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -40,11 +40,11 @@ spec:
       annotations:
         sidecar.istio.io/inject: "true"
       labels:
-        app: redis-prod
-        version: v1
+        app: redis
+        version: prod
     spec:
       containers:
-        - name: redis-prod
+        - name: redis
           image: bitnami/redis:6.0.8
           env:
             - name: ALLOW_EMPTY_PASSWORD
@@ -68,7 +68,7 @@ kind: Service
 metadata:
   labels:
     app: voting-app-ui
-    version: v1
+    version: prod
   name: voting-app-ui
   namespace: voting-app
 spec:
@@ -85,15 +85,15 @@ kind: Deployment
 metadata:
   labels:
     app: voting-app-ui
-    version: v1
-  name: voting-app-ui-v1
+    version: prod
+  name: voting-app-ui-prod
   namespace: voting-app
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: voting-app-ui
-      version: v1
+      version: prod
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -105,7 +105,7 @@ spec:
         sidecar.istio.io/inject: "true"
       labels:
         app: voting-app-ui
-        version: v1
+        version: prod
     spec:
       containers:
         - name: azure-vote-front
@@ -122,7 +122,7 @@ spec:
             - containerPort: 80
           env:
             - name: REDIS
-              value: "redis-prod"
+              value: "redis"
 
 ---
 apiVersion: networking.istio.io/v1alpha3
@@ -162,16 +162,16 @@ spec:
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: redis-prod
+  name: redis
   namespace: voting-app
 spec:
   hosts:
-    - redis-prod
+    - redis
   tcp:
     - match:
         - port: 6379
       route:
         - destination:
-            host: redis-prod
+            host: redis
             port:
               number: 6379
