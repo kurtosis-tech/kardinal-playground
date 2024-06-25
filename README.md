@@ -81,3 +81,9 @@ This guide showcases the power of Kardinal by demonstrating the seamless creatio
 ## ⏩ Whats Next?
 
 We are working with a small but selective set of initial users, join the beta [here](https://kardinal.dev/).
+
+## Issues
+
+If you run into any issues with this playground please create an issue here or email us at `hello@kardinal.dev`.
+
+If you are encountering any issue with the port forwards, simply use `./scripts/forward.sh` to reset the port forwarding.

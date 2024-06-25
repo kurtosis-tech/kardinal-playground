@@ -158,7 +158,7 @@ forward_dev() {
         sleep 2
     fi
 
-    sleep 3
+    sleep 7
 
     # Start port-forwarding
     kubectl port-forward -n voting-app deploy/voting-app-ui-v2 8081:80 > /dev/null 2>&1 &
