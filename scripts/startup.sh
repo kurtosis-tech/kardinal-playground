@@ -108,6 +108,7 @@ forward_dev() {
     kubectl wait --for=condition=available --timeout=60s deployment/voting-app-ui-v2 -n voting-app || { echo "❌ Error: Timeout waiting for voting-app-ui-v2 deployment"; return 1; }
 
     echo "🛠️ Port-forwarding the dev version (voting-app-ui-v2)..."
+    sleep 4
     nohup kubectl port-forward -n voting-app deploy/voting-app-ui-v2 8081:80 > /dev/null 2>&1 &
 
     return 0
@@ -174,6 +175,7 @@ forward_prod() {
     done
 
     log "⏭️ Port-forwarding the prod version (voting-app-ui)..."
+    sleep 4
     nohup kubectl port-forward -n voting-app svc/voting-app-ui 8080:80 > /dev/null 2>&1 &
 
     return 0
