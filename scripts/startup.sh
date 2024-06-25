@@ -263,9 +263,9 @@ start_kiali_dashboard() {
 }
 
 silent_segment_track() {
-  local username="${GITHUB_USERNAME:-$1}"
+  local username="${GITHUB_USERNAME}"
   if [ -z "$username" ]; then
-    echo "Error: GITHUB_USERNAME environment variable is not set and no username provided." >&2
+    echo "Error: GITHUB_USERNAME environment variable is not set" >&2
     return 1
   fi
 
