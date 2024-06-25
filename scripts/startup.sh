@@ -110,6 +110,12 @@ setup_voting_app() {
     log_verbose "Voting app set up successfully."
 }
 
+forward_prod() {
+    log "⏭️ Port-forwarding the prod version (voting-app-ui)..."
+    nohup kubectl port-forward -n voting-app svc/voting-app-ui 8080:80 > /dev/null 2>&1 &
+    log "✅ Prod version available at: http://localhost:8080"
+}
+
 main() {
     # Check if an argument is provided
     if [ $# -gt 0 ] && [ "$1" = "--verbose" ]; then
