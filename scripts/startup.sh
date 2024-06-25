@@ -102,10 +102,15 @@ install_kardinal() {
 
 # Function to forward dev version
 forward_dev() {
-    sleep 3 # we sleep for a bit as the service can take a few seconds to come alive
-    echo "🛠️ Port-forwarding the dev version (voting-app-dev)..."
+    echo "🛠️ Waiting for the dev version (voting-app-ui-v2) to be ready..."
+
+    # Wait for the deployment to be available
+    kubectl wait --for=condition=available --timeout=60s deployment/voting-app-ui-v2 -n voting-app || { echo "❌ Error: Timeout waiting for voting-app-ui-v2 deployment"; return 1; }
+
+    echo "🛠️ Port-forwarding the dev version (voting-app-ui-v2)..."
     nohup kubectl port-forward -n voting-app deploy/voting-app-ui-v2 8081:80 > /dev/null 2>&1 &
-    echo "✅ Dev version available at: http://localhost:8081"
+
+    return 0
 }
 
 # Check if the command is create-dev-flow
@@ -140,10 +145,38 @@ setup_voting_app() {
 }
 
 forward_prod() {
-    sleep 3 # we sleep for a bit as the service can take a few seconds to come alive
+    log "⏭️ Waiting for the prod version (voting-app-ui) to be ready..."
+
+    local service_name="voting-app-ui"
+    local namespace="voting-app"
+    local timeout=120  # timeout in seconds
+
+    local start_time=$(date +%s)
+    while true; do
+        # Check if the pod is running
+        local pod_status=$(kubectl get pods -n ${namespace} -l app=${service_name} -o jsonpath='{.items[0].status.phase}')
+        
+        # Check if the service has endpoints
+        local endpoint_ip=$(kubectl get endpoints -n ${namespace} ${service_name} -o jsonpath='{.subsets[0].addresses[0].ip}')
+
+        if [ "${pod_status}" = "Running" ] && [ -n "${endpoint_ip}" ]; then
+            log_verbose "Service ${service_name} is ready and has a running pod with endpoints"
+            break
+        fi
+
+        if [ $(($(date +%s) - start_time)) -ge ${timeout} ]; then
+            log_error "Timeout waiting for service ${service_name} to be ready. Pod status: ${pod_status}, Endpoint IP: ${endpoint_ip}"
+            return 1
+        fi
+
+        log_verbose "Waiting for service and pod to be ready..."
+        sleep 5
+    done
+
     log "⏭️ Port-forwarding the prod version (voting-app-ui)..."
     nohup kubectl port-forward -n voting-app svc/voting-app-ui 8080:80 > /dev/null 2>&1 &
-    log "✅ Prod version available at: http://localhost:8080"
+
+    return 0
 }
 
 main() {
