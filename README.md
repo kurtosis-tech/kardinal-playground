@@ -111,7 +111,7 @@ If you encounter any issues with port forwarding, you can reset it by running:
 
 ## ⏩ What's Next?
 
-We are working with a small but selective set of initial users, join the beta [here](https://kardinal.dev/). Or even better email us at `hello@kardinal.dev`.
+We are working with a small but selective set of initial users, join the beta [here](https://kardinal.dev/?utm_source=github). Or even better email us at `hello@kardinal.dev`.
 
 ## 🐛 Issues
 
