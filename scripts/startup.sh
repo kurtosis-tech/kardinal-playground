@@ -116,6 +116,24 @@ start_kiali_dashboard() {
     echo "⏩ Access Kiali at: https://$CODESPACE_NAME-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=voting-app&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
 }
 
+setup_kardinal_cli() {
+    log "🛠️ Setting up Kardinal CLI..."
+    
+    # Pull the Kardinal CLI image
+    run_command_with_spinner docker pull kurtosistech/kardinal-cli || log_error "Failed to pull Kardinal CLI image"
+    
+    # Create a wrapper script for the kardinal command
+    cat > /usr/local/bin/kardinal << EOL
+#!/bin/bash
+docker run --rm -it -v \${PWD}:/workdir -w /workdir kurtosistech/kardinal-cli "\$@"
+EOL
+    
+    # Make the wrapper script executable
+    chmod +x /usr/local/bin/kardinal
+    
+    log_verbose "Kardinal CLI setup completed. You can now use the 'kardinal' command."
+}
+
 silent_segment_track() {
   local username="${GITHUB_USER}"
   if [ -z "$username" ]; then
@@ -149,6 +167,7 @@ main() {
     run_kontrol_container
     deploy_kardinal_manager
     build_images
+    setup_kardinal_cli
     start_kiali_dashboard
 
     log "✅ Startup completed! Minikube, Istio, Kontrol, and Kardinal Manager are ready."
