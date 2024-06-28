@@ -43,7 +43,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
 
 2. 🚀 Deploy the demo application:
    ```
-   kardinal deploy -f voting-app-demo/compose.yml
+   kardinal deploy -d voting-app-demo/compose.yml
    ```
    This command deploys the voting app to your Minikube cluster in the "prod" namespace.
 
