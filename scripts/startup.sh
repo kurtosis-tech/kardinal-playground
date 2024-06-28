@@ -122,25 +122,17 @@ setup_kardinal_cli() {
     # Pull the Kardinal CLI image
     run_command_with_spinner docker pull kurtosistech/kardinal-cli || log_error "Failed to pull Kardinal CLI image"
     
-    # Create a directory for user scripts if it doesn't exist
-    mkdir -p "$HOME/.local/bin"
+    # Create the alias
+    alias kardinal='docker run --rm -it -v ${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -w /workdir --network host --entrypoint /nix/store/2529041pfblgzjccsm2zdhab706vxk0q-kardinal.cli/bin/kardinal.cli kurtosistech/kardinal-cli'
     
-    # Create a wrapper script for the kardinal command
-    cat > "$HOME/.local/bin/kardinal" << EOL
-#!/bin/bash
-docker run --rm -it -v \${PWD}:/workdir -w /workdir kurtosistech/kardinal-cli "\$@"
-EOL
+    # Add the alias to .bashrc for persistence
+    echo "alias kardinal='docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -w /workdir --network host --entrypoint /nix/store/2529041pfblgzjccsm2zdhab706vxk0q-kardinal.cli/bin/kardinal.cli kurtosistech/kardinal-cli'" >> ~/.bashrc
     
-    # Make the wrapper script executable
-    chmod +x "$HOME/.local/bin/kardinal"
+    log "✅ Kardinal CLI alias created. You can now use 'kardinal' command directly."
+    log "For example, to deploy using a compose file, run:"
+    log "kardinal deploy -d ./compose.yml"
     
-    # Add the directory to PATH if it's not already there
-    if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
-        echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
-        export PATH="$HOME/.local/bin:$PATH"
-    fi
-    
-    log_verbose "Kardinal CLI setup completed. You can now use the 'kardinal' command."
+    log_verbose "Kardinal CLI setup completed. The 'kardinal' command is now available."
 }
 
 silent_segment_track() {
