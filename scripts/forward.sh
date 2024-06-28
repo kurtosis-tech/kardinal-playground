@@ -4,14 +4,14 @@ set -euo pipefail
 
 forward_dev() {
     echo "🛠️ Forwarding dev version (voting-app-dev)..."
-    kubectl port-forward -n voting-app deploy/voting-app-ui-dev 8081:80 > /dev/null 2>&1 &
-    echo "✅ Dev version forwarded to port 8081"
+    kubectl port-forward -n prod deploy/voting-app-ui-dev 8091:80 > /dev/null 2>&1 &
+    echo "✅ Dev version forwarded to port 8091"
 }
 
 forward_prod() {
     echo "🚀 Forwarding prod version (voting-app-prod)..."
-    kubectl port-forward -n voting-app svc/voting-app-ui 8080:80 > /dev/null 2>&1 &
-    echo "✅ Prod version forwarded to port 8080"
+    kubectl port-forward -n prod svc/voting-app-ui 8090:80 > /dev/null 2>&1 &
+    echo "✅ Prod version forwarded to port 8090"
 }
 
 forward_kiali() {

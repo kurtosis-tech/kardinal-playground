@@ -1,3 +1,4 @@
 .DS_Store
 *.log
 node_modules/
+istio-1.22.1/
