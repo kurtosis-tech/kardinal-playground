@@ -88,168 +88,23 @@ install_addons() {
     log_verbose "Addons installed successfully."
 }
 
-install_kardinal() {
-    log "🐦 Installing Kardinal..."
-    run_command_with_spinner git clone https://github.com/kurtosis-tech/kardinal-demo-script.git || log_error "Failed to clone Kardinal demo script"
-    cd kardinal-demo-script
-    run_command_with_spinner /usr/bin/python3 -m pip install click || log_error "Failed to install click"
-    mv kardinal-cli kardinal-original
-    chmod u+x kardinal-original
-
-    log_verbose "Creating Kardinal wrapper script..."
-    cat > kardinal << 'EOL'
-#!/bin/bash
-
-# Function to forward dev version
-forward_dev() {
-    echo "🛠️ Waiting for the dev version (voting-app-dev) to be ready..."
-
-    # Wait for the deployment to be available
-    kubectl wait --for=condition=available --timeout=60s deployment/voting-app-ui-dev -n voting-app || { echo "❌ Error: Timeout waiting for voting-app-dev deployment"; return 1; }
-
-    # Wait for the pod to be created and running
-    local timeout=120
-    local start_time=$(date +%s)
-    local pod_running=false
-
-    while [ "$pod_running" = false ]; do
-        if kubectl get pods -A | grep "voting-app-ui-dev" | grep "Running" > /dev/null; then
-            pod_running=true
-            echo "✅ voting-app-dev pod is running."
-        else
-            if [ $(($(date +%s) - start_time)) -ge ${timeout} ]; then
-                echo "❌ Error: Timeout waiting for voting-app-dev pod to be running"
-                echo "Debugging information:"
-                echo "Deployment status:"
-                kubectl describe deployment voting-app-ui-dev -n voting-app
-                echo "Pods in all namespaces:"
-                kubectl get pods -A
-                echo "Events in the voting-app namespace:"
-                kubectl get events -n voting-app --sort-by='.lastTimestamp'
-                return 1
-            fi
-
-            echo "Waiting for voting-app-dev pod to be running... ($(( $timeout - $(date +%s) + $start_time )) seconds left)"
-            sleep 5
-        fi
-    done
-
-    # Get the full pod name
-    local pod_name=$(kubectl get pods -A | grep "voting-app-ui-dev" | grep "Running" | awk '{print $2}')
-    echo "Pod $pod_name is running. Checking readiness..."
-
-    # Check if all containers in the pod are ready
-    local containers_ready=$(kubectl get pod $pod_name -n voting-app -o jsonpath='{.status.containerStatuses[*].ready}' | grep -o "true" | wc -l)
-    local total_containers=$(kubectl get pod $pod_name -n voting-app -o jsonpath='{.spec.containers[*].name}' | wc -w)
-
-    if [ "$containers_ready" -ne "$total_containers" ]; then
-        echo "❌ Error: Not all containers in pod $pod_name are ready"
-        echo "Debugging information:"
-        kubectl describe pod $pod_name -n voting-app
-        return 1
-    fi
-
-    echo "🛠️ Port-forwarding the dev version (voting-app-dev)..."
-
-    # Check if port 8081 is already in use
-    if lsof -i :8081 > /dev/null 2>&1; then
-        echo "⚠️ Port 8081 is already in use. Stopping the existing process..."
-        kill $(lsof -t -i :8081) || true
-        sleep 2
-    fi
-
-    sleep 7
-
-    # Start port-forwarding
-    kubectl port-forward -n voting-app deploy/voting-app-ui-dev 8081:80 > /dev/null 2>&1 &
-
-    # Save the PID of the port-forward process
-    local port_forward_pid=$!
-
-    # Wait a moment to ensure the port-forward has started
-    sleep 6
-
-    # Check if the port-forward process is still running
-    if kill -0 $port_forward_pid 2>/dev/null; then
-        echo "✅ Port-forwarding started successfully (PID: $port_forward_pid)"
-    else
-        echo "❌ Failed to start port-forwarding"
-        echo "Debugging information:"
-        echo "Port 8081 status:"
-        lsof -i :8081
-        echo "Recent kubectl logs:"
-        kubectl logs deployment/voting-app-ui-dev -n voting-app --tail=50
-        return 1
-    fi
-
-    return 0
+run_kontrol_container() {
+    log "🎮 Running Kontrol container..."
+    run_command_with_spinner docker run -d -p 8080:8080 lostbean/kontrol-service || log_error "Failed to run Kontrol container"
+    log_verbose "Kontrol container is running on port 8080."
 }
 
-# Check if the command is create-dev-flow
-if [ "$1" = "create-dev-flow" ]; then
-    # Run the original kardinal command
-    kardinal-original "$@"
-    
-    # If kardinal command was successful, run forward_dev
-    if [ $? -eq 0 ]; then
-        forward_dev
-    fi
-else
-    # For all other commands, just pass through to kardinal-original
-    kardinal-original "$@"
-fi
-EOL
-
-    chmod u+x kardinal
-    echo 'export PATH=$PATH:'"$PWD" >> ~/.bashrc
-    cd ..
-    log_verbose "Kardinal installed successfully with wrapper script."
+deploy_kardinal_manager() {
+    log "🚀 Deploying Kardinal Manager..."
+    run_command_with_spinner kubectl apply -f manifests/kardinal-manager/k8s.yml || log_error "Failed to deploy Kardinal Manager"
+    log_verbose "Kardinal Manager deployed successfully."
 }
 
-setup_voting_app() {
-    log "🗳️ Setting up voting app..."
+build_images() {
+    log "🏗️ Building images..."
     run_command_with_spinner minikube image build -t voting-app-ui -f ./Dockerfile ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-prod image"
     run_command_with_spinner minikube image build -t voting-app-ui-dev -f ./Dockerfile-v2 ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-dev image"
-    run_command_with_spinner kubectl create namespace voting-app
-    run_command_with_spinner kubectl label namespace voting-app istio-injection=enabled
-    run_command_with_spinner kubectl apply -n voting-app -f ./voting-app-demo/manifests/prod-only-demo.yaml || log_error "Failed to apply voting app manifests"
-    log_verbose "Voting app set up successfully."
-}
-
-forward_prod() {
-    log "⏭️ Waiting for the prod version (voting-app-ui) to be ready..."
-
-    local service_name="voting-app-ui"
-    local namespace="voting-app"
-    local timeout=120  # timeout in seconds
-
-    local start_time=$(date +%s)
-    while true; do
-        # Check if the pod is running
-        local pod_status=$(kubectl get pods -n ${namespace} -l app=${service_name} -o jsonpath='{.items[0].status.phase}')
-        
-        # Check if the service has endpoints
-        local endpoint_ip=$(kubectl get endpoints -n ${namespace} ${service_name} -o jsonpath='{.subsets[0].addresses[0].ip}')
-
-        if [ "${pod_status}" = "Running" ] && [ -n "${endpoint_ip}" ]; then
-            log_verbose "Service ${service_name} is ready and has a running pod with endpoints"
-            break
-        fi
-
-        if [ $(($(date +%s) - start_time)) -ge ${timeout} ]; then
-            log_error "Timeout waiting for service ${service_name} to be ready. Pod status: ${pod_status}, Endpoint IP: ${endpoint_ip}"
-            return 1
-        fi
-
-        log_verbose "Waiting for service and pod to be ready..."
-        sleep 5
-    done
-
-    log "⏭️ Port-forwarding the prod version (voting-app-ui)..."
-    sleep 4
-    nohup kubectl port-forward -n voting-app svc/voting-app-ui 8080:80 > /dev/null 2>&1 &
-
-    return 0
+    log_verbose "Demo images built successfully."
 }
 
 start_kiali_dashboard() {
@@ -291,12 +146,12 @@ main() {
     start_minikube
     install_istio
     install_addons
-    install_kardinal
-    setup_voting_app
-    forward_prod
+    run_kontrol_container
+    deploy_kardinal_manager
+    build_images
     start_kiali_dashboard
 
-    log "✅ Startup completed! Minikube, Istio, and Kardinal are ready."
+    log "✅ Startup completed! Minikube, Istio, Kontrol, and Kardinal Manager are ready."
     exec bash
 }
 
