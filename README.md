@@ -35,60 +35,85 @@ Follow these steps to explore the Kardinal Playground and experience the before 
    ```
    ./scripts/startup.sh
    ```
-   This will set up Docker, Minikube, Istio, Kiali, and Kardinal for you, and deploy the voting-app namespace to the Minikube cluster. 
+   This will set up Docker, Minikube, Istio, Kiali, and Kardinal for you. 
 
    This can take around 3 minutes 🕰️. Familiarize yourself with the repository while this happens. 
 
    The script also supports a `--verbose` mode if you want to see what it's doing in detail.
 
-2. 🗳 Explore the production voting app:
+2. 🚀 Deploy the demo application:
+   ```
+   kardinal deploy -f voting-app-demo/compose.yml
+   ```
+   This command deploys the voting app to your Minikube cluster in the "prod" namespace.
+
+3. 🔗 Set up port forwarding:
+   ```
+   ./scripts/forward.sh
+   ```
+   This script sets up the necessary port forwarding for accessing the applications and Kiali dashboard.
+
+4. 🗳 Explore the production voting app:
    - Check the "Ports" tab in the Codespaces UI
    - Look for the port labelled "voting-app-prod" and open it in your browser
    - Click on the voting buttons to generate some traffic
 
-3. 📊 Visualize the production structure in Kiali:
+5. 📊 Visualize the production structure in Kiali:
    - Get your Codespace URL by running:
      ```
-     echo "https://$CODESPACE_NAME-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=voting-app&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
+     echo "https://$CODESPACE_NAME-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=prod&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
      ```
    - Open the URL provided by the command above in your browser
    - Observe the current structure of the production environment
    - Note: If you're having trouble viewing Kiali, refer to the "Screenshots" section at the end of this README to see what the production environment should look like
 
-4. 🔧 Set up the dev flow:
+6. 🔧 Create the dev flow:
    ```
-   kardinal create-dev-flow voting-app
+   kardinal flow create voting-app-ui voting-app-ui-dev -d voting-app-demo/compose.yml
    ```
-   This command will handle the deployment and port forwarding for you.
+   This command sets up a development version of the voting app alongside the production version.
 
-5. 🧪 Interact with the dev version:
+7. 🔄 Update port forwarding:
+   ```
+   ./scripts/forward.sh
+   ```
+   Run this again to ensure all new services are properly forwarded.
+
+8. 🧪 Interact with the dev version:
    - Check the "Ports" tab in the Codespaces UI
    - Look for the port labelled "voting-app-dev" and open it in your browser
    - Click on the voting buttons in the dev version to send traffic through it
 
-6. 🔍 Compare the new structure in Kiali:
+9. 🔍 Compare the new structure in Kiali:
    - Go back to the Kiali dashboard
    - Notice the changes in the environment:
-     - A dev version is now deployed
+     - A dev version is now deployed in a separate namespace
      - Dev traffic is routed to the dev version, with a database sidecar protecting the data layer
-     - Prod still works independently - go to the prod version and click, it goes to the prod version and speaks to the DB directly
+     - Prod still works independently in the "prod" namespace - go to the prod version and click, it goes to the prod version and speaks to the DB directly
    - If Kiali isn't displaying correctly, check the "Screenshots" section at the end of this README to see what the development environment should look like
 
-7. 🔄 Verify prod functionality:
-   - Return to the production voting app URL
-   - Confirm that it still works and interacts with the database directly
+10. 🔄 Verify prod functionality:
+    - Return to the production voting app URL
+    - Confirm that it still works and interacts with the database directly in the "prod" namespace
 
-8. 🧹 Clean up the dev flow:
-   ```
-   kardinal delete-dev-flow voting-app
-   ```
+11. 🧹 Clean up the dev flow:
+    ```
+    kardinal flow delete -d voting-app-demo/compose.yml
+    ```
+    This command removes the development version of the app.
 
-9. 🔎 Final Kiali check:
-   - Return to the Kiali dashboard one last time
-   - Observe that the environment has been cleaned up and returned to its original state
-   - If you can't access Kiali, refer to the production environment screenshot in the "Screenshots" section to see what the final state should resemble
+12. 🔄 Final port forwarding update:
+    ```
+    ./scripts/forward.sh
+    ```
+    Run this one last time to update the port forwarding.
 
-This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your production setup. You'll experience firsthand how Kardinal enables isolated development without risking production data or disrupting the live environment. 🚀
+13. 🔎 Final Kiali check:
+    - Return to the Kiali dashboard one last time
+    - Observe that the environment has been cleaned up and returned to its original state, with only the "prod" namespace visible
+    - If you can't access Kiali, refer to the production environment screenshot in the "Screenshots" section to see what the final state should resemble
+
+This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your production setup. You'll experience firsthand how Kardinal enables isolated development without risking production data or disrupting the live environment in the "prod" namespace. 🚀
 
 ## 🔗 Port Forwarding Explanation
 
