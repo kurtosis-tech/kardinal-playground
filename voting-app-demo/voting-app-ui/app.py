@@ -15,11 +15,10 @@ def get_db_connection():
     p = urlparse(connection_string)
 
     pg_connection_dict = {
-        'dbname': p.hostname,
+        'database': p.path[1:],
         'user': p.username,
         'password': p.password,
-        'port': p.port,
-        'host': p.scheme,
+        'host': p.hostname,
         'sslmode': 'require'
     }
 
