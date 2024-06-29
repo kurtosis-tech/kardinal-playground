@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import redis
 import os
+import psycopg2
+from urllib.parse import urlparse
 
 app = Flask(__name__)
 
@@ -8,6 +10,23 @@ redis_server = os.environ["REDIS"]
 
 # Initialize Redis
 r = redis.Redis(host=redis_server, port=6379)
+def get_db_connection():
+    connection_string = os.environ["POSTGRES"]
+    p = urlparse(connection_string)
+
+    pg_connection_dict = {
+        'dbname': p.hostname,
+        'user': p.username,
+        'password': p.password,
+        'port': p.port,
+        'host': p.scheme,
+        'sslmode': 'require'
+    }
+
+    print(pg_connection_dict)
+    con = psycopg2.connect(**pg_connection_dict)
+    return con
+
 
 # Getting app version
 if "APP_VERSION" in os.environ and os.environ["APP_VERSION"]:
@@ -88,6 +107,42 @@ def index():
             option2=option2,
         )
 
+
+@app.route("/fruits", methods=["GET", "POST"])
+def fruits():
+    conn = get_db_connection()
+    try:
+        if request.method == "GET":
+            # Fetch all fruits from PostgreSQL
+            with conn.cursor() as cur:
+                cur.execute("SELECT id, name FROM fruits;")
+                fruits = cur.fetchall()
+            
+            # Render the template with the fruits data
+            return render_template("fruits.html", fruits=fruits)
+        
+        elif request.method == "POST":
+            # Handle POST request
+            id = request.form['id']
+            name = request.form['name']
+            
+            if not id or not name:
+                return jsonify({"error": "ID and name are required"}), 400
+            
+            # Insert or update the value in PostgreSQL
+            with conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO fruits (id, name) VALUES (%s, %s)
+                    ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;
+                """, (id, name))
+                conn.commit()
+            
+            return redirect(url_for('fruits'))
+    except psycopg2.Error as e:
+        conn.rollback()  # Rollback any changes if an error occurs
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":
