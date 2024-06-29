@@ -117,18 +117,18 @@ def fruits():
             with conn.cursor() as cur:
                 cur.execute("SELECT id, name FROM fruits;")
                 fruits = cur.fetchall()
-            
+
             # Render the template with the fruits data
             return render_template("fruits.html", fruits=fruits)
-        
+
         elif request.method == "POST":
             # Handle POST request
             id = request.form['id']
             name = request.form['name']
-            
+
             if not id or not name:
                 return jsonify({"error": "ID and name are required"}), 400
-            
+
             # Insert or update the value in PostgreSQL
             with conn.cursor() as cur:
                 cur.execute("""
@@ -136,7 +136,7 @@ def fruits():
                     ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;
                 """, (id, name))
                 conn.commit()
-            
+
             return redirect(url_for('fruits'))
     except psycopg2.Error as e:
         conn.rollback()  # Rollback any changes if an error occurs
