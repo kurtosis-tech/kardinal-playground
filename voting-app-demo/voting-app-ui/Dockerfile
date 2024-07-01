@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip install Flask redis
+RUN pip install Flask redis psycopg2-binary
 
 EXPOSE 5000
 

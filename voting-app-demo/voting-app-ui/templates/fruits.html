@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruits</title>
+</head>
+<body>
+    <h1>Fruits Table</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fruit in fruits %}
+            <tr>
+                <td>{{ fruit[0] }}</td>
+                <td>{{ fruit[1] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Add a New Fruit</h2>
+    <form action="{{ url_for('fruits') }}" method="post">
+        <label for="id">ID:</label>
+        <input type="text" id="id" name="id" required><br>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+        <button type="submit">Add Fruit</button>
+    </form>
+</body>
+</html>
