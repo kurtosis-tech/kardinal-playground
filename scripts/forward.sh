@@ -35,8 +35,8 @@ forward_all() {
 
 print_usage() {
     echo "Usage: $0 [dev|prod|kiali|all]"
-    echo "  dev  : Forward dev version (voting-app-dev) to port 8081"
-    echo "  prod : Forward prod version (voting-app-prod) to port 8080"
+    echo "  dev  : Forward dev version (voting-app-dev) to port 8091"
+    echo "  prod : Forward prod version (voting-app-prod) to port 8090"
     echo "  kiali: Forward Kiali dashboard to port 20001"
     echo "  all  : Forward all of the above (default if no argument is provided)"
 }
@@ -68,8 +68,8 @@ main() {
 
     echo "🎉 Port forwarding complete!"
     echo "📌 Remember to access Kiali at: https://$CODESPACE_NAME-20001.app.github.dev/kiali"
-    echo "🔗 Prod app: https://$CODESPACE_NAME-8080.app.github.dev"
-    echo "🔗 Dev app: https://$CODESPACE_NAME-8081.app.github.dev"
+    echo "🔗 Prod app: https://$CODESPACE_NAME-8090.app.github.dev"
+    echo "🔗 Dev app: https://$CODESPACE_NAME-8091.app.github.dev"
 }
 
 main "$@"
