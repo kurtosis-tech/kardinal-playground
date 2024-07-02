@@ -47,7 +47,7 @@ Follow these steps to explore the Kardinal Playground.
    - Look for the port labelled "voting-app-prod" and open it in your browser
    - Click on the voting buttons to generate some traffic
   
-**Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.
+   **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.
 
 1. 📊 Visualize the production structure in Kiali:
    - Get your Codespace URL by running:
@@ -69,7 +69,7 @@ Follow these steps to explore the Kardinal Playground.
    - Look for the port labelled "voting-app-dev" and open it in your browser
    - Click on the voting buttons in the dev version to send traffic through it
 
-**Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.
+   **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.
 
 4. 🔍 Compare the new structure in Kiali:
    - Go back to the Kiali dashboard
