@@ -87,9 +87,9 @@ Follow these steps to explore the Kardinal Playground and experience the before 
 9. 🔍 Compare the new structure in Kiali:
    - Go back to the Kiali dashboard
    - Notice the changes in the environment:
-     - A dev version is now deployed in a separate namespace
+     - A dev version is now deployed in the same namespace
      - Dev traffic is routed to the dev version, with a database sidecar protecting the data layer
-     - Prod still works independently in the "prod" namespace - go to the prod version and click, it goes to the prod version and speaks to the DB directly
+     - Prod still works independently in the same namespace - go to the prod version and click, it goes to the prod version and speaks to the DB directly
    - If Kiali isn't displaying correctly, check the "Screenshots" section at the end of this README to see what the development environment should look like
 
 10. 🔄 Verify prod functionality:
