@@ -2,13 +2,13 @@
     "postStartCommand": "echo 'Welcome to the Kardinal Playground 🐧!'",
     "portsAttributes": {
         "8080": {
+            "label": "kontrol"
+        },
+        "8090": {
             "label": "voting-app-prod"
         },
-        "8081": {
+        "8091": {
             "label": "voting-app-dev"
-        },
-        "20001": {
-            "label": "kiali"
         }
     }
 }
