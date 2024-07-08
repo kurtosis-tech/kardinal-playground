@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-MAX_RETRIES=2
-INITIAL_RETRY_DELAY=5
+MAX_RETRIES=5
+INITIAL_RETRY_DELAY=2
 
 check_pod_status() {
     local resource_name=$1
@@ -85,23 +85,26 @@ main() {
         dev)
             kill_existing_forwards
             forward_dev
+            echo "🎉 Port forwarding complete!"
+            echo "🔗 Dev app: https://$CODESPACE_NAME-8091.app.github.dev"
             ;;
         prod)
             kill_existing_forwards
             forward_prod
+            echo "🎉 Port forwarding complete!"
+            echo "🔗 Prod app: https://$CODESPACE_NAME-8090.app.github.dev"
             ;;
         all)
             forward_all
+            echo "🎉 Port forwarding complete!"
+            echo "🔗 Prod app: https://$CODESPACE_NAME-8090.app.github.dev"
+            echo "🔗 Dev app: https://$CODESPACE_NAME-8091.app.github.dev"
             ;;
         *)
             print_usage
             exit 1
             ;;
     esac
-
-    echo "🎉 Port forwarding complete!"
-    echo "🔗 Prod app: https://$CODESPACE_NAME-8090.app.github.dev"
-    echo "🔗 Dev app: https://$CODESPACE_NAME-8091.app.github.dev"
 }
 
 # Call main function with all script arguments
