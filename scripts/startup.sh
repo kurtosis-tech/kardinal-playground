@@ -130,8 +130,8 @@ deploy_kardinal_manager() {
 
     log_verbose "About to run Docker command..."
 
-    # Run the Docker command and display the output
-    docker run --rm \
+    # Run the Docker command with spinner
+    run_command_with_spinner docker run --rm \
                -v ${PWD}:/workdir \
                -v /var/run/docker.sock:/var/run/docker.sock \
                -v $KARDINAL_DATA_DIR:/.local/share/kardinal \
@@ -145,8 +145,8 @@ deploy_kardinal_manager() {
 
     log "Docker command completed successfully"
 
-    # Run the Docker command and display the output
-    docker run --rm \
+    # Run the Docker command for voting app deployment with spinner
+    run_command_with_spinner docker run --rm \
                -v ${PWD}:/workdir \
                -v /var/run/docker.sock:/var/run/docker.sock \
                -v $KARDINAL_DATA_DIR:/.local/share/kardinal \
