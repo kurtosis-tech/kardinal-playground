@@ -4,6 +4,7 @@ set -euo pipefail
 
 VERBOSE=false
 TENANT_UUID=""
+KARDINAL_CLI_PATH=""
 
 # Spinning cursor animation
 spinner() {
@@ -109,7 +110,7 @@ setup_kardinal_cli() {
         return 1
     fi
 
-    # Create the alias
+    # Create the alias (this won't be used in the script, but will be available for the user later)
     alias kardinal="docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli"
 
     # Add the alias to .bashrc for persistence
@@ -122,9 +123,9 @@ setup_kardinal_cli() {
 deploy_kardinal_manager() {
     log "🚀 Deploying Kardinal Manager..."
     
-    # Run kardinal deploy and capture the output
+    # Run kardinal deploy using Docker command directly
     local deploy_output
-    deploy_output=$(kardinal deploy -d voting-app-demo/compose.yml)
+    deploy_output=$(docker run --rm -v ${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli deploy -d voting-app-demo/compose.yml)
     
     # Extract the tenant UUID using regex
     if [[ $deploy_output =~ UUID[[:space:]]([a-f0-9-]+) ]]; then
