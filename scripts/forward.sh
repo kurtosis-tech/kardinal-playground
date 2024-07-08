@@ -2,28 +2,8 @@
 
 set -euo pipefail
 
-MAX_RETRIES=3
-RETRY_DELAY=5
-
-forward_dev() {
-    echo "🛠️ Forwarding dev version (voting-app-dev)..."
-    if retry_check_pod_status "voting-app-ui-dev" "prod"; then
-        retry_port_forward -n prod deploy/voting-app-ui-dev 8091:80
-        echo "✅ Dev version forwarded to port 8091"
-    else
-        echo "❌ Failed to forward dev version: pod is not running after retries"
-    fi
-}
-
-forward_prod() {
-    echo "🚀 Forwarding prod version (voting-app-prod)..."
-    if retry_check_pod_status "voting-app-ui" "prod"; then
-        retry_port_forward -n prod svc/voting-app-ui 8090:80
-        echo "✅ Prod version forwarded to port 8090"
-    else
-        echo "❌ Failed to forward prod version: pod is not running after retries"
-    fi
-}
+MAX_RETRIES=2
+INITIAL_RETRY_DELAY=5
 
 check_pod_status() {
     local resource_name=$1
@@ -41,34 +21,43 @@ check_pod_status() {
     fi
 }
 
-retry_check_pod_status() {
-    local pod_name=$1
-    local namespace=$2
+retry_with_exponential_backoff() {
+    local cmd="$1"
+    local retry_delay=$INITIAL_RETRY_DELAY
     local retries=0
+
     while [ $retries -lt $MAX_RETRIES ]; do
-        if check_pod_status "$pod_name" "$namespace"; then
+        if eval "$cmd"; then
             return 0
         fi
-        echo "Pod not ready. Retrying in $RETRY_DELAY seconds..."
-        sleep $RETRY_DELAY
+        echo "Command failed. Retrying in $retry_delay seconds..."
+        sleep $retry_delay
+        retry_delay=$((retry_delay * 2))
         ((retries++))
     done
-    echo "Max retries reached. Pod is not in Running state."
+
+    echo "Max retries reached. Command failed."
     return 1
 }
 
-retry_port_forward() {
-    local retries=0
-    while [ $retries -lt $MAX_RETRIES ]; do
-        if kubectl port-forward "$@" > /dev/null 2>&1 & then
-            return 0
-        fi
-        echo "Port forward failed. Retrying in $RETRY_DELAY seconds..."
-        sleep $RETRY_DELAY
-        ((retries++))
-    done
-    echo "Max retries reached. Port forward failed."
-    return 1
+forward_dev() {
+    echo "🛠️ Forwarding dev version (voting-app-dev)..."
+    if retry_with_exponential_backoff "check_pod_status 'voting-app-ui-dev' 'prod'"; then
+        retry_with_exponential_backoff "kubectl port-forward -n prod deploy/voting-app-ui-dev 8091:80 > /dev/null 2>&1 &"
+        echo "✅ Dev version forwarded to port 8091"
+    else
+        echo "❌ Failed to forward dev version: pod is not running after retries"
+    fi
+}
+
+forward_prod() {
+    echo "🚀 Forwarding prod version (voting-app-prod)..."
+    if retry_with_exponential_backoff "check_pod_status 'voting-app-ui' 'prod'"; then
+        retry_with_exponential_backoff "kubectl port-forward -n prod svc/voting-app-ui 8090:80 > /dev/null 2>&1 &"
+        echo "✅ Prod version forwarded to port 8090"
+    else
+        echo "❌ Failed to forward prod version: pod is not running after retries"
+    fi
 }
 
 kill_existing_forwards() {
