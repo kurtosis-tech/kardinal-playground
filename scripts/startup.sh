@@ -215,7 +215,7 @@ main() {
 
     log "✅ Startup completed! Minikube, Istio, Kontrol, and Kardinal Manager are ready."
     log "Tenant UUID: $TENANT_UUID"
-    log "📊 Kardinal Dashboard "https://app.kardinal.dev/$(cat ~/.local/share/kardinal/fk-tenant-uuid)/traffic-configuration"
+    log "📊 Kardinal Dashboard: https://app.kardinal.dev/$(cat ~/.local/share/kardinal/fk-tenant-uuid)/traffic-configuration"
     exec bash
 }
 
