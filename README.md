@@ -54,7 +54,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
 1. 📊 Visualize the production structure in app.kardinal.dev:
    - Get your Kardinal URL by running:
      ```
-     echo "https:/app.kardinal.dev/${TENANT_UUID}"
+     echo "https://app.kardinal.dev/$(cat ~/.local/share/kardinal/fk-tenant-uuid)/traffic-configuration"
      ```
    - Open the URL provided by the command above in your browser
    - Observe the current structure of the production environment
