@@ -9,7 +9,7 @@ check_pod_status() {
     local resource_name=$1
     local namespace=$2
     local status
-    status=$(kubectl get pods -A | grep "$namespace.*$resource_name" | awk '{print $4}')
+    status=$(kubectl get pods -n "$namespace" | grep "^$resource_name" | awk '{print $3}')
     if [ "$status" = "Running" ]; then
         return 0
     elif [ -z "$status" ]; then
