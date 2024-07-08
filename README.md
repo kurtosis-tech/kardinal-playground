@@ -44,7 +44,7 @@ Follow these steps to explore the Kardinal Playground.
 
 1. 🔗 Set up port forwarding:
    ```
-   ./scripts/forward.sh
+   ./scripts/forward.sh prod
    ```
 
 1. 🗳 Explore the production voting app:
@@ -70,7 +70,7 @@ Follow these steps to explore the Kardinal Playground.
 
 1. 🔄 Update port forwarding:
    ```
-   ./scripts/forward.sh
+   ./scripts/forward.sh all
    ```
    Run this again to ensure all new services are properly forwarded.
 
@@ -101,7 +101,7 @@ Follow these steps to explore the Kardinal Playground.
 
 1. 🔄 Final port forwarding update:
     ```
-    ./scripts/forward.sh
+    ./scripts/forward.sh prod
     ```
     Run this one last time to update the port forwarding.
 
