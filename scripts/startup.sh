@@ -3,6 +3,7 @@
 set -euo pipefail
 
 VERBOSE=false
+TENANT_UUID=""
 
 # Spinning cursor animation
 spinner() {
@@ -94,28 +95,6 @@ run_kontrol_container() {
     log_verbose "Kontrol container is running on port 8080."
 }
 
-deploy_kardinal_manager() {
-    log "🚀 Deploying Kardinal Manager..."
-    run_command_with_spinner kubectl apply -f manifests/kardinal-manager/k8s.yml || log_error "Failed to deploy Kardinal Manager"
-    log_verbose "Kardinal Manager deployed successfully."
-}
-
-build_images() {
-    log "🏗️ Building images..."
-    run_command_with_spinner minikube image build -t voting-app-ui -f ./Dockerfile ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-prod image"
-    run_command_with_spinner minikube image build -t voting-app-ui-dev -f ./Dockerfile-v2 ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-dev image"
-    log_verbose "Demo images built successfully."
-}
-
-start_kiali_dashboard() {
-    log "📊 Starting Kiali dashboard..."
-    nohup istioctl dashboard kiali &>/dev/null &
-    log "✅ Kiali dashboard started."
-
-    # Print the Kiali URL
-    echo "⏩ Access Kiali at: https://$CODESPACE_NAME-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=voting-app&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
-}
-
 setup_kardinal_cli() {
     log "🛠️ Setting up Kardinal CLI..."
 
@@ -137,10 +116,46 @@ setup_kardinal_cli() {
     echo "alias kardinal=\"docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli\"" >> ~/.bashrc
 
     log "✅ Kardinal CLI alias created. You can now use 'kardinal' command directly."
-    log "For example, to deploy using a compose file, run:"
-    log "kardinal deploy -d ./compose.yml"
-
     log_verbose "Kardinal CLI setup completed. The 'kardinal' command is now available."
+}
+
+deploy_kardinal_manager() {
+    log "🚀 Deploying Kardinal Manager..."
+    
+    # Run kardinal deploy and capture the output
+    local deploy_output
+    deploy_output=$(kardinal deploy -d voting-app-demo/compose.yml)
+    
+    # Extract the tenant UUID using regex
+    if [[ $deploy_output =~ UUID[[:space:]]([a-f0-9-]+) ]]; then
+        TENANT_UUID="${BASH_REMATCH[1]}"
+        log_verbose "Extracted Tenant UUID: $TENANT_UUID"
+    else
+        log_error "Failed to extract Tenant UUID from deploy output"
+    fi
+    
+    # Update the manifest with the extracted UUID
+    sed -i "s/{TENANT_ID_HERE}/$TENANT_UUID/" manifests/kardinal-manager/k8s.yml
+    
+    # Apply the updated manifest
+    run_command_with_spinner kubectl apply -f manifests/kardinal-manager/k8s.yml || log_error "Failed to deploy Kardinal Manager"
+    log_verbose "Kardinal Manager deployed successfully with Tenant UUID: $TENANT_UUID"
+}
+
+build_images() {
+    log "🏗️ Building images..."
+    run_command_with_spinner minikube image build -t voting-app-ui -f ./Dockerfile ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-prod image"
+    run_command_with_spinner minikube image build -t voting-app-ui-dev -f ./Dockerfile-v2 ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-dev image"
+    log_verbose "Demo images built successfully."
+}
+
+start_kiali_dashboard() {
+    log "📊 Starting Kiali dashboard..."
+    nohup istioctl dashboard kiali &>/dev/null &
+    log "✅ Kiali dashboard started."
+
+    # Print the Kiali URL
+    echo "⏩ Access Kiali at: https://$CODESPACE_NAME-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=voting-app&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
 }
 
 silent_segment_track() {
@@ -174,12 +189,13 @@ main() {
     install_istio
     install_addons
     run_kontrol_container
-    deploy_kardinal_manager
     build_images
     setup_kardinal_cli
+    deploy_kardinal_manager
     start_kiali_dashboard
 
     log "✅ Startup completed! Minikube, Istio, Kontrol, and Kardinal Manager are ready."
+    log "Tenant UUID: $TENANT_UUID"
     exec bash
 }
 
