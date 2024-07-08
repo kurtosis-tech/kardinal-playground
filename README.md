@@ -12,9 +12,6 @@ In this demo, you will:
 ## 🛠 Features
 
 - 🐦 Kardinal: Our developer tool for safely developing in prod
-- 🚙 Minikube: A tool that lets you run Kubernetes locally
-- 🎛 kubectl: The command-line tool for interacting with Kubernetes clusters
-- 🌐 Istio: An open-source service mesh that layers transparently onto existing distributed applications
 
 ## 🚀 Getting Started
 
