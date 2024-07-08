@@ -129,13 +129,6 @@ deploy_kardinal_manager() {
             echo "$TENANT_UUID" > "$UUID_FILE"
         fi
     fi
-
-    # Update the manifest with the extracted UUID
-    sed -i "s/{TENANT_ID_HERE}/$TENANT_UUID/" manifests/kardinal-manager/k8s.yml
-
-    # Apply the updated manifest
-    run_command_with_spinner kubectl apply -f manifests/kardinal-manager/k8s.yml || log_error "Failed to deploy Kardinal Manager"
-    log_verbose "Kardinal Manager deployed successfully with Tenant UUID: $TENANT_UUID"
 }
 
 build_images() {
