@@ -9,9 +9,6 @@
         },
         "8091": {
             "label": "voting-app-dev"
-        },
-        "20001": {
-            "label": "kiali"
         }
     }
 }

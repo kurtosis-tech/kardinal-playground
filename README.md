@@ -8,7 +8,6 @@ Welcome to the Kardinal Playground! This GitHub Codespace comes with Kardinal an
 - 🚙 Minikube: A tool that lets you run Kubernetes locally
 - 🎛 kubectl: The command-line tool for interacting with Kubernetes clusters
 - 🌐 Istio: An open-source service mesh that layers transparently onto existing distributed applications
-- 📊 Kiali: A management console for Istio-based service mesh
 
 ## 🚀 Getting Started
 
@@ -35,7 +34,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
    ```
    ./scripts/startup.sh
    ```
-   This will set up Docker, Minikube, Istio, Kiali, Kardinal Manager and Kardinal CLI for you. It will
+   This will set up Docker, Minikube, Istio, Kardinal Manager and Kardinal CLI for you. It will
    also deploy the initial version of the voting app.
 
    This can take around 3 minutes 🕰️. Familiarize yourself with the repository while this happens. 
@@ -46,21 +45,19 @@ Follow these steps to explore the Kardinal Playground and experience the before 
    ```
    ./scripts/forward.sh
    ```
-   This script sets up the necessary port forwarding for accessing the applications and Kiali dashboard.
 
 1. 🗳 Explore the production voting app:
    - Check the "Ports" tab in the Codespaces UI
    - Look for the port labelled "voting-app-prod" and open it in your browser
    - Click on the voting buttons to generate some traffic
 
-1. 📊 Visualize the production structure in Kiali:
-   - Get your Codespace URL by running:
+1. 📊 Visualize the production structure in app.kardinal.dev:
+   - Get your Kardinal URL by running:
      ```
-     echo "https://$CODESPACE_NAME-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=prod&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
+     echo "https:/app.kardinal.dev/${TENANT_UUID}"
      ```
    - Open the URL provided by the command above in your browser
    - Observe the current structure of the production environment
-   - Note: If you're having trouble viewing Kiali, refer to the "Screenshots" section at the end of this README to see what the production environment should look like
 
 1. 🔧 Create the dev flow:
    ```
@@ -79,13 +76,12 @@ Follow these steps to explore the Kardinal Playground and experience the before 
    - Look for the port labelled "voting-app-dev" and open it in your browser
    - Click on the voting buttons in the dev version to send traffic through it
 
-1. 🔍 Compare the new structure in Kiali:
-   - Go back to the Kiali dashboard
+1. 🔍 Compare the new structure in the app.kardinal.dev:
+   - Go back to the dashboard
    - Notice the changes in the environment:
      - A dev version is now deployed in the same namespace
      - Dev traffic is routed to the dev version, with a database sidecar protecting the data layer
      - Prod still works independently in the same namespace - go to the prod version and click, it goes to the prod version and speaks to the DB directly
-   - If Kiali isn't displaying correctly, check the "Screenshots" section at the end of this README to see what the development environment should look like
 
 1. 🔄 Verify prod functionality:
     - Return to the production voting app URL
@@ -103,10 +99,9 @@ Follow these steps to explore the Kardinal Playground and experience the before 
     ```
     Run this one last time to update the port forwarding.
 
-1. 🔎 Final Kiali check:
-    - Return to the Kiali dashboard one last time
+1. 🔎 Final graph check
+    - Return to the dashboard one last time
     - Observe that the environment has been cleaned up and returned to its original state, with only the "prod" namespace visible
-    - If you can't access Kiali, refer to the production environment screenshot in the "Screenshots" section to see what the final state should resemble
 
 This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your production setup. You'll experience firsthand how Kardinal enables isolated development without risking production data or disrupting the live environment in the "prod" namespace. 🚀
 
@@ -118,16 +113,6 @@ If you encounter any issues with port forwarding, you can reset it by running:
 ```
 ./scripts/forward.sh
 ```
-
-## 📸 Screenshots
-
-### Production Environment
-![Production Kiali Graph](static/prod.png)
-*This image shows the Kiali graph for the production environment, demonstrating the direct connection between the voting app and the Redis database.*
-
-### Development Environment
-![Development Kiali Graph](static/dev.png)
-*This image displays the Kiali graph for the development environment, showcasing the additional components introduced by Kardinal, including the dev version of the app and the database sidecar.*
 
 ## ⏩ What's Next?
 
