@@ -70,7 +70,7 @@ Follow these steps to explore the Kardinal Playground.
 
 1. 🔄 Update port forwarding:
    ```
-   ./scripts/forward.sh all
+   ./scripts/forward.sh
    ```
    Run this again to ensure all new services are properly forwarded.
 

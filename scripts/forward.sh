@@ -26,14 +26,17 @@ forward_prod() {
 }
 
 check_pod_status() {
-    local pod_name=$1
+    local resource_name=$1
     local namespace=$2
     local status
-    status=$(kubectl get pods -n "$namespace" -l app="$pod_name" -o jsonpath='{.items[0].status.phase}')
+    status=$(kubectl get pods -A | grep "$namespace.*$resource_name" | awk '{print $4}')
     if [ "$status" = "Running" ]; then
         return 0
+    elif [ -z "$status" ]; then
+        echo "Resource $resource_name in namespace $namespace not found"
+        return 1
     else
-        echo "Pod $pod_name in namespace $namespace is not running (status: $status)"
+        echo "Resource $resource_name in namespace $namespace is not running (status: $status)"
         return 1
     fi
 }
@@ -112,4 +115,5 @@ main() {
     echo "🔗 Dev app: https://$CODESPACE_NAME-8091.app.github.dev"
 }
 
+# Call main function with all script arguments
 main "$@"
