@@ -55,6 +55,6 @@ spec:
               value: "443"
             - name: KARDINAL_MANAGER_CLUSTER_CONFIG_ENDPOINT
               # This is valid for reaching out the Kardinal Kontrol if this is running on the host
-              value: "http://host.minikube.internal:8080/cluster-resources/{TENANT_ID_HERE}/cluster-resources"
+              value: "http://host.minikube.internal:8080/tenant/{TENANT_ID_HERE}/cluster-resources"
             - name: KARDINAL_MANAGER_FETCHER_JOB_DURATION_SECONDS
               value: "10"
