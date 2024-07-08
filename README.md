@@ -51,7 +51,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
    - Look for the port labelled "voting-app-prod" and open it in your browser
    - Click on the voting buttons to generate some traffic
 
-1. 📊 Visualize the production structure in app.kardinal.dev:
+1. 📊 Visualize the production structure on app.kardinal.dev:
    - Get your Kardinal URL by running:
      ```
      echo "https://app.kardinal.dev/$(cat ~/.local/share/kardinal/fk-tenant-uuid)/traffic-configuration"
@@ -76,7 +76,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
    - Look for the port labelled "voting-app-dev" and open it in your browser
    - Click on the voting buttons in the dev version to send traffic through it
 
-1. 🔍 Compare the new structure in the app.kardinal.dev:
+1. 🔍 Compare the new structure on app.kardinal.dev:
    - Go back to the dashboard
    - Notice the changes in the environment:
      - A dev version is now deployed in the same namespace
@@ -101,7 +101,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
 
 1. 🔎 Final graph check
     - Return to the dashboard one last time
-    - Observe that the environment has been cleaned up and returned to its original state, with only the "prod" namespace visible
+    - Observe that the environment has been cleaned up and returned to its original state, with only the "prod" services visible.
 
 This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your production setup. You'll experience firsthand how Kardinal enables isolated development without risking production data or disrupting the live environment in the "prod" namespace. 🚀
 
