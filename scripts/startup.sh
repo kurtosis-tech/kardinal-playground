@@ -111,10 +111,10 @@ setup_kardinal_cli() {
     fi
 
     # Create the alias (this won't be used in the script, but will be available for the user later)
-    alias kardinal="docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli"
+    alias kardinal="docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v \${XDG_DATA_HOME:-\$HOME/.local/share}/kardinal:/root/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli"
 
     # Add the alias to .bashrc for persistence
-    echo "alias kardinal=\"docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli\"" >> ~/.bashrc
+    echo "alias kardinal=\"docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v \${XDG_DATA_HOME:-\$HOME/.local/share}/kardinal:/root/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli\"" >> ~/.bashrc
 
     log "✅ Kardinal CLI alias created. You can now use 'kardinal' command directly."
     log_verbose "Kardinal CLI setup completed. The 'kardinal' command is now available."
@@ -122,22 +122,28 @@ setup_kardinal_cli() {
 
 deploy_kardinal_manager() {
     log "🚀 Deploying Kardinal Manager..."
-    
-    # Run kardinal deploy using Docker command directly
-    local deploy_output
-    deploy_output=$(docker run --rm -v ${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli deploy -d voting-app-demo/compose.yml)
-    
-    # Extract the tenant UUID using regex
-    if [[ $deploy_output =~ UUID[[:space:]]([a-f0-9-]+) ]]; then
-        TENANT_UUID="${BASH_REMATCH[1]}"
-        log_verbose "Extracted Tenant UUID: $TENANT_UUID"
+
+    # Check if UUID file exists
+    if [ -f "$UUID_FILE" ]; then
+        TENANT_UUID=$(cat "$UUID_FILE")
+        log_verbose "Using existing Tenant UUID: $TENANT_UUID"
     else
-        log_error "Failed to extract Tenant UUID from deploy output"
+        # Run kardinal deploy using Docker command directly, capturing the UUID from the log
+        TENANT_UUID=$(docker run --rm -v ${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v ${XDG_DATA_HOME:-$HOME/.local/share}/kardinal:/root/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli deploy -d voting-app-demo/compose.yml 2>&1 | grep -oP 'UUID \K[a-f0-9-]+')
+
+        if [ -z "$TENANT_UUID" ]; then
+            log_error "Failed to extract Tenant UUID."
+        else
+            log_verbose "Extracted new Tenant UUID: $TENANT_UUID"
+            # Ensure the directory exists
+            mkdir -p "$(dirname "$UUID_FILE")"
+            echo "$TENANT_UUID" > "$UUID_FILE"
+        fi
     fi
-    
+
     # Update the manifest with the extracted UUID
     sed -i "s/{TENANT_ID_HERE}/$TENANT_UUID/" manifests/kardinal-manager/k8s.yml
-    
+
     # Apply the updated manifest
     run_command_with_spinner kubectl apply -f manifests/kardinal-manager/k8s.yml || log_error "Failed to deploy Kardinal Manager"
     log_verbose "Kardinal Manager deployed successfully with Tenant UUID: $TENANT_UUID"
