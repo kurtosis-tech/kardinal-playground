@@ -107,7 +107,7 @@ Follow these steps to explore the Kardinal Playground.
     - Return to the dashboard one last time
     - Observe that the environment has been cleaned up and returned to its original state, with only the "prod" services visible.
 
-This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your production setup. You'll experience firsthand how Kardinal enables isolated development without risking production data or disrupting the live environment in the "prod" namespace. 🚀
+This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your production setup. You'll experience firsthand how Kardinal enables isolated development without risking production data or disrupting the live environment.🚀
 
 ## 🔗 Port Forwarding Explanation
 
