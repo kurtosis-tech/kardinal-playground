@@ -1,10 +1,17 @@
 # 🎡 Kardinal Playground
 
-Welcome to the Kardinal Playground! This GitHub Codespace comes with Kardinal and all necessary tools pre-installed and ready to go. 🚀
+Welcome to the Kardinal Playground! This codespace contains a demo showing how you can safely test new features in production without risking downtime using Kardinal. 🚀 It takes about 5 minutes, 3 of which are just waiting for the setup script to complete.
+
+
+In this demo, you will:
+1. Set up a Kubernetes cluster with a demo voting app installed on it (3 minutes)
+2. Visualize your production cluster using Kiali (30 seconds)
+3. Use Kardinal to set up a lightweight "dev environment" inside of your production cluster so you can test on production data (30 seconds)
+4. Visualize your cluster in Kiali again, to see how the Kardinal "dev environment" is structured (30 seconds)
 
 ## 🛠 Features
 
-- 🐦 Kardinal: Our platform that allows you to dev on prod safely
+- 🐦 Kardinal: Our developer tool for safely developing in prod
 - 🚙 Minikube: A tool that lets you run Kubernetes locally
 - 🎛 kubectl: The command-line tool for interacting with Kubernetes clusters
 - 🌐 Istio: An open-source service mesh that layers transparently onto existing distributed applications
@@ -14,8 +21,7 @@ Welcome to the Kardinal Playground! This GitHub Codespace comes with Kardinal an
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=818205437&skip_quickstart=true&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json)
 
 1. 🏗 Create a new Codespace from this repository.
-2. ⏳ Wait for the Codespace to finish setting up. This includes installing all necessary tools and starting Minikube.
-3. 🎉 Once setup is complete, you're ready to start your Kardinal adventure!
+2. 🎉 Once setup is complete, run through the steps in the "Usage Guide" sectio
 
 ## 📊 About the Voting App
 
@@ -28,7 +34,7 @@ This setup demonstrates a basic microservices architecture, making it an ideal e
 
 ## 🗺 Usage Guide
 
-Follow these steps to explore the Kardinal Playground and experience the before → after progression:
+Follow these steps to explore the Kardinal Playground.
 
 1. 🏁 Run the startup script:
    ```
@@ -37,9 +43,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
    This will set up Docker, Minikube, Istio, Kardinal Manager and Kardinal CLI for you. It will
    also deploy the initial version of the voting app.
 
-   This can take around 3 minutes 🕰️. Familiarize yourself with the repository while this happens. 
-
-   The script also supports a `--verbose` mode if you want to see what it's doing in detail.
+   This can take around 3 minutes 🕰️.
 
 1. 🔗 Set up port forwarding:
    ```
@@ -50,6 +54,8 @@ Follow these steps to explore the Kardinal Playground and experience the before 
    - Check the "Ports" tab in the Codespaces UI
    - Look for the port labelled "voting-app-prod" and open it in your browser
    - Click on the voting buttons to generate some traffic
+  
+   **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.
 
 1. 📊 Visualize the production structure on app.kardinal.dev:
    - Get your Kardinal URL by running:
@@ -78,6 +84,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
 
 1. 🔍 Compare the new structure on app.kardinal.dev:
    - Go back to the dashboard
+   **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.
    - Notice the changes in the environment:
      - A dev version is now deployed in the same namespace
      - Dev traffic is routed to the dev version, with a database sidecar protecting the data layer
@@ -99,7 +106,7 @@ Follow these steps to explore the Kardinal Playground and experience the before 
     ```
     Run this one last time to update the port forwarding.
 
-1. 🔎 Final graph check
+1. 🔎 Final dashboard check
     - Return to the dashboard one last time
     - Observe that the environment has been cleaned up and returned to its original state, with only the "prod" services visible.
 
@@ -108,6 +115,9 @@ This guide showcases the power of Kardinal by demonstrating the seamless creatio
 ## 🔗 Port Forwarding Explanation
 
 We're using port forwarding in this Codespace setup to make the various services accessible to you. Since the Minikube cluster is running inside the Codespace, we need to forward specific ports to allow you to interact with the applications and dashboards through your browser. This is why you'll see multiple forwarded ports in the "Ports" tab of the Codespace UI.
+
+Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.
+
 
 If you encounter any issues with port forwarding, you can reset it by running:
 ```
