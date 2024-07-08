@@ -78,10 +78,12 @@ Follow these steps to explore the Kardinal Playground.
    - Check the "Ports" tab in the Codespaces UI
    - Look for the port labelled "voting-app-dev" and open it in your browser
    - Click on the voting buttons in the dev version to send traffic through it
+   
+   **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.   
+
 
 1. 🔍 Compare the new structure on app.kardinal.dev:
    - Go back to the dashboard
-   **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.
    - Notice the changes in the environment:
      - A dev version is now deployed in the same namespace
      - Dev traffic is routed to the dev version, with a database sidecar protecting the data layer

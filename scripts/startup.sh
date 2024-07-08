@@ -158,7 +158,7 @@ deploy_kardinal_manager() {
                --entrypoint $KARDINAL_CLI_PATH \
                kurtosistech/kardinal-cli deploy -d voting-app-demo/compose.yml
 
-    log "Initial version of voting app deployed"
+    log "🗳️ Initial version of voting app deployed"
 
 
     # Extract the Tenant UUID from the UUID file
@@ -214,7 +214,7 @@ main() {
     deploy_kardinal_manager
 
     log "✅ Startup completed! Minikube, Istio, Kontrol, and Kardinal Manager are ready."
-    log "Tenant UUID: $TENANT_UUID"
+    log "🏠 Tenant UUID: $TENANT_UUID"
     log "📊 Kardinal Dashboard: https://app.kardinal.dev/$(cat ~/.local/share/kardinal/fk-tenant-uuid)/traffic-configuration"
     exec bash
 }
