@@ -83,22 +83,6 @@ install_istio() {
     log_verbose "Istio installed successfully."
 }
 
-install_addons() {
-    log "🧩 Installing Kiali and other addons..."
-    run_command_with_spinner kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.22/samples/addons/prometheus.yaml || log_error "Failed to install Prometheus"
-    run_command_with_spinner kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.22/samples/addons/grafana.yaml || log_error "Failed to install Grafana"
-    run_command_with_spinner kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.22/samples/addons/jaeger.yaml || log_error "Failed to install Jaeger"
-    run_command_with_spinner kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.22/samples/addons/kiali.yaml || log_error "Failed to install Kiali"
-    run_command_with_spinner kubectl rollout status deployment/kiali -n istio-system || log_error "Kiali deployment failed"
-    log_verbose "Addons installed successfully."
-}
-
-run_kontrol_container() {
-    log "🎮 Running Kontrol container..."
-    run_command_with_spinner docker run -d -p 8080:8080 lostbean/kontrol-service || log_error "Failed to run Kontrol container"
-    log_verbose "Kontrol container is running on port 8080."
-}
-
 setup_kardinal_cli() {
     log "🛠️ Setting up Kardinal CLI..."
 
@@ -161,15 +145,6 @@ build_images() {
     log_verbose "Demo images built successfully."
 }
 
-start_kiali_dashboard() {
-    log "📊 Starting Kiali dashboard..."
-    nohup istioctl dashboard kiali &>/dev/null &
-    log "✅ Kiali dashboard started."
-
-    # Print the Kiali URL
-    echo "⏩ Access Kiali at: https://$CODESPACE_NAME-20001.app.github.dev/kiali/console/graph/namespaces/?duration=60&refresh=10000&namespaces=voting-app&idleNodes=true&layout=kiali-dagre&namespaceLayout=kiali-dagre&animation=true"
-}
-
 silent_segment_track() {
   local username="${GITHUB_USER}"
   if [ -z "$username" ]; then
@@ -199,12 +174,9 @@ main() {
     setup_docker
     start_minikube
     install_istio
-    install_addons
-    run_kontrol_container
     build_images
     setup_kardinal_cli
     deploy_kardinal_manager
-    start_kiali_dashboard
 
     log "✅ Startup completed! Minikube, Istio, Kontrol, and Kardinal Manager are ready."
     log "Tenant UUID: $TENANT_UUID"
