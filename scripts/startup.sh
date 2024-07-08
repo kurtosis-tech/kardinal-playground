@@ -101,10 +101,10 @@ setup_kardinal_cli() {
     mkdir -p "$KARDINAL_DATA_DIR"
 
     # Update the alias to use the correct data directory
-    alias kardinal="docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v $KARDINAL_DATA_DIR:/root/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli"
+    alias kardinal="docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v $KARDINAL_DATA_DIR:/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli"
 
     # Add the updated alias to .bashrc for persistence
-    echo "alias kardinal=\"docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v $KARDINAL_DATA_DIR:/root/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli\"" >> ~/.bashrc
+    echo "alias kardinal=\"docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v $KARDINAL_DATA_DIR:/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli\"" >> ~/.bashrc
 
     log "✅ Kardinal CLI alias created. You can now use 'kardinal' command directly."
     log_verbose "Kardinal CLI setup completed. The 'kardinal' command is now available."
@@ -113,22 +113,48 @@ setup_kardinal_cli() {
 deploy_kardinal_manager() {
     log "🚀 Deploying Kardinal Manager..."
 
-    local deploy_output
-    deploy_output=$(docker run --rm -v ${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v $KARDINAL_DATA_DIR:/root/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli manager deploy kloud-kontrol 2>&1)
+    local kube_config="${HOME}/.kube/config"
+    local minikube_dir="${HOME}/.minikube"
 
-    # Extract the Tenant UUID from the deploy output or the UUID file
+    # Check if the Kubernetes config file exists
+    if [ ! -f "$kube_config" ]; then
+        log_error "Kubernetes config file not found at $kube_config"
+        return 1
+    fi
+
+    # Check if the Minikube directory exists
+    if [ ! -d "$minikube_dir" ]; then
+        log_error "Minikube directory not found at $minikube_dir"
+        return 1
+    fi
+
+    log_verbose "About to run Docker command..."
+
+    # Run the Docker command and display the output
+    docker run --rm \
+               -v ${PWD}:/workdir \
+               -v /var/run/docker.sock:/var/run/docker.sock \
+               -v $KARDINAL_DATA_DIR:/.local/share/kardinal \
+               -v $kube_config:/.kube/config \
+               -v $minikube_dir:/home/codespace/.minikube \
+               -e MINIKUBE_HOME=/home/codespace/.minikube \
+               -w /workdir \
+               --network host \
+               --entrypoint $KARDINAL_CLI_PATH \
+               kurtosistech/kardinal-cli manager deploy kloud-kontrol
+
+    echo "Docker command completed successfully"
+
+    # Extract the Tenant UUID from the UUID file
     if [ -f "$UUID_FILE" ]; then
         TENANT_UUID=$(cat "$UUID_FILE")
         log_verbose "Using existing Tenant UUID: $TENANT_UUID"
     else
-        TENANT_UUID=$(echo "$deploy_output" | grep -oP 'UUID \K[a-f0-9-]+')
-        if [ -z "$TENANT_UUID" ]; then
-            log_error "Failed to extract Tenant UUID. Deploy output: $deploy_output"
-        else
-            log_verbose "Extracted new Tenant UUID: $TENANT_UUID"
-            echo "$TENANT_UUID" > "$UUID_FILE"
-        fi
+        log_error "UUID file not found at $UUID_FILE after deployment"
+        return 1
     fi
+
+    log_verbose "Kardinal Manager deployed successfully with Tenant UUID: $TENANT_UUID"
 }
 
 build_images() {
