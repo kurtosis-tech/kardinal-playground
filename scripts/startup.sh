@@ -143,7 +143,23 @@ deploy_kardinal_manager() {
                --entrypoint $KARDINAL_CLI_PATH \
                kurtosistech/kardinal-cli manager deploy kloud-kontrol
 
-    echo "Docker command completed successfully"
+    log "Docker command completed successfully"
+
+    # Run the Docker command and display the output
+    docker run --rm \
+               -v ${PWD}:/workdir \
+               -v /var/run/docker.sock:/var/run/docker.sock \
+               -v $KARDINAL_DATA_DIR:/.local/share/kardinal \
+               -v $kube_config:/.kube/config \
+               -v $minikube_dir:/home/codespace/.minikube \
+               -e MINIKUBE_HOME=/home/codespace/.minikube \
+               -w /workdir \
+               --network host \
+               --entrypoint $KARDINAL_CLI_PATH \
+               kurtosistech/kardinal-cli deploy -d voting-app-demo/compose.yml
+
+    log "Initial version of voting app deployed"
+
 
     # Extract the Tenant UUID from the UUID file
     if [ -f "$UUID_FILE" ]; then
