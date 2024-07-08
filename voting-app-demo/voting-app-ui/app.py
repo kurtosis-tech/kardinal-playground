@@ -10,6 +10,7 @@ redis_server = os.environ["REDIS"]
 
 # Initialize Redis
 r = redis.Redis(host=redis_server, port=6379)
+
 def get_db_connection():
     connection_string = os.environ["POSTGRES"]
     p = urlparse(connection_string)
@@ -23,9 +24,43 @@ def get_db_connection():
     }
 
     print(pg_connection_dict)
-    con = psycopg2.connect(**pg_connection_dict)
-    return con
+    return psycopg2.connect(**pg_connection_dict)
 
+def init_db():
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            # Create 'fruits' table if it doesn't exist
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS fruits (
+                    id INTEGER PRIMARY KEY,
+                    name VARCHAR(100) NOT NULL
+                )
+            """)
+
+            # Check if the table is empty
+            cur.execute("SELECT COUNT(*) FROM fruits")
+            if cur.fetchone()[0] == 0:
+                # Populate with initial data
+                initial_fruits = [
+                    (1, 'Apple'),
+                    (2, 'Banana'),
+                    (3, 'Orange'),
+                    (4, 'Strawberry'),
+                    (5, 'Mango')
+                ]
+                cur.executemany("INSERT INTO fruits (id, name) VALUES (%s, %s)", initial_fruits)
+
+            conn.commit()
+    except psycopg2.Error as e:
+        print(f"An error occurred while initializing the database: {e}")
+        conn.rollback()
+    finally:
+        conn.close()
+
+# Initialize the database when the app starts
+with app.app_context():
+    init_db()
 
 # Getting app version
 if "APP_VERSION" in os.environ and os.environ["APP_VERSION"]:
@@ -142,7 +177,6 @@ def fruits():
         return jsonify({"error": str(e)}), 500
     finally:
         conn.close()
-
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=80)
