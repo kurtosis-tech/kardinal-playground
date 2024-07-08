@@ -128,7 +128,7 @@ deploy_kardinal_manager() {
         return 1
     fi
 
-    log_verbose "About to run Docker command..."
+    log_verbose "About to run Docker command to deploy manager..."
 
     # Run the Docker command with spinner
     run_command_with_spinner docker run --rm \
@@ -143,7 +143,8 @@ deploy_kardinal_manager() {
                --entrypoint $KARDINAL_CLI_PATH \
                kurtosistech/kardinal-cli manager deploy kloud-kontrol
 
-    log "Docker command completed successfully"
+    log_verbose "Docker command to deploy manager completed successfully"
+    log "👩‍💼 Kardinal Manager Deployed"
 
     # Run the Docker command for voting app deployment with spinner
     run_command_with_spinner docker run --rm \
