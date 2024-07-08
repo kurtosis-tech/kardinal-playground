@@ -6,7 +6,7 @@ VERBOSE=false
 TENANT_UUID=""
 KARDINAL_CLI_PATH=""
 KARDINAL_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/kardinal"
-UUID_FILE="$KARDINAL_DATA_DIR/uuid"
+UUID_FILE="$KARDINAL_DATA_DIR/fk-tenant-uuid"
 
 
 # Spinning cursor animation
@@ -100,10 +100,10 @@ setup_kardinal_cli() {
     # Ensure the Kardinal data directory exists
     mkdir -p "$KARDINAL_DATA_DIR"
 
-    # Create the alias (this won't be used in the script, but will be available for the user later)
+    # Update the alias to use the correct data directory
     alias kardinal="docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v $KARDINAL_DATA_DIR:/root/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli"
 
-    # Add the alias to .bashrc for persistence
+    # Add the updated alias to .bashrc for persistence
     echo "alias kardinal=\"docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v $KARDINAL_DATA_DIR:/root/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli\"" >> ~/.bashrc
 
     log "✅ Kardinal CLI alias created. You can now use 'kardinal' command directly."
@@ -113,9 +113,8 @@ setup_kardinal_cli() {
 deploy_kardinal_manager() {
     log "🚀 Deploying Kardinal Manager..."
 
-    # Run kardinal deploy using Docker command directly
     local deploy_output
-    deploy_output=$(docker run --rm -v ${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v $KARDINAL_DATA_DIR:/root/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli deploy -d voting-app-demo/compose.yml 2>&1)
+    deploy_output=$(docker run --rm -v ${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v $KARDINAL_DATA_DIR:/root/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli manager deploy kloud-kontrol 2>&1)
 
     # Extract the Tenant UUID from the deploy output or the UUID file
     if [ -f "$UUID_FILE" ]; then
@@ -127,6 +126,7 @@ deploy_kardinal_manager() {
             log_error "Failed to extract Tenant UUID. Deploy output: $deploy_output"
         else
             log_verbose "Extracted new Tenant UUID: $TENANT_UUID"
+            echo "$TENANT_UUID" > "$UUID_FILE"
         fi
     fi
 
