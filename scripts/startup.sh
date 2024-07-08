@@ -118,20 +118,28 @@ start_kiali_dashboard() {
 
 setup_kardinal_cli() {
     log "🛠️ Setting up Kardinal CLI..."
-    
+
     # Pull the Kardinal CLI image
     run_command_with_spinner docker pull kurtosistech/kardinal-cli || log_error "Failed to pull Kardinal CLI image"
-    
+
+    # Find the kardinal.cli binary path
+    KARDINAL_CLI_PATH=$(docker run --rm kurtosistech/kardinal-cli sh -c 'ls -1 /nix/store/*/bin/kardinal.cli 2>/dev/null | head -n 1')
+
+    if [ -z "$KARDINAL_CLI_PATH" ]; then
+        log_error "Failed to find kardinal.cli binary in the Docker image"
+        return 1
+    fi
+
     # Create the alias
-    alias kardinal='docker run --rm -it -v ${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -w /workdir --network host --entrypoint /nix/store/2529041pfblgzjccsm2zdhab706vxk0q-kardinal.cli/bin/kardinal.cli kurtosistech/kardinal-cli'
-    
+    alias kardinal="docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli"
+
     # Add the alias to .bashrc for persistence
-    echo "alias kardinal='docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -w /workdir --network host --entrypoint /nix/store/2529041pfblgzjccsm2zdhab706vxk0q-kardinal.cli/bin/kardinal.cli kurtosistech/kardinal-cli'" >> ~/.bashrc
-    
+    echo "alias kardinal=\"docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli\"" >> ~/.bashrc
+
     log "✅ Kardinal CLI alias created. You can now use 'kardinal' command directly."
     log "For example, to deploy using a compose file, run:"
     log "kardinal deploy -d ./compose.yml"
-    
+
     log_verbose "Kardinal CLI setup completed. The 'kardinal' command is now available."
 }
 
@@ -159,7 +167,7 @@ main() {
     fi
 
     log "🕰️ This can take around 3 minutes! Familiarize yourself with the repository while this happens."
-    
+
     silent_segment_track
     setup_docker
     start_minikube
