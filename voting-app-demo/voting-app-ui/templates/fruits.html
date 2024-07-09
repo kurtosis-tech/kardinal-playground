@@ -4,33 +4,122 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fruits</title>
+    <style>
+        body {
+            background-color: #fff;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+        #container {
+            margin-top: 5%;
+        }
+        #logo {
+            display: block;
+            margin: 0 auto;
+            width: 500px;
+            text-align: center;
+            font-size: 30px;
+        }
+        #content {
+            padding: 40px;
+            padding-right: 20px;
+            padding-top: 20px;
+            display: block;
+            margin: 0 auto;
+            width: 500px;
+            text-align: center;
+            font-size: 18px;
+            border-bottom: 1px solid black;
+            border-top: 1px solid black;
+        }
+        .space {
+            display: block;
+            margin: 0 auto;
+            width: 500px;
+            height: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        form {
+            text-align: left;
+        }
+        label {
+            display: inline-block;
+            width: 50px;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 200px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: white;
+            border: 2px solid #008CBA;
+            color: black;
+            padding: 16px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+            width: 250px;
+        }
+        button:hover {
+            background-color: #008CBA;
+            color: white;
+        }
+        h2 {
+            color: #4CAF50;
+            font-size: 26px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Fruits Table</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for fruit in fruits %}
-            <tr>
-                <td>{{ fruit[0] }}</td>
-                <td>{{ fruit[1] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div id="container">
+        <div id="logo">Fruits Database</div>
+        <div class="space"></div>
+        <div class="space"></div>
+        <div id="content">
+            <h2>Fruits Table</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fruit in fruits %}
+                    <tr>
+                        <td>{{ fruit[0] }}</td>
+                        <td>{{ fruit[1] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
-    <h2>Add a New Fruit</h2>
-    <form action="{{ url_for('fruits') }}" method="post">
-        <label for="id">ID:</label>
-        <input type="text" id="id" name="id" required><br>
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br>
-        <button type="submit">Add Fruit</button>
-    </form>
+            <h2>Add a New Fruit</h2>
+            <form action="{{ url_for('fruits') }}" method="post">
+                <label for="id">ID:</label>
+                <input type="text" id="id" name="id" required><br>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required><br>
+                <button type="submit">Add Fruit</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
