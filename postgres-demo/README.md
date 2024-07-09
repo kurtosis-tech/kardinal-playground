@@ -4,9 +4,9 @@ Welcome to the Kardinal Playground! This codespace contains a demo showing how y
 
 In this demo, you will:
 1. Set up a Neon database and configure the Kubernetes cluster with a demo voting app (4 minutes)
-2. Visualize your production cluster using Kiali (30 seconds)
+2. Visualize your production cluster using the Kardinal Dashboard (30 seconds)
 3. Use Kardinal to set up a lightweight "dev environment" inside of your production cluster so you can test on production data (30 seconds)
-4. Visualize your cluster in Kiali again, to see how the Kardinal "dev environment" is structured (30 seconds)
+4. Visualize your cluster in the Kardinal Dashboard again, to see how the Kardinal "dev environment" is structured (30 seconds)
 
 ## 🛠 Features
 
@@ -102,7 +102,6 @@ Follow these steps to explore the Kardinal Playground.
    - Go back to the dashboard
    - Notice the changes in the environment:
      - A dev version is now deployed in the same namespace
-     - Dev traffic is routed to the dev version
      - Dev traffic is routed to the dev version, with a database sidecar protecting the data layer
      - Prod still works independently in the same namespace - go to the prod version and click, it goes to the prod version and speaks to the DB directly
      - The isolated database writes are managed through Neon's branching feature, which is seamlessly integrated with Kardinal via the sidecar
