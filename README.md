@@ -8,7 +8,7 @@ In this demo, you will:
 1. Set up a Kubernetes cluster with a demo voting app installed on it (3 minutes)
 2. Visualize your production cluster using the Kardinal Dashboard (30 seconds)
 3. Use Kardinal to set up a lightweight "dev environment" inside of your production cluster so you can test on production data (30 seconds)
-4. Visualize your cluster in Kardinal Dashboard again, to see how the Kardinal "dev environment" is structured (30 seconds)
+4. Visualize your cluster in the Kardinal Dashboard again, to see how the Kardinal "dev environment" is structured (30 seconds)
 
 ## 🛠 Features
 
