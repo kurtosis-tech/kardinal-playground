@@ -1,19 +1,9 @@
 version: "3"
 services:
-  azure-vote-back:
-    image: bitnami/redis:6.0.8
-    container_name: redis-prod
-    environment:
-      ALLOW_EMPTY_PASSWORD: "yes"
-      REDIS_PORT_NUMBER: "6379"
-    ports:
-      - "6379:6379"
-
   azure-vote-front:
     image: voting-app-ui
     container_name: voting-app-ui
     environment:
-      REDIS: redis-prod
       POSTGRES: "postgresql://USER:PASSWORD@HOST/DB?sslmode=require"
       NEON_API_KEY: "API_KEY"
       NEON_PROJECT_ID: "PROJECT_ID" # id of the project looks like foo-bar-12312
