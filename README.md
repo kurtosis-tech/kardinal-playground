@@ -103,8 +103,9 @@ Follow these steps to explore the Kardinal Playground.
    - Notice the changes in the environment:
      - A dev version is now deployed in the same namespace
      - Dev traffic is routed to the dev version
+     - Dev traffic is routed to the dev version, with a database sidecar protecting the data layer
      - Prod still works independently in the same namespace - go to the prod version and click, it goes to the prod version and speaks to the DB directly
-   - The isolated database writes are managed through Neon's branching feature, which is seamlessly integrated with Kardinal
+     - The isolated database writes are managed through Neon's branching feature, which is seamlessly integrated with Kardinal via the sidecar
 
 1. 🔄 Verify prod functionality:
     - Return to the production voting app URL (ending with -8090)
