@@ -10,5 +10,3 @@ services:
       NEON_MAIN_BRANCH_ID: "ID_OF_THE_MAIN_BRANCH" # branches will be created based on this branch looks like br-fizz-buzz-123zv
     ports:
       - "80:80"
-    depends_on:
-      - azure-vote-back
