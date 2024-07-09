@@ -57,7 +57,7 @@ Follow these steps to explore the Kardinal Playground.
 
 1. 🔗 Set up port forwarding:
    ```
-   ./scripts/forward.sh
+   ./scripts/forward.sh prod
    ```
 
 1. 🗳 Explore the production voting app:
@@ -65,7 +65,7 @@ Follow these steps to explore the Kardinal Playground.
    - Look for the port labelled "voting-app-prod" and open it in your browser
    - Click on the voting buttons to generate some traffic
 
-   **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is forwarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.
+   **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is forwarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh prod` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.
 
 1. 📊 Visualize the production structure on app.kardinal.dev:
    - Get your Kardinal URL by running:
@@ -93,29 +93,16 @@ Follow these steps to explore the Kardinal Playground.
 
 1. 🧪 Interact with the dev version:
    - Check the "Ports" tab in the Codespaces UI
-   - Look for the ports labelled "voting-app-prod" (8090) and "voting-app-dev" (8091)
-   - To get the correct URLs for both prod and dev versions, run these commands in your terminal:
-     ```
-     echo "🔗 Prod app: https://$CODESPACE_NAME-8090.app.github.dev/fruits"
-     echo "🔗 Dev app: https://$CODESPACE_NAME-8091.app.github.dev/fruits"
-     ```
-   - Open both URLs in your browser
-   - In the dev version, click on the voting buttons to send traffic through it
-   - Notice that initially, both endpoints show the same data for the `/fruits` endpoint
-
-1. 🍎 Test isolated writes:
-   - In the dev version (the URL ending with -8091), add a new fruit by sending a POST request to the `/fruits` endpoint. You can use curl in your terminal:
-     ```
-     curl -X POST https://$CODESPACE_NAME-8091.app.github.dev/fruits -H "Content-Type: application/json" -d '{"name":"Dragon Fruit"}'
-     ```
-   - Refresh both the prod and dev `/fruits` endpoints in your browser
-   - You'll see that the new fruit (Dragon Fruit) appears only in the dev version, demonstrating the isolated write capability
+   - Look for the port labelled "voting-app-dev" and open it in your browser
+   - Click on the voting buttons in the dev version to send traffic through it
+   
+   **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.   
 
 1. 🔍 Compare the new structure on app.kardinal.dev:
    - Go back to the dashboard
    - Notice the changes in the environment:
      - A dev version is now deployed in the same namespace
-     - Dev traffic is routed to the dev version, with a database sidecar protecting the data layer
+     - Dev traffic is routed to the dev version
      - Prod still works independently in the same namespace - go to the prod version and click, it goes to the prod version and speaks to the DB directly
    - The isolated database writes are managed through Neon's branching feature, which is seamlessly integrated with Kardinal
 
@@ -131,7 +118,7 @@ Follow these steps to explore the Kardinal Playground.
 
 1. 🔄 Final port forwarding update:
     ```
-    ./scripts/forward.sh
+    ./scripts/forward.sh prod
     ```
     Run this one last time to update the port forwarding.
 
