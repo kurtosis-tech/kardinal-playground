@@ -86,28 +86,22 @@ install_istio() {
 setup_kardinal_cli() {
     log "🛠️ Setting up Kardinal CLI..."
 
-    # Pull the Kardinal CLI image
-    run_command_with_spinner docker pull kurtosistech/kardinal-cli || log_error "Failed to pull Kardinal CLI image"
-
-    # Find the kardinal.cli binary path
-    KARDINAL_CLI_PATH=$(docker run --rm kurtosistech/kardinal-cli sh -c 'ls -1 /nix/store/*/bin/kardinal.cli 2>/dev/null | head -n 1')
-
-    if [ -z "$KARDINAL_CLI_PATH" ]; then
-        log_error "Failed to find kardinal.cli binary in the Docker image"
-        return 1
-    fi
+    # Install Kardinal CLI using curl
+    run_command_with_spinner curl get.kardinal.dev -sL | sh || log_error "Failed to install Kardinal CLI"
 
     # Ensure the Kardinal data directory exists
     mkdir -p "$KARDINAL_DATA_DIR"
 
-    # Update the alias to use the correct data directory
-    alias kardinal="docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v $KARDINAL_DATA_DIR:/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli"
+    # Find the kardinal CLI path
+    KARDINAL_CLI_PATH=$(which kardinal)
 
-    # Add the updated alias to .bashrc for persistence
-    echo "alias kardinal=\"docker run --rm -it -v \${PWD}:/workdir -v /var/run/docker.sock:/var/run/docker.sock -v $KARDINAL_DATA_DIR:/.local/share/kardinal -w /workdir --network host --entrypoint $KARDINAL_CLI_PATH kurtosistech/kardinal-cli\"" >> ~/.bashrc
+    if [ -z "$KARDINAL_CLI_PATH" ]; then
+        log_error "Failed to find kardinal CLI after installation"
+        return 1
+    fi
 
-    log "✅ Kardinal CLI alias created. You can now use 'kardinal' command directly."
-    log_verbose "Kardinal CLI setup completed. The 'kardinal' command is now available."
+    log "✅ Kardinal CLI installed successfully. You can now use the 'kardinal' command directly."
+    log_verbose "Kardinal CLI setup completed. The 'kardinal' command is now available at $KARDINAL_CLI_PATH."
 }
 
 deploy_kardinal_manager() {
@@ -126,51 +120,28 @@ deploy_kardinal_manager() {
     if [ ! -d "$minikube_dir" ]; then
         log_error "Minikube directory not found at $minikube_dir"
         return 1
-    fi
+    }
 
-    log_verbose "About to run Docker command to deploy manager..."
+    log_verbose "About to run kardinal command to deploy manager..."
 
-    # Run the Docker command with spinner
-    run_command_with_spinner docker run --rm \
-               -v ${PWD}:/workdir \
-               -v /var/run/docker.sock:/var/run/docker.sock \
-               -v $KARDINAL_DATA_DIR:/.local/share/kardinal \
-               -v $kube_config:/.kube/config \
-               -v $minikube_dir:/home/codespace/.minikube \
-               -e MINIKUBE_HOME=/home/codespace/.minikube \
-               -w /workdir \
-               --network host \
-               --entrypoint $KARDINAL_CLI_PATH \
-               kurtosistech/kardinal-cli manager deploy kloud-kontrol
+    # Run the kardinal command with spinner
+    run_command_with_spinner kardinal manager deploy kloud-kontrol
 
-    log_verbose "Docker command to deploy manager completed successfully"
+    log_verbose "Kardinal command to deploy manager completed successfully"
     log "👩‍💼 Kardinal Manager Deployed"
 
-    # Run the Docker command for voting app deployment with spinner
-    run_command_with_spinner docker run --rm \
-               -v ${PWD}:/workdir \
-               -v /var/run/docker.sock:/var/run/docker.sock \
-               -v $KARDINAL_DATA_DIR:/.local/share/kardinal \
-               -v $kube_config:/.kube/config \
-               -v $minikube_dir:/home/codespace/.minikube \
-               -e MINIKUBE_HOME=/home/codespace/.minikube \
-               -w /workdir \
-               --network host \
-               --entrypoint $KARDINAL_CLI_PATH \
-               kurtosistech/kardinal-cli deploy -d voting-app-demo/compose.yml
+    # Run the kardinal command for voting app deployment with spinner
+    run_command_with_spinner kardinal deploy -d voting-app-demo/compose.yml
 
     log "🗳️ Initial version of voting app deployed"
 
-
     # Extract the Tenant UUID from the UUID file
-    if [ -f "$UUID_FILE" ]; then
-        TENANT_UUID=$(cat "$UUID_FILE")
-        log_verbose "Using existing Tenant UUID: $TENANT_UUID"
-    else
+    if [ ! -f "$UUID_FILE" ]; then
         log_error "UUID file not found at $UUID_FILE after deployment"
         return 1
     fi
 
+    TENANT_UUID=$(cat "$UUID_FILE")
     log_verbose "Kardinal Manager deployed successfully with Tenant UUID: $TENANT_UUID"
 }
 
