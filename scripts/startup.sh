@@ -87,7 +87,7 @@ setup_kardinal_cli() {
     log "🛠️ Setting up Kardinal CLI..."
 
     # Install Kardinal CLI using curl
-    run_command_with_spinner curl get.kardinal.dev -sL | sh || log_error "Failed to install Kardinal CLI"
+    run_command_with_spinner sh -c 'curl get.kardinal.dev -sL | bash' || log_error "Failed to install Kardinal CLI"
 
     # Ensure the Kardinal data directory exists
     mkdir -p "$KARDINAL_DATA_DIR"
