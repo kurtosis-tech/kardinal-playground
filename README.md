@@ -49,7 +49,7 @@ Follow these steps to explore the Kardinal Playground.
    ```
 
 1. 🗳 Explore the production voting app:
-   - Check the "Ports" tab in the Codespaces UI
+   - Check the "Ports" tab, directly above the terminal section in the Codespaces UI.
    - Look for the port labelled "voting-app-prod" and open it in your browser
    - Click on the voting buttons to generate some traffic
   
@@ -76,7 +76,7 @@ Follow these steps to explore the Kardinal Playground.
    Run this again to ensure all new services are properly forwarded.
 
 1. 🧪 Interact with the dev version:
-   - Check the "Ports" tab in the Codespaces UI
+   - Check the "Ports" tab, directly above the terminal section in the Codespaces UI.
    - Look for the port labelled "voting-app-dev" and open it in your browser
    - Click on the voting buttons in the dev version to send traffic through it
    
@@ -113,7 +113,7 @@ This guide showcases the power of Kardinal by demonstrating the seamless creatio
 
 ## 🔗 Port Forwarding Explanation
 
-We're using port forwarding in this Codespace setup to make the various services accessible to you. Since the Minikube cluster is running inside the Codespace, we need to forward specific ports to allow you to interact with the applications and dashboards through your browser. This is why you'll see multiple forwarded ports in the "Ports" tab of the Codespace UI.
+We're using port forwarding in this Codespace setup to make the various services accessible to you. Since the Minikube cluster is running inside the Codespace, we need to forward specific ports to allow you to interact with the applications and dashboards through your browser. This is why you'll see multiple forwarded ports in the "Ports" tab (directly above the terminal section in the Codespaces UI).
 
 Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.
 
