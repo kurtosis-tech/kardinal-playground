@@ -120,6 +120,7 @@ deploy_kardinal_manager() {
     if [ ! -d "$minikube_dir" ]; then
         log_error "Minikube directory not found at $minikube_dir"
         return 1
+    fi
 
     log_verbose "About to run kardinal command to deploy manager..."
 
