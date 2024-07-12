@@ -64,7 +64,7 @@ Follow these steps to explore the Kardinal Playground.
 
 1. 🔧 Create the dev flow:
    ```
-   kardinal flow create voting-app-ui voting-app-ui-dev -d voting-app-demo/compose.yml
+   kardinal flow create voting-app-ui voting-app-ui-dev -k voting-app-demo/k8s-manifest.yaml
    ```
    This command sets up a development version of the voting app alongside the production version.
 
@@ -95,7 +95,7 @@ Follow these steps to explore the Kardinal Playground.
 
 1. 🧹 Clean up the dev flow:
     ```
-    kardinal flow delete -d voting-app-demo/compose.yml
+    kardinal flow delete -k voting-app-demo/k8s-manifest.yaml
     ```
     This command removes the development version of the app.
 
