@@ -2,6 +2,7 @@
 
 Welcome to the Kardinal Playground! This codespace contains a demo showing how you can safely test new features in production without risking downtime using Kardinal. 🚀 It takes about 5 minutes, 3 of which are just waiting for the setup script to complete.
 
+> **Note**: Want to try the demo with PostgreSQL instead of Redis? Check out the [PostgreSQL Demo](#-postgresql-demo) section below!
 
 In this demo, you will:
 1. Set up a Kubernetes cluster with a demo voting app installed on it (3 minutes)
@@ -81,7 +82,6 @@ Follow these steps to explore the Kardinal Playground.
    
    **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.   
 
-
 1. 🔍 Compare the new structure on app.kardinal.dev:
    - Go back to the dashboard
    - Notice the changes in the environment:
@@ -117,11 +117,22 @@ We're using port forwarding in this Codespace setup to make the various services
 
 Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait a tick, and open the port in the "ports" tab.
 
-
 If you encounter any issues with port forwarding, you can reset it by running:
 ```
 ./scripts/forward.sh
 ```
+
+## 🐘 PostgreSQL Demo
+
+If you'd like to try the demo with PostgreSQL instead of Redis, you can do so by following these steps:
+
+1. Change to the PostgreSQL demo directory:
+   ```
+   cd postgres-demo
+   ```
+2. Follow the instructions in the README file in that directory.
+
+This alternative demo showcases Kardinal's capabilities with a different database technology.
 
 ## ⏩ What's Next?
 

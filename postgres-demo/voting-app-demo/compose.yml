@@ -1,0 +1,12 @@
+version: "3"
+services:
+  azure-vote-front:
+    image: voting-app-ui
+    container_name: voting-app-ui
+    environment:
+      POSTGRES: "postgresql://USER:PASSWORD@HOST/DB?sslmode=require"
+      NEON_API_KEY: "API_KEY"
+      NEON_PROJECT_ID: "PROJECT_ID" # id of the project looks like foo-bar-12312
+      NEON_MAIN_BRANCH_ID: "ID_OF_THE_MAIN_BRANCH" # branches will be created based on this branch looks like br-fizz-buzz-123zv
+    ports:
+      - "80:80"
