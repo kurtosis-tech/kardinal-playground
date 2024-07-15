@@ -112,7 +112,7 @@ Follow these steps to explore the Kardinal Playground.
 
 1. 🧹 Clean up the dev flow:
     ```
-    kardinal flow delete -d voting-app-demo/k8s-manifest.yaml
+    kardinal flow delete -k voting-app-demo/k8s-manifest.yaml
     ```
     This command removes the development version of the app.
 
