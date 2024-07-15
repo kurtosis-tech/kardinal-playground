@@ -131,7 +131,7 @@ deploy_kardinal_manager() {
     log "👩‍💼 Kardinal Manager Deployed"
 
     # Run the kardinal command for voting app deployment with spinner
-    run_command_with_spinner kardinal deploy -d voting-app-demo/compose.yml
+    run_command_with_spinner kardinal deploy -k voting-app-demo/k8s-manifest.yaml
 
     log "🗳️ Initial version of voting app deployed"
 
