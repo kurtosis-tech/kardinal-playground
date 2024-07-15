@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: voting-app-ui
+    version: v1
+  name: voting-app-ui
+  namespace: voting-app
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: voting-app-ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: voting-app-ui
+    version: v1
+  name: voting-app-ui
+  namespace: voting-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voting-app-ui
+      version: v1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+      labels:
+        app: voting-app-ui
+        version: v1
+    spec:
+      containers:
+        - name: voting-app-ui
+          image: voting-app-ui
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          ports:
+            - containerPort: 80
+          env:
+            - name: POSTGRES
+              value: "postgresql://USER:PASSWORD@HOST/DB?sslmode=require"
+            - name: NEON_API_KEY
+              value: "API_KEY"
+            - name: NEON_PROJECT_ID
+              value: "PROJECT_ID" # id of the project looks like foo-bar-12312
+            - name: NEON_MAIN_BRANCH_ID
+              value: "ID_OF_THE_MAIN_BRANCH" # branches will be created based on this branch looks like br-fizz-buzz-123zv
