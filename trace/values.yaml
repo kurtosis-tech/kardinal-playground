@@ -10,6 +10,8 @@ traceRouterRedis:
 
 votingAppRedis:
   image: bitnami/redis:6.0.8
+  devImage: bitnami/redis:6.0.8
+  prodImage: bitnami/redis:6.0.8
 
 votingApp:
   prodImage: h4ck3rk3y/voting-app-ui:latest
