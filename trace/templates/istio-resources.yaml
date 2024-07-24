@@ -209,31 +209,35 @@ spec:
         typed_config:
           "@type": "type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua"
           inlineCode: |
-            local http = require("resty.http")
-            
             function envoy_on_request(request_handle)
               local headers = request_handle:headers()
               local trace_id = headers:get("x-kardinal-trace-id")
               local hostname = headers:get(":authority")
               
               if trace_id then
-                local destination = determine_destination(trace_id, hostname)
+                local destination = determine_destination(request_handle, trace_id, hostname)
                 headers:add("x-kardinal-destination", destination)
               end
             end
 
-            function determine_destination(trace_id, hostname)
-              local httpc = http.new()
-              local res, err = httpc:request_uri("http://trace-router:8080/route", {
-                method = "GET",
-                query = "trace_id=" .. trace_id .. "&hostname=" .. hostname,
-              })
+            function determine_destination(request_handle, trace_id, hostname)
+              local cluster_name = "trace_router_cluster"
+              local headers, body = request_handle:httpCall(
+                cluster_name,
+                {
+                  [":method"] = "GET",
+                  [":path"] = "/route?trace_id=" .. trace_id .. "&hostname=" .. hostname,
+                  [":authority"] = "trace-router:8080"
+                },
+                "",
+                5000
+              )
               
-              if not res then
+              if not headers then
                 return hostname .. "-prod"  -- Fallback to prod
               end
               
-              return res.body
+              return body
             end
 ---
 apiVersion: security.istio.io/v1beta1

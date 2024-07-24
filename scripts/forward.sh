@@ -43,7 +43,7 @@ retry_with_exponential_backoff() {
 forward_dev() {
     echo "🛠️ Forwarding dev version (voting-app-dev)..."
     if retry_with_exponential_backoff "check_pod_status 'voting-app-ui-dev' 'kardinal'"; then
-        retry_with_exponential_backoff "kubectl port-forward -n prod deploy/voting-app-ui-dev 8091:80 > /dev/null 2>&1 &"
+        retry_with_exponential_backoff "kubectl port-forward -n kardinal deploy/voting-app-ui-dev 8091:80 > /dev/null 2>&1 &"
         echo "✅ Dev version forwarded to port 8091"
     else
         echo "❌ Failed to forward dev version: pod is not running after retries"
@@ -53,7 +53,7 @@ forward_dev() {
 forward_prod() {
     echo "🚀 Forwarding prod version (voting-app-prod)..."
     if retry_with_exponential_backoff "check_pod_status 'voting-app-ui-prod' 'kardinal'"; then
-        retry_with_exponential_backoff "kubectl port-forward -n prod svc/voting-app-ui 8090:80 > /dev/null 2>&1 &"
+        retry_with_exponential_backoff "kubectl port-forward -n kardinal deploy/voting-app-ui-prod 8092:80 > /dev/null 2>&1 &"
         echo "✅ Prod version forwarded to port 8090"
     else
         echo "❌ Failed to forward prod version: pod is not running after retries"
@@ -92,12 +92,12 @@ main() {
             kill_existing_forwards
             forward_prod
             echo "🎉 Port forwarding complete!"
-            echo "🔗 Prod app: https://$CODESPACE_NAME-8090.app.github.dev"
+            echo "🔗 Prod app: https://$CODESPACE_NAME-8092.app.github.dev"
             ;;
         all)
             forward_all
             echo "🎉 Port forwarding complete!"
-            echo "🔗 Prod app: https://$CODESPACE_NAME-8090.app.github.dev"
+            echo "🔗 Prod app: https://$CODESPACE_NAME-8092.app.github.dev"
             echo "🔗 Dev app: https://$CODESPACE_NAME-8091.app.github.dev"
             ;;
         *)
