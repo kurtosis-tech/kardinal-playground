@@ -89,6 +89,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: kardinal-tracing
+  namespace: kardinal
 spec:
   workloadSelector:
     labels:
@@ -185,6 +186,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: inbound-trace-id-check
+  namespace: kardinal
 spec:
   workloadSelector:
     labels:
@@ -220,6 +222,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: outbound-trace-router
+  namespace: kardinal
 spec:
   workloadSelector:
     labels:
