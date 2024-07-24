@@ -61,7 +61,7 @@ spec:
   - match:
     - headers:
         x-kardinal-destination:
-          regex: ".*-dev"
+          exact: "voting-app-redis-dev"
     route:
     - destination:
         host: voting-app-redis
