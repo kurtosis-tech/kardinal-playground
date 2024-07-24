@@ -250,12 +250,6 @@ spec:
       app: voting-app-ui
   action: DENY
   rules:
-  - from:
-    - source:
-        notRequestPrincipals: ["*"]
-    to:
-    - operation:
-        notPaths: ["/healthz", "/metrics"]
     when:
     - key: request.headers[x-kardinal-trace-id]
       notValues: ["*"]
