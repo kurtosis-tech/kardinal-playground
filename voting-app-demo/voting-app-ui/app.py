@@ -51,6 +51,7 @@ if app_version == "v1":
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    print(request.headers)
     if request.method == "POST":
         vote = request.form["vote"]
         if vote == "option1":
