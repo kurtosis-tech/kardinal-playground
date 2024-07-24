@@ -1,0 +1,70 @@
+# templates/trace-router-redis.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: trace-router-redis
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    app: trace-router-redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trace-router-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trace-router-redis
+  template:
+    metadata:
+      labels:
+        app: trace-router-redis
+    spec:
+      containers:
+        - name: redis
+          image: {{ .Values.traceRouterRedis.image }}
+          ports:
+            - containerPort: 6379
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+
+---
+# templates/voting-app-redis.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: voting-app-redis
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    app: voting-app-redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voting-app-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voting-app-redis
+  template:
+    metadata:
+      labels:
+        app: voting-app-redis
+    spec:
+      containers:
+        - name: redis
+          image: {{ .Values.votingAppRedis.image }}
+          ports:
+            - containerPort: 6379
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"

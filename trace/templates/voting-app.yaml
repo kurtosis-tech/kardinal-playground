@@ -1,0 +1,65 @@
+# templates/voting-app.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: voting-app-ui
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: voting-app-ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voting-app-ui-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voting-app-ui
+      version: prod
+  template:
+    metadata:
+      labels:
+        app: voting-app-ui
+        version: prod
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+        - name: voting-app-ui-prod
+          image: {{ .Values.votingApp.prodImage }}
+          ports:
+            - containerPort: 80
+          env:
+            - name: REDIS
+              value: "voting-app-redis"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voting-app-ui-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voting-app-ui
+      version: dev
+  template:
+    metadata:
+      labels:
+        app: voting-app-ui
+        version: dev
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+        - name: voting-app-ui-dev
+          image: {{ .Values.votingApp.devImage }}
+          ports:
+            - containerPort: 80
+          env:
+            - name: REDIS
+              value: "voting-app-redis"

@@ -1,0 +1,257 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: voting-app-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: voting-app-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - voting-app-gateway
+  http:
+  - match:
+    - headers:
+        x-kardinal-destination:
+          exact: "voting-app-ui-dev"
+    route:
+    - destination:
+        host: voting-app-ui
+        subset: dev
+  - route:
+    - destination:
+        host: voting-app-ui
+        subset: prod
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: voting-app-ui
+spec:
+  host: voting-app-ui
+  subsets:
+  - name: prod
+    labels:
+      version: prod
+  - name: dev
+    labels:
+      version: dev
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: voting-app-redis-vs
+spec:
+  hosts:
+  - voting-app-redis
+  http:
+  - match:
+    - headers:
+        x-kardinal-destination:
+          regex: ".*-dev"
+    route:
+    - destination:
+        host: voting-app-redis
+        subset: dev
+  - route:
+    - destination:
+        host: voting-app-redis
+        subset: prod
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: voting-app-redis
+spec:
+  host: voting-app-redis
+  subsets:
+  - name: prod
+    labels:
+      version: prod
+  - name: dev
+    labels:
+      version: dev
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: kardinal-tracing
+spec:
+  workloadSelector:
+    labels:
+      istio: ingressgateway
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: GATEWAY
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.filters.network.http_connection_manager"
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: envoy.lua
+        typed_config:
+          "@type": "type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua"
+          inlineCode: |
+            local http = require("resty.http")
+            
+            function envoy_on_request(request_handle)
+              local headers = request_handle:headers()
+              local trace_id = headers:get("x-kardinal-trace-id")
+              local hostname = headers:get(":authority")
+              
+              if not trace_id then
+                trace_id = generate_trace_id()
+                headers:add("x-kardinal-trace-id", trace_id)
+              end
+              
+              local destination = determine_destination(trace_id, hostname)
+              headers:add("x-kardinal-destination", destination)
+            end
+
+            function generate_trace_id()
+              local httpc = http.new()
+              local res, err = httpc:request_uri("http://trace-router:8080/generate-trace-id", {
+                method = "GET",
+              })
+              
+              if not res then
+                return string.format("%032x", math.random(2^128 - 1))  -- Fallback
+              end
+              
+              return res.body
+            end
+
+            function determine_destination(trace_id, hostname)
+              local httpc = http.new()
+              local res, err = httpc:request_uri("http://trace-router:8080/route", {
+                method = "GET",
+                query = "trace_id=" .. trace_id .. "&hostname=" .. hostname,
+              })
+              
+              if not res then
+                return hostname .. "-prod"  -- Fallback to prod
+              end
+              
+              return res.body
+            end
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: inbound-trace-id-check
+spec:
+  workloadSelector:
+    labels:
+      app: voting-app-ui
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: SIDECAR_INBOUND
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.filters.network.http_connection_manager"
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: envoy.lua
+        typed_config:
+          "@type": "type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua"
+          inlineCode: |
+            function envoy_on_request(request_handle)
+              local headers = request_handle:headers()
+              local trace_id = headers:get("x-kardinal-trace-id")
+              
+              if not trace_id then
+                request_handle:respond(
+                  {[":status"] = "400"},
+                  "Missing required x-kardinal-trace-id header"
+                )
+              end
+            end
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: outbound-trace-router
+spec:
+  workloadSelector:
+    labels:
+      app: voting-app-ui
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: SIDECAR_OUTBOUND
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.filters.network.http_connection_manager"
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: envoy.lua
+        typed_config:
+          "@type": "type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua"
+          inlineCode: |
+            local http = require("resty.http")
+            
+            function envoy_on_request(request_handle)
+              local headers = request_handle:headers()
+              local trace_id = headers:get("x-kardinal-trace-id")
+              local hostname = headers:get(":authority")
+              
+              if trace_id then
+                local destination = determine_destination(trace_id, hostname)
+                headers:add("x-kardinal-destination", destination)
+              end
+            end
+
+            function determine_destination(trace_id, hostname)
+              local httpc = http.new()
+              local res, err = httpc:request_uri("http://trace-router:8080/route", {
+                method = "GET",
+                query = "trace_id=" .. trace_id .. "&hostname=" .. hostname,
+              })
+              
+              if not res then
+                return hostname .. "-prod"  -- Fallback to prod
+              end
+              
+              return res.body
+            end
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: require-trace-id
+spec:
+  selector:
+    matchLabels:
+      app: voting-app-ui
+  action: DENY
+  rules:
+  - from:
+    - source:
+        notRequestPrincipals: ["*"]
+    to:
+    - operation:
+        notPaths: ["/healthz", "/metrics"]
+    when:
+    - key: request.headers[x-kardinal-trace-id]
+      notValues: ["*"]
