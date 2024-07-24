@@ -108,47 +108,77 @@ spec:
         typed_config:
           "@type": "type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua"
           inlineCode: |
-            local http = require("resty.http")
-            
             function envoy_on_request(request_handle)
               local headers = request_handle:headers()
               local trace_id = headers:get("x-kardinal-trace-id")
               local hostname = headers:get(":authority")
               
               if not trace_id then
-                trace_id = generate_trace_id()
+                trace_id = generate_trace_id(request_handle)
                 headers:add("x-kardinal-trace-id", trace_id)
+                set_initial_route(request_handle, trace_id, hostname)
               end
               
-              local destination = determine_destination(trace_id, hostname)
+              local destination = determine_destination(request_handle, trace_id, hostname)
               headers:add("x-kardinal-destination", destination)
             end
 
-            function generate_trace_id()
-              local httpc = http.new()
-              local res, err = httpc:request_uri("http://trace-router:8080/generate-trace-id", {
-                method = "GET",
-              })
+            function generate_trace_id(request_handle)
+              local trace_id = string.format("%032x", math.random(2^128 - 1))
+              local http_request = request_handle:httpCall(
+                "trace-router",
+                {
+                  [":method"] = "GET",
+                  [":path"] = "/generate-trace-id"
+                },
+                "",
+                5000
+              )
               
-              if not res then
-                return string.format("%032x", math.random(2^128 - 1))  -- Fallback
+              if http_request[2] == 200 then
+                return trace_id
+              else
+                return trace_id  -- Fallback
               end
-              
-              return res.body
             end
 
-            function determine_destination(trace_id, hostname)
-              local httpc = http.new()
-              local res, err = httpc:request_uri("http://trace-router:8080/route", {
-                method = "GET",
-                query = "trace_id=" .. trace_id .. "&hostname=" .. hostname,
-              })
+            function set_initial_route(request_handle, trace_id, hostname)
+              local body = "trace_id=" .. trace_id .. "&hostname=" .. hostname .. "&destination=voting-app-prod"
+              local headers = {["Content-Type"] = "application/x-www-form-urlencoded"}
+              local http_request = request_handle:httpCall(
+                "trace-router",
+                {
+                  [":method"] = "POST",
+                  [":path"] = "/set-route",
+                  ["Content-Type"] = "application/x-www-form-urlencoded"
+                },
+                body,
+                5000
+              )
               
-              if not res then
+              if http_request[2] ~= 200 then
+                -- Handle error (optional)
+                return
+              end
+            end
+
+            function determine_destination(request_handle, trace_id, hostname)
+              local query = "?trace_id=" .. trace_id .. "&hostname=" .. hostname
+              local http_request = request_handle:httpCall(
+                "trace-router",
+                {
+                  [":method"] = "GET",
+                  [":path"] = "/route" .. query
+                },
+                "",
+                5000
+              )
+              
+              if http_request[2] == 200 then
+                return http_request[3]
+              else
                 return hostname .. "-prod"  -- Fallback to prod
               end
-              
-              return res.body
             end
 ---
 apiVersion: networking.istio.io/v1alpha3
