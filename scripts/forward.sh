@@ -52,7 +52,7 @@ forward_dev() {
 
 forward_prod() {
     echo "🚀 Forwarding prod version (voting-app-prod)..."
-    if retry_with_exponential_backoff "check_pod_status 'voting-app-ui-prod' 'prod'"; then
+    if retry_with_exponential_backoff "check_pod_status 'voting-app-ui-prod' 'kardinal'"; then
         retry_with_exponential_backoff "kubectl port-forward -n prod svc/voting-app-ui 8090:80 > /dev/null 2>&1 &"
         echo "✅ Prod version forwarded to port 8090"
     else
