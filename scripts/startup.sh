@@ -177,8 +177,10 @@ main() {
 
     log "🕰️ This can take around 3 minutes! Familiarize yourself with the repository while this happens."
 
-    build_images
-    
+    setup_docker
+    start_minikube
+    install_istio
+
     log "✅ Startup completed! Minikube, Istio, Kontrol, and Kardinal Manager are ready."
     log "🏠 Tenant UUID: $TENANT_UUID"
     log "📊 Kardinal Dashboard: https://app.kardinal.dev/$(cat ~/.local/share/kardinal/fk-tenant-uuid)/traffic-configuration"

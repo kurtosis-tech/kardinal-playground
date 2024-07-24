@@ -42,7 +42,7 @@ retry_with_exponential_backoff() {
 
 forward_dev() {
     echo "🛠️ Forwarding dev version (voting-app-dev)..."
-    if retry_with_exponential_backoff "check_pod_status 'voting-app-ui-dev' 'prod'"; then
+    if retry_with_exponential_backoff "check_pod_status 'voting-app-ui-dev' 'kardinal'"; then
         retry_with_exponential_backoff "kubectl port-forward -n prod deploy/voting-app-ui-dev 8091:80 > /dev/null 2>&1 &"
         echo "✅ Dev version forwarded to port 8091"
     else
