@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: voting-app-redis
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    app: voting-app-redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voting-app-redis-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voting-app-redis
+      version: prod
+  template:
+    metadata:
+      labels:
+        app: voting-app-redis
+        version: prod
+    spec:
+      containers:
+        - name: redis
+          image: {{ .Values.votingAppRedis.prodImage }}
+          ports:
+            - containerPort: 6379
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voting-app-redis-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voting-app-redis
+      version: dev
+  template:
+    metadata:
+      labels:
+        app: voting-app-redis
+        version: dev
+    spec:
+      containers:
+        - name: redis
+          image: {{ .Values.votingAppRedis.devImage }}
+          ports:
+            - containerPort: 6379
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
