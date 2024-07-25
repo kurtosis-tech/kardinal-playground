@@ -113,6 +113,8 @@ spec:
               local headers = request_handle:headers()
               local trace_id = headers:get("x-kardinal-trace-id")
               local hostname = headers:get(":authority")
+
+              request_handle:logInfo("Incoming request - Trace ID: " .. (trace_id or "none") .. ", Hostname: " .. (hostname or "none"))
               
               if not trace_id then
                 trace_id = generate_trace_id(request_handle)
