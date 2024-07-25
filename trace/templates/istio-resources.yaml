@@ -148,11 +148,11 @@ spec:
                   "outbound|8080||trace-router.kardinal.svc.cluster.local",
                   {
                     [":method"] = "POST",
-                    [":path"] = "/set-route",
+                    [":path"] = "/set-route?trace_id=" .. trace_id .. "&hostname=" .. hostname .. "&destination=voting-app-ui-prod",
                     [":authority"] = "trace-router.kardinal.svc.cluster.local",
                     ["Content-Type"] = "application/json"
                   },
-                  string.format('{"trace_id": "%s", "hostname": "%s", "destination": "voting-app-ui-prod"}', trace_id, hostname),
+                  "{}",  -- Empty JSON body
                   5000
                 )
 
