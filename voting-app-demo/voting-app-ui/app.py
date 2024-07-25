@@ -2,6 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for
 import redis
 import os
 
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 app = Flask(__name__)
 
 redis_server = os.environ["REDIS"]
@@ -51,6 +57,7 @@ if app_version == "v1":
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    logger.info(f"Request Headers: {dict(request.headers)}")
     print(request.headers)
     if request.method == "POST":
         vote = request.form["vote"]
