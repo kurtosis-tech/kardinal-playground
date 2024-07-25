@@ -116,12 +116,18 @@ spec:
               
               if not trace_id then
                 trace_id = generate_trace_id(request_handle)
-                headers:add("x-kardinal-trace-id", trace_id)
-                set_initial_route(request_handle, trace_id, hostname)
+                if trace_id then
+                  headers:add("x-kardinal-trace-id", trace_id)
+                  set_initial_route(request_handle, trace_id, hostname)
+                end
               end
               
-              local destination = determine_destination(request_handle, trace_id, hostname)
-              headers:add("x-kardinal-destination", destination)
+              if trace_id then
+                local destination = determine_destination(request_handle, trace_id, hostname)
+                if destination then
+                  headers:add("x-kardinal-destination", destination)
+                end
+              end
             end
 
             function generate_trace_id(request_handle)
@@ -140,6 +146,7 @@ spec:
               if headers[":status"] == "200" then
                 return body
               else
+                request_handle:logErr("Failed to generate trace ID: " .. tostring(headers[":status"]))
                 return trace_id  -- Fallback
               end
             end
