@@ -59,14 +59,18 @@ spec:
   - voting-app-redis
   http:
   - match:
-    - headers:
-        x-kardinal-destination:
-          exact: "voting-app-redis-dev"
+    - sourceLabels:
+        app: voting-app-ui
+        version: dev
     route:
     - destination:
         host: voting-app-redis
         subset: dev
-  - route:
+  - match:
+    - sourceLabels:
+        app: voting-app-ui
+        version: prod
+    route:
     - destination:
         host: voting-app-redis
         subset: prod
