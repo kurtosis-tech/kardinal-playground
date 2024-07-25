@@ -1,6 +1,6 @@
 # values.yaml
 traceRouter:
-  image: h4ck3rk3y/router
+  image: h4ck3rk3y/router:txt
   redis:
     host: trace-router-redis
     port: 6379
