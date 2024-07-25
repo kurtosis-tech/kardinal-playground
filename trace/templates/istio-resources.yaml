@@ -113,7 +113,7 @@ spec:
               local headers = request_handle:headers()
               local trace_id = headers:get("x-kardinal-trace-id")
               local hostname = headers:get(":authority")
-              
+
               request_handle:logInfo("Processing request - Initial trace ID: " .. (trace_id or "none") .. ", Hostname: " .. (hostname or "none"))
 
               if not trace_id then
@@ -131,7 +131,7 @@ spec:
                   5000
                 )
 
-                if generate_headers[":status"] == "200" then
+                if generate_headers and generate_headers[":status"] == "200" then
                   trace_id = generate_body
                   request_handle:logInfo("Received trace ID from trace-router: " .. trace_id)
                 else
@@ -152,8 +152,8 @@ spec:
                   5000
                 )
 
-                if set_route_headers[":status"] ~= "200" then
-                  request_handle:logWarn("Failed to set initial route: " .. tostring(set_route_headers[":status"]))
+                if not set_route_headers or set_route_headers[":status"] ~= "200" then
+                  request_handle:logWarn("Failed to set initial route: " .. tostring(set_route_headers and set_route_headers[":status"]))
                 end
               end
 
@@ -169,7 +169,7 @@ spec:
               )
 
               local destination
-              if determine_headers[":status"] == "200" then
+              if determine_headers and determine_headers[":status"] == "200" then
                 destination = determine_body
                 request_handle:logInfo("Determined destination: " .. destination)
               else
