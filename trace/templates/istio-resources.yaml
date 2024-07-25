@@ -152,7 +152,7 @@ spec:
                     [":authority"] = "trace-router.kardinal.svc.cluster.local",
                     ["Content-Type"] = "application/x-www-form-urlencoded"
                   },
-                  "trace_id=" .. trace_id .. "&hostname=" .. hostname .. "&destination=voting-app-prod",
+                  "trace_id=" .. trace_id .. "&hostname=" .. hostname .. "&destination=voting-app-ui-prod",
                   5000
                 )
 
