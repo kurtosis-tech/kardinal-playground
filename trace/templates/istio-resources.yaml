@@ -150,9 +150,9 @@ spec:
                     [":method"] = "POST",
                     [":path"] = "/set-route",
                     [":authority"] = "trace-router.kardinal.svc.cluster.local",
-                    ["Content-Type"] = "application/x-www-form-urlencoded"
+                    ["Content-Type"] = "application/json"
                   },
-                  "trace_id=" .. trace_id .. "&hostname=" .. hostname .. "&destination=voting-app-ui-prod",
+                  string.format('{"trace_id": "%s", "hostname": "%s", "destination": "voting-app-ui-prod"}', trace_id, hostname),
                   5000
                 )
 
