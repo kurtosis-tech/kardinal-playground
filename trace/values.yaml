@@ -1,4 +1,5 @@
 # values.yaml
+# https://gist.github.com/h4ck3rk3y/e415989e2632881ebd6a6f7b5a9fe9d7
 traceRouter:
   image: h4ck3rk3y/router:txt
   redis:
