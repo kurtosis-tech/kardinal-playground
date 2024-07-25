@@ -113,8 +113,6 @@ spec:
               local headers = request_handle:headers()
               local trace_id = headers:get("x-kardinal-trace-id")
               local hostname = headers:get(":authority")
-
-              request_handle:logInfo("Incoming request - Trace ID: " .. (trace_id or "none") .. ", Hostname: " .. (hostname or "none"))
               
               if not trace_id then
                 trace_id = generate_trace_id(request_handle)
@@ -128,18 +126,19 @@ spec:
 
             function generate_trace_id(request_handle)
               local trace_id = string.format("%032x", math.random(2^128 - 1))
-              local http_request = request_handle:httpCall(
+              local headers, body = request_handle:httpCall(
                 "outbound|8080||trace-router.kardinal.svc.cluster.local",
                 {
                   [":method"] = "GET",
-                  [":path"] = "/generate-trace-id"
+                  [":path"] = "/generate-trace-id",
+                  [":authority"] = "trace-router.kardinal.svc.cluster.local"
                 },
                 "",
                 5000
               )
               
-              if http_request[2] == 200 then
-                return trace_id
+              if headers[":status"] == "200" then
+                return body
               else
                 return trace_id  -- Fallback
               end
@@ -147,39 +146,40 @@ spec:
 
             function set_initial_route(request_handle, trace_id, hostname)
               local body = "trace_id=" .. trace_id .. "&hostname=" .. hostname .. "&destination=voting-app-prod"
-              local headers = {["Content-Type"] = "application/x-www-form-urlencoded"}
-              local http_request = request_handle:httpCall(
+              local headers, response_body = request_handle:httpCall(
                 "outbound|8080||trace-router.kardinal.svc.cluster.local",
                 {
                   [":method"] = "POST",
                   [":path"] = "/set-route",
+                  [":authority"] = "trace-router.kardinal.svc.cluster.local",
                   ["Content-Type"] = "application/x-www-form-urlencoded"
                 },
                 body,
                 5000
               )
               
-              if http_request[2] ~= 200 then
-                -- Handle error (optional)
-                return
+              if headers[":status"] ~= "200" then
+                request_handle:logErr("Failed to set initial route: " .. tostring(headers[":status"]))
               end
             end
 
             function determine_destination(request_handle, trace_id, hostname)
               local query = "?trace_id=" .. trace_id .. "&hostname=" .. hostname
-              local http_request = request_handle:httpCall(
+              local headers, body = request_handle:httpCall(
                 "outbound|8080||trace-router.kardinal.svc.cluster.local",
                 {
                   [":method"] = "GET",
-                  [":path"] = "/route" .. query
+                  [":path"] = "/route" .. query,
+                  [":authority"] = "trace-router.kardinal.svc.cluster.local"
                 },
                 "",
                 5000
               )
               
-              if http_request[2] == 200 then
-                return http_request[3]
+              if headers[":status"] == "200" then
+                return body
               else
+                request_handle:logErr("Failed to determine destination: " .. tostring(headers[":status"]))
                 return hostname .. "-prod"  -- Fallback to prod
               end
             end
