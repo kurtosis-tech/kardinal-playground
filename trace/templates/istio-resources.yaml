@@ -89,7 +89,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: kardinal-tracing
-  namespace: kardinal
+  namespace: istio-system
 spec:
   workloadSelector:
     labels:
