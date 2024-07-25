@@ -138,7 +138,7 @@ spec:
                   request_handle:logWarn("Failed to get trace ID from trace-router, using generated: " .. trace_id)
                 end
 
-                headers:add("x-kardinal-trace-id", trace_id)
+                request_handle:headers():add("x-kardinal-trace-id", trace_id)
 
                 local set_route_headers, set_route_body = request_handle:httpCall(
                   "outbound|8080||trace-router.kardinal.svc.cluster.local",
@@ -177,7 +177,7 @@ spec:
                 request_handle:logWarn("Failed to determine destination, using fallback: " .. destination)
               end
 
-              headers:add("x-kardinal-destination", destination)
+              request_handle:headers():add("x-kardinal-destination", destination)
               request_handle:logInfo("Final headers - Trace ID: " .. trace_id .. ", Destination: " .. destination)
             end
 ---
