@@ -114,81 +114,71 @@ spec:
               local trace_id = headers:get("x-kardinal-trace-id")
               local hostname = headers:get(":authority")
               
+              request_handle:logInfo("Processing request - Initial trace ID: " .. (trace_id or "none") .. ", Hostname: " .. (hostname or "none"))
+
               if not trace_id then
-                trace_id = generate_trace_id(request_handle)
-                if trace_id then
-                  headers:add("x-kardinal-trace-id", trace_id)
-                  set_initial_route(request_handle, trace_id, hostname)
-                end
-              end
-              
-              if trace_id then
-                local destination = determine_destination(request_handle, trace_id, hostname)
-                if destination then
-                  headers:add("x-kardinal-destination", destination)
-                end
-              end
-            end
+                trace_id = string.format("%032x", math.random(2^128 - 1))
+                request_handle:logInfo("Generated new trace ID: " .. trace_id)
 
-            function generate_trace_id(request_handle)
-              local trace_id = string.format("%032x", math.random(2^128 - 1))
-              local headers, body = request_handle:httpCall(
+                local generate_headers, generate_body = request_handle:httpCall(
+                  "outbound|8080||trace-router.kardinal.svc.cluster.local",
+                  {
+                    [":method"] = "GET",
+                    [":path"] = "/generate-trace-id",
+                    [":authority"] = "trace-router.kardinal.svc.cluster.local"
+                  },
+                  "",
+                  5000
+                )
+
+                if generate_headers[":status"] == "200" then
+                  trace_id = generate_body
+                  request_handle:logInfo("Received trace ID from trace-router: " .. trace_id)
+                else
+                  request_handle:logWarn("Failed to get trace ID from trace-router, using generated: " .. trace_id)
+                end
+
+                headers:add("x-kardinal-trace-id", trace_id)
+
+                local set_route_headers, set_route_body = request_handle:httpCall(
+                  "outbound|8080||trace-router.kardinal.svc.cluster.local",
+                  {
+                    [":method"] = "POST",
+                    [":path"] = "/set-route",
+                    [":authority"] = "trace-router.kardinal.svc.cluster.local",
+                    ["Content-Type"] = "application/x-www-form-urlencoded"
+                  },
+                  "trace_id=" .. trace_id .. "&hostname=" .. hostname .. "&destination=voting-app-prod",
+                  5000
+                )
+
+                if set_route_headers[":status"] ~= "200" then
+                  request_handle:logWarn("Failed to set initial route: " .. tostring(set_route_headers[":status"]))
+                end
+              end
+
+              local determine_headers, determine_body = request_handle:httpCall(
                 "outbound|8080||trace-router.kardinal.svc.cluster.local",
                 {
                   [":method"] = "GET",
-                  [":path"] = "/generate-trace-id",
+                  [":path"] = "/route?trace_id=" .. trace_id .. "&hostname=" .. hostname,
                   [":authority"] = "trace-router.kardinal.svc.cluster.local"
                 },
                 "",
                 5000
               )
-              
-              if headers[":status"] == "200" then
-                return body
-              else
-                request_handle:logErr("Failed to generate trace ID: " .. tostring(headers[":status"]))
-                return trace_id  -- Fallback
-              end
-            end
 
-            function set_initial_route(request_handle, trace_id, hostname)
-              local body = "trace_id=" .. trace_id .. "&hostname=" .. hostname .. "&destination=voting-app-prod"
-              local headers, response_body = request_handle:httpCall(
-                "outbound|8080||trace-router.kardinal.svc.cluster.local",
-                {
-                  [":method"] = "POST",
-                  [":path"] = "/set-route",
-                  [":authority"] = "trace-router.kardinal.svc.cluster.local",
-                  ["Content-Type"] = "application/x-www-form-urlencoded"
-                },
-                body,
-                5000
-              )
-              
-              if headers[":status"] ~= "200" then
-                request_handle:logErr("Failed to set initial route: " .. tostring(headers[":status"]))
-              end
-            end
-
-            function determine_destination(request_handle, trace_id, hostname)
-              local query = "?trace_id=" .. trace_id .. "&hostname=" .. hostname
-              local headers, body = request_handle:httpCall(
-                "outbound|8080||trace-router.kardinal.svc.cluster.local",
-                {
-                  [":method"] = "GET",
-                  [":path"] = "/route" .. query,
-                  [":authority"] = "trace-router.kardinal.svc.cluster.local"
-                },
-                "",
-                5000
-              )
-              
-              if headers[":status"] == "200" then
-                return body
+              local destination
+              if determine_headers[":status"] == "200" then
+                destination = determine_body
+                request_handle:logInfo("Determined destination: " .. destination)
               else
-                request_handle:logErr("Failed to determine destination: " .. tostring(headers[":status"]))
-                return hostname .. "-prod"  -- Fallback to prod
+                destination = hostname .. "-prod"
+                request_handle:logWarn("Failed to determine destination, using fallback: " .. destination)
               end
+
+              headers:add("x-kardinal-destination", destination)
+              request_handle:logInfo("Final headers - Trace ID: " .. trace_id .. ", Destination: " .. destination)
             end
 ---
 apiVersion: networking.istio.io/v1alpha3
