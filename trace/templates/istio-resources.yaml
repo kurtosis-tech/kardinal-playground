@@ -262,7 +262,7 @@ spec:
                 {
                   [":method"] = "GET",
                   [":path"] = "/route?trace_id=" .. trace_id .. "&hostname=" .. hostname,
-                  [":authority"] = "trace-router.kardinal.svc.cluster.local""
+                  [":authority"] = "trace-router.kardinal.svc.cluster.local"
                 },
                 "",
                 5000
