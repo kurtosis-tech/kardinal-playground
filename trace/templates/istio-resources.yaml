@@ -127,7 +127,7 @@ spec:
             function generate_trace_id(request_handle)
               local trace_id = string.format("%032x", math.random(2^128 - 1))
               local http_request = request_handle:httpCall(
-                "trace-router",
+                "outbound|8080||trace-router.kardinal.svc.cluster.local",
                 {
                   [":method"] = "GET",
                   [":path"] = "/generate-trace-id"
@@ -147,7 +147,7 @@ spec:
               local body = "trace_id=" .. trace_id .. "&hostname=" .. hostname .. "&destination=voting-app-prod"
               local headers = {["Content-Type"] = "application/x-www-form-urlencoded"}
               local http_request = request_handle:httpCall(
-                "trace-router",
+                "outbound|8080||trace-router.kardinal.svc.cluster.local",
                 {
                   [":method"] = "POST",
                   [":path"] = "/set-route",
@@ -166,7 +166,7 @@ spec:
             function determine_destination(request_handle, trace_id, hostname)
               local query = "?trace_id=" .. trace_id .. "&hostname=" .. hostname
               local http_request = request_handle:httpCall(
-                "trace-router",
+                "outbound|8080||trace-router.kardinal.svc.cluster.local",
                 {
                   [":method"] = "GET",
                   [":path"] = "/route" .. query
@@ -254,13 +254,12 @@ spec:
             end
 
             function determine_destination(request_handle, trace_id, hostname)
-              local cluster_name = "trace_router_cluster"
               local headers, body = request_handle:httpCall(
-                cluster_name,
+                "outbound|8080||trace-router.kardinal.svc.cluster.local",
                 {
                   [":method"] = "GET",
                   [":path"] = "/route?trace_id=" .. trace_id .. "&hostname=" .. hostname,
-                  [":authority"] = "trace-router:8080"
+                  [":authority"] = "trace-router.kardinal.svc.cluster.local""
                 },
                 "",
                 5000
