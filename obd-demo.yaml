@@ -104,7 +104,7 @@ spec:
     spec:
       containers:
         - name: server
-          image: h4ck3rk3y/obd-frontend:0.0.6
+          image: leoporoli/newobd-frontend:0.0.6
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
