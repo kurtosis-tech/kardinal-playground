@@ -181,7 +181,6 @@ main() {
     setup_docker
     start_minikube
     install_istio
-    build_images
     setup_kardinal_cli
     deploy_kardinal_manager
 
