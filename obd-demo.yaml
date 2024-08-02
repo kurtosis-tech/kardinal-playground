@@ -221,7 +221,7 @@ metadata:
     version: v1
   annotations:
     kardinal.dev.service/stateful: "true"
-    kardinal.dev/plugins: |
+    kardinal.dev.service/plugins: |
       - name: github.com/kurtosis-tech/postgres-seed-plugin
         args:
           seed_script: ""
