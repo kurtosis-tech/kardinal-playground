@@ -145,13 +145,6 @@ deploy_kardinal_manager() {
     log_verbose "Kardinal Manager deployed successfully with Tenant UUID: $TENANT_UUID"
 }
 
-build_images() {
-    log "🏗️ Building images..."
-    run_command_with_spinner minikube image build -t voting-app-ui -f ./Dockerfile ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-prod image"
-    run_command_with_spinner minikube image build -t voting-app-ui-dev -f ./Dockerfile-v2 ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-dev image"
-    log_verbose "Demo images built successfully."
-}
-
 silent_segment_track() {
   local username="${GITHUB_USER}"
   if [ -z "$username" ]; then
