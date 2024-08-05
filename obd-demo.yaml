@@ -102,6 +102,17 @@ spec:
       annotations:
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
+      initContainers:
+        - name: wait-for-cartservice
+          image: curlimages/curl:8.9.1
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until curl --location 'http://cartservice:8090/health'; do
+                echo "Waiting for Cart service...";
+                sleep 5;
+              done;
       containers:
         - name: server
           image: leoporoli/newobd-frontend:0.0.6
