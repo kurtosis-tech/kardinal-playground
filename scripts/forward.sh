@@ -23,7 +23,7 @@ update_ngrok_config() {
     
     # Create the basic configuration
     cat > "$NGROK_CONFIG_FILE" << EOF
-authtoken: $NGROK_AUTHOTKEN
+authtoken: $NGROK_AUTHTOKEN
 version: 2
 tunnels:
   prod:
