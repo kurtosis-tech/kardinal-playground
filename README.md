@@ -67,7 +67,7 @@ Follow these steps to explore the Kardinal Playground.
    - From the output of the previous command, copy the host value (it should look like `dev-[a-zA-Z0-9]+.app.localhost`)
    - Run a new ngrok instance with this host:
      ```
-     ngrok http 8080 --host-header="[your-dev-host-value]"
+     ./scripts/forward.sh [your-dev-host-value]
      ```
    - Note the new ngrok URL for accessing your dev instance
 
