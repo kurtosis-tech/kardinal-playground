@@ -35,19 +35,19 @@ Follow these steps to explore the Kardinal Playground.
    ```
    ./scripts/startup.sh
    ```
-   This will set up Docker, Minikube, Istio, Kardinal Manager, Kardinal CLI, and ngrok for you. It will
+   This will set up Docker, Minikube, Istio, Kardinal Manager, Kardinal CLI, and nginx for you. It will
    also deploy the initial version of the online boutique app.
 
    This can take around 3 minutes 🕰️.
 
-2. 🔗 Set up port forwarding and start ngrok:
+2. 🔗 Set up port forwarding and start nginx:
    ```
    ./scripts/forward.sh
    ```
-   This script will set up port forwarding and start ngrok. Note the ngrok URL provided in the output.
+   This script will set up port forwarding and start nginx. Use the codespaces URL that is printed on the screen.
 
 3. 🛍️ Explore the main online boutique deployment:
-   - Use the ngrok URL provided by the forward.sh script
+   - Use the nginx URL provided by the forward.sh script
    - Browse through the online store and add items to your cart to generate some traffic
    - This might take a few seconds and a few retries as sometimes the local port forwarding takes a few seconds to come up
 
@@ -65,17 +65,16 @@ Follow these steps to explore the Kardinal Playground.
    ```
    This command sets up a development version of the frontend alongside the main version.
 
-6. 🌐 Set up ngrok for the dev instance:
-   - Kill the previous instance of ngrok if it exists (via ctrl+c)
+6. 🌐 Set up nginx for the dev instance:
    - From the output of the previous command, copy the host value (it should look like `dev-[a-zA-Z0-9]+.app.localhost`)
-   - Run a new ngrok instance with this host:
+   - Run a new nginx instance with this host:
      ```
      ./scripts/forward.sh [your-dev-host-value]
      ```
-   - Note the new ngrok URL for accessing your dev instance (this is the second url in the list)
+   - Note the new codespaces URL
 
 7. 🧪 Interact with the dev version:
-   - Use the new ngrok URL to access your dev instance of the online boutique
+   - Use the nginx nginx URL to access your dev instance of the online boutique
    - Notice how two items are already in the cart as we seeded the dev database for you
    - Browse through the store and add items to your cart in the dev version
 
@@ -86,11 +85,18 @@ Follow these steps to explore the Kardinal Playground.
      - Dev traffic is routed to the dev version of the frontend
      - The main version still works independently in the same namespace
 
-9. 🔄 Verify main deployment functionality:
-    - Return to the main online boutique URL (the first ngrok URL)
+9. 🌐 Set up nginx for the prod instance:
+   - Run a new nginx instance with this host:
+     ```
+     ./scripts/forward.sh
+     ```
+   - Note the new codespaces URL     
+
+10. 🔄 Verify main deployment functionality:
+    - Return to the main online boutique URL (the first nginx URL)
     - Confirm that it still works and has not been impacted by the development workflow
 
-10. 🧹 Clean up the dev flow:
+11. 🧹 Clean up the dev flow:
     ```
     kardinal flow delete
     ```
@@ -102,11 +108,11 @@ Follow these steps to explore the Kardinal Playground.
 
 This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your main, stable setup. You'll experience firsthand how Kardinal enables isolated development without risking stability of a shared cluster, or disrupting the live environment. 🚀
 
-## 🔗 Port Forwarding and ngrok Explanation
+## 🔗 Port Forwarding and nginx Explanation
 
-We're using port forwarding in combination with ngrok in this Codespace setup to make the various services accessible to you. Since the Minikube cluster is running inside the Codespace, we use port forwarding to expose the services locally, and then use ngrok to create secure tunnels to these local ports, making them accessible over the internet.
+We're using port forwarding in combination with nginx in this Codespace setup to make the various services accessible to you. We use Codespaces to forward URLs over the internet but add an nginx proxy to set the right hostname to hit the right lightweight environment
 
-If you encounter any issues with port forwarding or ngrok, you can reset it by running:
+If you encounter any issues with port forwarding or nginx, you can reset it by running:
 ```
 ./scripts/forward.sh
 ```
@@ -131,4 +137,4 @@ We are working with a small but selective set of initial users, join the beta [h
 
 If you run into any issues with this playground please create an issue here or email us at `hello@kardinal.dev`.
 
-If you are encountering any issue with the port forwards or ngrok, simply use `./scripts/forward.sh` to reset the setup.
+If you are encountering any issue with the port forwards or nginx, simply use `./scripts/forward.sh` to reset the setup.
