@@ -217,7 +217,7 @@ main() {
     log "Waiting for all pods in the prod namespace to be healthy..."
     retry 3 check_prod_pods_health    
 
-    local input_host="${1:-dev-default.app.localhost}"
+    local input_host="${1:-prod.app.localhost}"
     local validated_host
     
     if ! validated_host=$(validate_and_format_hostname "$input_host"); then
