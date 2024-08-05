@@ -31,7 +31,6 @@ retry() {
     return 0
 }
 
-# Function to create nginx configuration
 create_nginx_conf() {
     local host="${1:-prod.app.localhost}"
     
@@ -63,6 +62,12 @@ http {
         listen 8080;
         server_name _;
 
+        # Cache-busting headers
+        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
+        if_modified_since off;
+        expires off;
+        etag off;
+
         location / {
             proxy_pass http://istio_ingress;
             proxy_set_header Host $host;
@@ -75,6 +80,9 @@ http {
             proxy_http_version 1.1;
             proxy_set_header Upgrade \$http_upgrade;
             proxy_set_header Connection \$connection_upgrade;
+
+            # Additional cache-busting headers for proxied content
+            proxy_set_header Pragma "no-cache";
         }
     }
 }
