@@ -12,6 +12,27 @@ log() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $1"
 }
 
+# Function to validate and format the hostname
+validate_and_format_hostname() {
+    local input_host="$1"
+    
+    # Remove http:// or https:// if present
+    input_host="${input_host#http://}"
+    input_host="${input_host#https://}"
+    
+    # Check if the hostname is empty (use default) or matches the required patterns
+    if [[ -z "$input_host" || "$input_host" == "prod.app.localhost" ]]; then
+        echo "prod.app.localhost"
+    elif [[ $input_host =~ ^dev-[a-zA-Z0-9]+\.app\.localhost$ ]]; then
+        echo "$input_host"
+    elif [[ $input_host =~ ^dev-[a-zA-Z0-9]+$ ]]; then
+        echo "${input_host}.app.localhost"
+    else
+        log "❌ Invalid hostname format. It should be 'prod.app.localhost' or 'dev-[alphanumeric].app.localhost'"
+        return 1
+    fi
+}
+
 # Function to retry a command
 retry() {
     local retries=$1
@@ -32,7 +53,7 @@ retry() {
 }
 
 create_nginx_conf() {
-    local host="${1:-prod.app.localhost}"
+    local host="$1"
     
     mkdir -p "$NGINX_CONF_DIR"
     mkdir -p "$NGINX_LOG_DIR"
@@ -188,7 +209,6 @@ check_prod_pods_health() {
 
 # Main function
 main() {
-
     log "🔪 Killing any existing processes..."
     stop_nginx
     pkill -f "kubectl port-forward" &> /dev/null || true
@@ -197,15 +217,21 @@ main() {
     log "Waiting for all pods in the prod namespace to be healthy..."
     retry 3 check_prod_pods_health    
 
-    local host="${1:-prod.app.localhost}"
+    local input_host="${1:-prod.app.localhost}"
+    local validated_host
     
-    create_nginx_conf "$host"
+    if ! validated_host=$(validate_and_format_hostname "$input_host"); then
+        log "Exiting due to invalid hostname."
+        exit 1
+    fi
+    
+    create_nginx_conf "$validated_host"
     retry 3 start_nginx
     retry 3 check_port
     retry 3 forward_gateway
 
     log "🎉 Setup complete!"
-    log "🔀 Host header is set to: $host"
+    log "🔀 Host header is set to: $validated_host"
 
     log "ℹ️ Access your services through the Codespaces URL:"
     log "   https://$CODESPACE_NAME-8080.$GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN"
