@@ -52,6 +52,7 @@ Follow these steps to explore the Kardinal Playground.
    - This might take a few seconds and a few retries as sometimes the local port forwarding takes a few seconds to come up
 
 4. 📊 Visualize the application structure on app.kardinal.dev:
+   - Open a new terminal
    - Get your Kardinal URL by running:
      ```
      echo "https://app.kardinal.dev/$(cat ~/.local/share/kardinal/fk-tenant-uuid)/traffic-configuration"
