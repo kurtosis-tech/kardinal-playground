@@ -129,6 +129,32 @@ forward_gateway() {
     fi
 }
 
+check_prod_pods_health() {
+    log "Checking health of pods in the prod namespace..."
+    local max_attempts=30
+    local attempt=1
+    local all_healthy=false
+
+    while [ $attempt -le $max_attempts ]; do
+        if kubectl get pods -n prod --no-headers | awk '{print $2}' | grep -qv '2/2'; then
+            log "Attempt $attempt/$max_attempts: Some pods are not yet ready. Waiting..."
+            sleep 10
+            ((attempt++))
+        else
+            all_healthy=true
+            break
+        fi
+    done
+
+    if $all_healthy; then
+        log "✅ All pods in the prod namespace are healthy and have status 2/2"
+        return 0
+    else
+        log "❌ Not all pods in the prod namespace are healthy after $max_attempts attempts"
+        return 1
+    fi
+}
+
 # Main function
 main() {
 
@@ -143,6 +169,9 @@ main() {
     retry 3 start_nginx
     retry 3 check_port
     retry 3 forward_gateway
+
+    log "Waiting for all pods in the prod namespace to be healthy..."
+    retry 3 check_prod_pods_health
 
     log "🎉 Setup complete!"
     log "🔀 Host header is set to: $host"
