@@ -67,6 +67,7 @@ Follow these steps to explore the Kardinal Playground.
 
 6. 🌐 Set up nginx for the dev instance:
    - From the output of the previous command, copy the host value (it should look like `dev-[a-zA-Z0-9]+.app.localhost`)
+   - Kill any instances of the previous forwarding script
    - Run a new nginx instance with this host:
      ```
      ./scripts/forward.sh [your-dev-host-value]
@@ -86,7 +87,8 @@ Follow these steps to explore the Kardinal Playground.
      - The main version still works independently in the same namespace
 
 9. 🌐 Set up nginx for the prod instance:
-   - Run a new nginx instance with this host:
+   - Kill any instances of the previous forwarding script
+   - Restart the forwarding to forward to prod:
      ```
      ./scripts/forward.sh
      ```
