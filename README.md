@@ -100,7 +100,7 @@ Follow these steps to explore the Kardinal Playground.
 
 11. 🧹 Clean up the dev flow:
     ```
-    kardinal flow delete
+    kardinal flow delete <flow_id>
     ```
     This command removes the development version of the app.
 

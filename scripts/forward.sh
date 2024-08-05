@@ -130,11 +130,34 @@ forward_gateway() {
 }
 
 check_prod_pods_health() {
-    log "Checking health of pods in the prod namespace..."
+    log "Checking for pods in the prod namespace..."
     local max_attempts=30
     local attempt=1
+    local resources_exist=false
     local all_healthy=false
 
+    # Wait for at least one resource to exist
+    while [ $attempt -le $max_attempts ]; do
+        if kubectl get pods -n prod --no-headers 2>/dev/null | wc -l | grep -q "0"; then
+            log "Attempt $attempt/$max_attempts: No pods found in prod namespace. Waiting..."
+            sleep 10
+            ((attempt++))
+        else
+            resources_exist=true
+            log "Pods found in prod namespace. Proceeding to health check."
+            break
+        fi
+    done
+
+    if ! $resources_exist; then
+        log "❌ No pods appeared in the prod namespace after $max_attempts attempts"
+        return 1
+    fi
+
+    # Reset attempt counter for health check
+    attempt=1
+
+    # Check health of existing pods
     while [ $attempt -le $max_attempts ]; do
         if kubectl get pods -n prod --no-headers | awk '{print $2}' | grep -qv '2/2'; then
             log "Attempt $attempt/$max_attempts: Some pods are not yet ready. Waiting..."
