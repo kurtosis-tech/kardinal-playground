@@ -31,14 +31,6 @@ retry() {
     return 0
 }
 
-# Function to install nginx
-install_nginx() {
-    if ! command -v nginx &> /dev/null; then
-        log "🛠️ Installing nginx..."
-        sudo apt-get update &> /dev/null && sudo apt-get install -y nginx &> /dev/null
-    fi
-}
-
 # Function to create nginx configuration
 create_nginx_conf() {
     local host="${1:-prod.app.localhost}"
@@ -137,26 +129,8 @@ forward_gateway() {
     fi
 }
 
-# Function to check if kubectl is available
-check_kubectl() {
-    if ! command -v kubectl &> /dev/null; then
-        log "❌ kubectl could not be found. Please ensure it's installed and in your PATH."
-        exit 1
-    fi
-}
-
-# Function to check if gh CLI is available
-check_gh_cli() {
-    if ! command -v gh &> /dev/null; then
-        log "❌ GitHub CLI (gh) could not be found. Please ensure it's installed and in your PATH."
-        exit 1
-    fi
-}
-
 # Main function
 main() {
-    check_kubectl
-    check_gh_cli
 
     log "🔪 Killing any existing processes..."
     stop_nginx
@@ -165,7 +139,6 @@ main() {
 
     local host="${1:-prod.app.localhost}"
     
-    install_nginx
     create_nginx_conf "$host"
     retry 3 start_nginx
     retry 3 check_port
