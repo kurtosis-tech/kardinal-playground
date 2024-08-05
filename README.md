@@ -47,6 +47,7 @@ Follow these steps to explore the Kardinal Playground.
 3. 🛍️ Explore the main online boutique deployment:
    - Use the ngrok URL provided by the forward.sh script
    - Browse through the online store and add items to your cart to generate some traffic
+   - This might take a few seconds and a few retries as sometimes the local port forwarding takes a few seconds to come up
 
 4. 📊 Visualize the application structure on app.kardinal.dev:
    - Get your Kardinal URL by running:
