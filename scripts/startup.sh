@@ -104,18 +104,11 @@ setup_kardinal_cli() {
     log_verbose "Kardinal CLI setup completed. The 'kardinal' command is now available at $KARDINAL_CLI_PATH."
 }
 
-install_ngrok() {
-    log "🌐 Installing ngrok..."
-    curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
-    echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
-    sudo apt update && sudo apt install ngrok
-    log_verbose "ngrok installed successfully."
-}
-
-setup_ngrok() {
-    log "🔑 Configuring ngrok..."
-    ngrok config add-authtoken $NGROK_AUTHTOKEN
-    log_verbose "ngrok configured successfully."
+install_nginx() {
+    log "🌐 Installing nginx..."
+    run_command_with_spinner sudo apt-get update
+    run_command_with_spinner sudo apt-get install -y nginx
+    log_verbose "nginx installed successfully."
 }
 
 deploy_kardinal_manager() {
@@ -189,8 +182,7 @@ main() {
     start_minikube
     install_istio
     setup_kardinal_cli
-    install_ngrok
-    setup_ngrok
+    install_nginx
     deploy_kardinal_manager
 
     log "✅ Startup completed! Minikube, Istio, Kontrol, and Kardinal Manager are ready."
