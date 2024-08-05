@@ -2,12 +2,10 @@
 
 Welcome to the Kardinal Playground! This codespace contains a demo showing how you can safely test new features in ultra-lightweight development environments using Kardinal. 🚀 It takes about 5 minutes, 3 of which are just waiting for the setup script to complete.
 
-> **Note**: Want to try the demo with PostgreSQL instead of Redis? Check out the [PostgreSQL Demo](#-postgresql-demo) section below!
-
 In this demo, you will:
-1. Set up a Kubernetes cluster with a demo voting app installed on it (3 minutes)
+1. Set up a Kubernetes cluster with a demo online boutique app installed on it (3 minutes)
 2. Visualize your stable, staging cluster using the Kardinal Dashboard (30 seconds)
-3. Use Kardinal to set up a lightweight "dev environment" inside of your cluster so you can quickly and efficiently (30 seconds)
+3. Use Kardinal to set up a lightweight "dev environment" inside of your cluster so you can quickly and efficiently test changes (30 seconds)
 4. Visualize your cluster in the Kardinal Dashboard again, to see how the Kardinal "dev environment" is structured (30 seconds)
 
 ## 🛠 Features
@@ -21,14 +19,11 @@ In this demo, you will:
 1. 🏗 Create a new Codespace from this repository.
 2. 🎉 Once setup is complete, run through the steps in the "Usage Guide" section
 
-## 📊 About the Voting App
+## 📊 About the Online Boutique App
 
-The voting app is a simple application composed of two main components:
+The Online Boutique app is a cloud-native microservices demo application. It's a web-based e-commerce app where users can browse items, add them to the cart, and purchase them.
 
-1. A Python Flask web application that allows users to vote between two options.
-2. A Redis database that stores the votes.
-
-This setup demonstrates a basic microservices architecture, making it an ideal example for showcasing Kardinal's capabilities in managing development environments.
+This setup demonstrates a microservices architecture, making it an ideal example for showcasing Kardinal's capabilities in managing development environments.
 
 ## 🗺 Usage Guide
 
@@ -38,24 +33,23 @@ Follow these steps to explore the Kardinal Playground.
    ```
    ./scripts/startup.sh
    ```
-   This will set up Docker, Minikube, Istio, Kardinal Manager and Kardinal CLI for you. It will
-   also deploy the initial version of the voting app.
+   This will set up Docker, Minikube, Istio, Kardinal Manager, Kardinal CLI, and ngrok for you. It will
+   also deploy the initial version of the online boutique app.
 
    This can take around 3 minutes 🕰️.
 
-1. 🔗 Set up port forwarding:
+2. 🔗 Set up port forwarding and start ngrok:
    ```
-   ./scripts/forward.sh prod
+   ./scripts/forward.sh
    ```
+   This script will set up port forwarding and start ngrok. Note the ngrok URL provided in the output.
 
-1. 🗳 Explore the main voting app deployment:
-   - Check the "Ports" tab, directly above the terminal section in the Codespaces UI.
-   - Look for the port labelled "voting-app-prod" and open it in your browser
-   - Click on the voting buttons to generate some traffic
-  
-   **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait 15 seconds, and open the port in the "ports" tab.
+3. 🛍️ Explore the main online boutique deployment:
+   - Use the ngrok URL provided by the forward.sh script
+   - Browse through the online store and add items to your cart to generate some traffic
+   - This might take a few seconds and a few retries as sometimes the local port forwarding takes a few seconds to come up
 
-1. 📊 Visualize the application structure on app.kardinal.dev:
+4. 📊 Visualize the application structure on app.kardinal.dev:
    - Get your Kardinal URL by running:
      ```
      echo "https://app.kardinal.dev/$(cat ~/.local/share/kardinal/fk-tenant-uuid)/traffic-configuration"
@@ -63,76 +57,57 @@ Follow these steps to explore the Kardinal Playground.
    - Open the URL provided by the command above in your browser
    - Observe the current structure of the deployment
 
-1. 🔧 Create the dev flow:
+5. 🔧 Create the dev flow:
    ```
-   kardinal flow create voting-app-ui voting-app-ui-dev -k voting-app-demo/k8s-manifest.yaml
+   kardinal flow create frontend leoporoli/newobd-frontend:dev
    ```
-   This command sets up a development version of the voting app alongside the main version.
+   This command sets up a development version of the frontend alongside the main version.
 
-1. 🔄 Update port forwarding:
-   ```
-   ./scripts/forward.sh
-   ```
-   Run this again to ensure all new services are properly forwarded.
+6. 🌐 Set up ngrok for the dev instance:
+   - Kill the previous instance of ngrok if it exists (via ctrl+c)
+   - From the output of the previous command, copy the host value (it should look like `dev-[a-zA-Z0-9]+.app.localhost`)
+   - Run a new ngrok instance with this host:
+     ```
+     ./scripts/forward.sh [your-dev-host-value]
+     ```
+   - Note the new ngrok URL for accessing your dev instance (this is the second url in the list)
 
-1. 🧪 Interact with the dev version:
-   - Check the "Ports" tab, directly above the terminal section in the Codespaces UI.
-   - Look for the port labelled "voting-app-dev" and open it in your browser
-   - Click on the voting buttons in the dev version to send traffic through it
-   
-   **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait 15 seconds, and open the port in the "ports" tab.   
+7. 🧪 Interact with the dev version:
+   - Use the new ngrok URL to access your dev instance of the online boutique
+   - Notice how two items are already in the cart as we seeded the dev database for you
+   - Browse through the store and add items to your cart in the dev version
 
-1. 🔍 Compare the new structure on app.kardinal.dev:
+8. 🔍 Compare the new structure on app.kardinal.dev:
    - Go back to the dashboard
    - Notice the changes in the environment:
-     - A dev version is now deployed in the same namespace
-     - Dev traffic is routed to the dev version, with a database sidecar protecting the data layer
-     - The main version still works independently in the same namespace, and speaks to the DB directly
+     - A dev version of the frontend is now deployed in the same namespace
+     - Dev traffic is routed to the dev version of the frontend
+     - The main version still works independently in the same namespace
 
-1. 🔄 Verify main deployment functionality:
-    - Return to the main voting app URL
+9. 🔄 Verify main deployment functionality:
+    - Return to the main online boutique URL (the first ngrok URL)
     - Confirm that it still works and has not been impacted by the development workflow
-  
-1. 🧹 Clean up the dev flow:
+
+10. 🧹 Clean up the dev flow:
     ```
-    kardinal flow delete -k voting-app-demo/k8s-manifest.yaml
+    kardinal flow delete
     ```
     This command removes the development version of the app.
 
-1. 🔄 Final port forwarding update:
-    ```
-    ./scripts/forward.sh prod
-    ```
-    Run this one last time to update the port forwarding.
-
-1. 🔎 Final dashboard check
+11. 🔎 Final dashboard check
     - Return to the dashboard one last time
-    - Observe that the environment has been cleaned up and returned to its original state, with only the "prod" services visible.
+    - Observe that the environment has been cleaned up and returned to its original state, with only the main services visible.
 
 This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your main, stable setup. You'll experience firsthand how Kardinal enables isolated development without risking stability of a shared cluster, or disrupting the live environment. 🚀
 
-## 🔗 Port Forwarding Explanation
+## 🔗 Port Forwarding and ngrok Explanation
 
-We're using port forwarding in this Codespace setup to make the various services accessible to you. Since the Minikube cluster is running inside the Codespace, we need to forward specific ports to allow you to interact with the applications and dashboards through your browser. This is why you'll see multiple forwarded ports in the "Ports" tab (directly above the terminal section in the Codespaces UI).
+We're using port forwarding in combination with ngrok in this Codespace setup to make the various services accessible to you. Since the Minikube cluster is running inside the Codespace, we use port forwarding to expose the services locally, and then use ngrok to create secure tunnels to these local ports, making them accessible over the internet.
 
-Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait 15 seconds, and open the port in the "ports" tab.
-
-If you encounter any issues with port forwarding, you can reset it by running:
+If you encounter any issues with port forwarding or ngrok, you can reset it by running:
 ```
 ./scripts/forward.sh
 ```
-
-## 🐘 PostgreSQL Demo
-
-If you'd like to try the demo with PostgreSQL instead of Redis, you can do so by following these steps:
-
-1. Change to the PostgreSQL demo directory:
-   ```
-   cd postgres-demo
-   ```
-2. Follow the instructions in the README file in that directory.
-
-This alternative demo showcases Kardinal's capabilities with a different database technology.
 
 ## ⏩ What's Next?
 
@@ -142,4 +117,4 @@ We are working with a small but selective set of initial users, join the beta [h
 
 If you run into any issues with this playground please create an issue here or email us at `hello@kardinal.dev`.
 
-If you are encountering any issue with the port forwards, simply use `./scripts/forward.sh` to reset the port forwarding.
+If you are encountering any issue with the port forwards or ngrok, simply use `./scripts/forward.sh` to reset the setup.

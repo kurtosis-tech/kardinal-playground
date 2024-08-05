@@ -2,110 +2,85 @@
 
 set -euo pipefail
 
-MAX_RETRIES=5
-INITIAL_RETRY_DELAY=2
+NGROK_CONFIG_FILE="$HOME/.ngrok2/ngrok.conf"
 
-check_pod_status() {
-    local resource_name=$1
-    local namespace=$2
-    local status
-    status=$(kubectl get pods -n "$namespace" | grep "^$resource_name" | awk '{print $3}')
-    if [ "$status" = "Running" ]; then
-        return 0
-    elif [ -z "$status" ]; then
-        echo "Resource $resource_name in namespace $namespace not found"
-        return 1
+# Function to forward the Istio ingress gateway
+forward_gateway() {
+    echo "🛠️ Checking if Istio ingress gateway is already forwarded..."
+    if ! pgrep -f "kubectl port-forward -n istio-system service/istio-ingressgateway 8080:80" > /dev/null; then
+        echo "🛠️ Forwarding Istio ingress gateway to port 8080..."
+        kubectl port-forward -n istio-system service/istio-ingressgateway 8080:80 &
     else
-        echo "Resource $resource_name in namespace $namespace is not running (status: $status)"
-        return 1
+        echo "✅ Istio ingress gateway is already forwarded."
     fi
 }
 
-retry_with_exponential_backoff() {
-    local cmd="$1"
-    local retry_delay=$INITIAL_RETRY_DELAY
-    local retries=0
+# Function to create or update ngrok config
+update_ngrok_config() {
+    local dev_host="$1"
 
-    while [ $retries -lt $MAX_RETRIES ]; do
-        if eval "$cmd"; then
-            return 0
-        fi
-        echo "Port forwarding failed. Retrying in $retry_delay seconds..."
-        sleep $retry_delay
-        retry_delay=$((retry_delay * 2))
-        ((retries++))
-    done
-
-    echo "Max retries reached. Port forwarding failed."
-    return 1
-}
-
-forward_dev() {
-    echo "🛠️ Forwarding dev version (voting-app-dev)..."
-    if retry_with_exponential_backoff "check_pod_status 'voting-app-ui-dev' 'prod'"; then
-        retry_with_exponential_backoff "kubectl port-forward -n prod deploy/voting-app-ui-dev 8091:80 > /dev/null 2>&1 &"
-        echo "✅ Dev version forwarded to port 8091"
-    else
-        echo "❌ Failed to forward dev version: pod is not running after retries"
-    fi
-}
-
-forward_prod() {
-    echo "🚀 Forwarding prod version (voting-app-prod)..."
-    if retry_with_exponential_backoff "check_pod_status 'voting-app-ui-prod' 'prod'"; then
-        retry_with_exponential_backoff "kubectl port-forward -n prod svc/voting-app-ui 8090:80 > /dev/null 2>&1 &"
-        echo "✅ Prod version forwarded to port 8090"
-    else
-        echo "❌ Failed to forward prod version: pod is not running after retries"
-    fi
-}
-
-kill_existing_forwards() {
-    echo "🔪 Killing existing port-forwards..."
-    pkill -f "kubectl port-forward.*voting-app" || true
-}
-
-forward_all() {
-    kill_existing_forwards
-    forward_prod
-    forward_dev
-}
-
-print_usage() {
-    echo "Usage: $0 [dev|prod|all]"
-    echo "  dev  : Forward dev version (voting-app-dev) to port 8091"
-    echo "  prod : Forward prod version (voting-app-prod) to port 8090"
-    echo "  all  : Forward all of the above (default if no argument is provided)"
-}
-
-main() {
-    local command=${1:-all}
+    mkdir -p "$(dirname "$NGROK_CONFIG_FILE")"
     
-    case $command in
-        dev)
-            kill_existing_forwards
-            forward_dev
-            echo "🎉 Port forwarding complete!"
-            echo "🔗 Dev app: https://$CODESPACE_NAME-8091.app.github.dev"
-            ;;
-        prod)
-            kill_existing_forwards
-            forward_prod
-            echo "🎉 Port forwarding complete!"
-            echo "🔗 Prod app: https://$CODESPACE_NAME-8090.app.github.dev"
-            ;;
-        all)
-            forward_all
-            echo "🎉 Port forwarding complete!"
-            echo "🔗 Prod app: https://$CODESPACE_NAME-8090.app.github.dev"
-            echo "🔗 Dev app: https://$CODESPACE_NAME-8091.app.github.dev"
-            ;;
-        *)
-            print_usage
-            exit 1
-            ;;
-    esac
+    # Create the basic configuration
+    cat > "$NGROK_CONFIG_FILE" << EOF
+authtoken: $NGROK_AUTHTOKEN
+version: 2
+tunnels:
+  prod:
+    proto: http
+    addr: 8080
+    host_header: prod.app.localhost
+EOF
+
+    # Add dev tunnel if dev_host is provided
+    if [ -n "$dev_host" ]; then
+        cat >> "$NGROK_CONFIG_FILE" << EOF
+  dev:
+    proto: http
+    addr: 8080
+    host_header: $dev_host   
+EOF
+    fi
 }
 
-# Call main function with all script arguments
+# Function to start ngrok
+start_ngrok() {
+    echo "🌐 Starting ngrok..."
+    if [ -n "$1" ]; then
+        ngrok start --config="$NGROK_CONFIG_FILE" prod dev &
+    else
+        ngrok start --config="$NGROK_CONFIG_FILE" prod &
+    fi
+}
+
+# Function to check if kubectl is available
+check_kubectl() {
+    if ! command -v kubectl &> /dev/null; then
+        echo "❌ kubectl could not be found. Please ensure it's installed and in your PATH."
+        exit 1
+    fi
+}
+
+# Main function
+main() {
+    check_kubectl
+
+    echo "🔪 Killing any existing ngrok processes..."
+    pkill -f ngrok || true
+
+    forward_gateway
+
+    local dev_host="${1:-}"
+    update_ngrok_config "$dev_host"
+    start_ngrok "$dev_host"
+
+    echo "🎉 Port forwarding and ngrok setup complete!"
+    echo "ℹ️ Access your services through the ngrok URLs provided above."
+    echo "⚠️ Remember to use the ngrok URLs for accessing your services."
+
+    # Keep the script running
+    wait
+}
+
+# Run the main function with all arguments passed to the script
 main "$@"
