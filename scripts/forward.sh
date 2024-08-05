@@ -38,7 +38,7 @@ EOF
   dev:
     proto: http
     addr: 8080
-    host_header: $dev_host
+    host_header: $dev_host   
 EOF
     fi
 }

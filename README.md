@@ -64,12 +64,13 @@ Follow these steps to explore the Kardinal Playground.
    This command sets up a development version of the frontend alongside the main version.
 
 6. 🌐 Set up ngrok for the dev instance:
+   - Kill the previous instance of ngrok if it exists (via ctrl+c)
    - From the output of the previous command, copy the host value (it should look like `dev-[a-zA-Z0-9]+.app.localhost`)
    - Run a new ngrok instance with this host:
      ```
      ./scripts/forward.sh [your-dev-host-value]
      ```
-   - Note the new ngrok URL for accessing your dev instance
+   - Note the new ngrok URL for accessing your dev instance (this is the second url in the list)
 
 7. 🧪 Interact with the dev version:
    - Use the new ngrok URL to access your dev instance of the online boutique
