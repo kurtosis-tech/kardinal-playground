@@ -2,6 +2,8 @@
 
 Welcome to the Kardinal Playground! This codespace contains a demo showing how you can safely test new features in ultra-lightweight development environments using Kardinal. 🚀 It takes about 5 minutes, 3 of which are just waiting for the setup script to complete.
 
+> **Note**: Want to try the demo with Neon PostgreSQL instead of vanilla PostgresSQL? Check out the [Neon PostgreSQL Demo](#-neon-postgresql-demo) section below!
+
 In this demo, you will:
 1. Set up a Kubernetes cluster with a demo online boutique app installed on it (3 minutes)
 2. Visualize your stable, staging cluster using the Kardinal Dashboard (30 seconds)
@@ -108,6 +110,18 @@ If you encounter any issues with port forwarding or ngrok, you can reset it by r
 ```
 ./scripts/forward.sh
 ```
+
+## 🐘 Neon PostgreSQL Demo
+
+If you'd like to try the demo with Neon instead of vanilla Postgres, you can do so by following these steps:
+
+1. Change to the PostgreSQL demo directory:
+   ```
+   cd postgres-demo
+   ```
+2. Follow the instructions in the README file in that directory.
+
+This alternative demo showcases Kardinal's capabilities with a different database technology.
 
 ## ⏩ What's Next?
 
