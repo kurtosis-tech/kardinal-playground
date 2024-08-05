@@ -59,7 +59,7 @@ Follow these steps to explore the Kardinal Playground.
 
 5. 🔧 Create the dev flow:
    ```
-   kardinal flow create frontend leoporli/newobd-frontend:dev
+   kardinal flow create frontend leoporoli/newobd-frontend:dev
    ```
    This command sets up a development version of the frontend alongside the main version.
 

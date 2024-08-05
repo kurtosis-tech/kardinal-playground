@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+NGROK_CONFIG_FILE="$HOME/.ngrok2/ngrok.conf"
+
 # Function to forward the Istio ingress gateway
 forward_gateway() {
     echo "🛠️ Checking if Istio ingress gateway is already forwarded..."
@@ -13,11 +15,42 @@ forward_gateway() {
     fi
 }
 
+# Function to create or update ngrok config
+update_ngrok_config() {
+    local dev_host="$1"
+
+    mkdir -p "$(dirname "$NGROK_CONFIG_FILE")"
+    
+    # Create the basic configuration
+    cat > "$NGROK_CONFIG_FILE" << EOF
+authtoken: $NGROK_AUTHOTKEN
+version: 2
+tunnels:
+  prod:
+    proto: http
+    addr: 8080
+    host_header: prod.app.localhost
+EOF
+
+    # Add dev tunnel if dev_host is provided
+    if [ -n "$dev_host" ]; then
+        cat >> "$NGROK_CONFIG_FILE" << EOF
+  dev:
+    proto: http
+    addr: 8080
+    host_header: $dev_host
+EOF
+    fi
+}
+
 # Function to start ngrok
 start_ngrok() {
-    local host_header=${1:-"prod.app.localhost"}
-    echo "🌐 Starting ngrok with host header: $host_header"
-    ngrok http 8080 --host-header="$host_header" &
+    echo "🌐 Starting ngrok..."
+    if [ -n "$1" ]; then
+        ngrok start --config="$NGROK_CONFIG_FILE" prod dev &
+    else
+        ngrok start --config="$NGROK_CONFIG_FILE" prod &
+    fi
 }
 
 # Function to check if kubectl is available
@@ -37,15 +70,13 @@ main() {
 
     forward_gateway
 
-    if [ $# -eq 0 ]; then
-        start_ngrok
-    else
-        start_ngrok "$1"
-    fi
+    local dev_host="${1:-}"
+    update_ngrok_config "$dev_host"
+    start_ngrok "$dev_host"
 
     echo "🎉 Port forwarding and ngrok setup complete!"
-    echo "ℹ️ Access your services through the ngrok URL provided above."
-    echo "⚠️ Remember to use the ngrok URL for accessing your services."
+    echo "ℹ️ Access your services through the ngrok URLs provided above."
+    echo "⚠️ Remember to use the ngrok URLs for accessing your services."
 
     # Keep the script running
     wait
