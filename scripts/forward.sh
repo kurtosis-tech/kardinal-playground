@@ -194,15 +194,15 @@ main() {
     pkill -f "kubectl port-forward" &> /dev/null || true
     pkill -f "gh codespace ports forward" &> /dev/null || true
 
+    log "Waiting for all pods in the prod namespace to be healthy..."
+    retry 3 check_prod_pods_health    
+
     local host="${1:-prod.app.localhost}"
     
     create_nginx_conf "$host"
     retry 3 start_nginx
     retry 3 check_port
     retry 3 forward_gateway
-
-    log "Waiting for all pods in the prod namespace to be healthy..."
-    retry 3 check_prod_pods_health
 
     log "🎉 Setup complete!"
     log "🔀 Host header is set to: $host"
