@@ -75,7 +75,7 @@ Follow these steps to explore the Kardinal Playground.
    - Note the new codespaces URL
 
 7. 🧪 Interact with the dev version:
-   - Use the nginx nginx URL to access your dev instance of the online boutique
+   - Use the nginx URL to access your dev instance of the online boutique
    - Notice how two items are already in the cart as we seeded the dev database for you
    - Browse through the store and add items to your cart in the dev version
 
