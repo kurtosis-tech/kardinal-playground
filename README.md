@@ -1,6 +1,8 @@
 # 🎡 Kardinal Playground
 
-Welcome to the Kardinal Playground! This codespace contains a demo showing how you can safely test new features in ultra-lightweight development environments using Kardinal. 🚀 It takes about 5 minutes, 3 of which are just waiting for the setup script to complete.
+Welcome to the Kardinal Playground! This walkthrough shows how you can test new features in ultra-lightweight development environments using Kardinal. 🚀 
+
+This repo is designed to run in Github Codespaces. It has 5 steps and takes 5 minutes. 3 of those minutes are just waiting for the startup script to run in Codespaces.
 
 In this demo, you will:
 
