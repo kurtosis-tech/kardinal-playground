@@ -57,7 +57,7 @@ Follow these steps to explore the Kardinal Playground.
    - To interact with the dev version, copy the flow-id from the previous command (it should look like `dev-[a-zA-Z0-9]`)
    - Run the following to forward the dev demo application port from within Codespaces to a URL you can access
      ```
-     kardinal gateway [flow-id]
+     kardinal gateway <flow-id>
      ```
    - Access the dev frontend from the forwarded port
    - Notice how two items are already in the cart, as the dev database is configured to be seeded with some dev data
