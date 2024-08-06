@@ -36,7 +36,7 @@ Follow these steps to explore the Kardinal Playground.
    ```
    kardinal gateway prod
    ```
-   This script forward the main demo application port from within Codespaces to a URL you can access
+   This command forwards the main demo application port from within Codespaces to a URL you can access
 
    Now, explore the application:
    - Click the URL provided by gateway `http://localhost:9060`
