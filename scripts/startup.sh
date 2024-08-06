@@ -104,13 +104,6 @@ setup_kardinal_cli() {
     log_verbose "Kardinal CLI setup completed. The 'kardinal' command is now available at $KARDINAL_CLI_PATH."
 }
 
-install_nginx() {
-    log "🌐 Installing nginx..."
-    run_command_with_spinner sudo apt-get update
-    run_command_with_spinner sudo apt-get install -y nginx
-    log_verbose "nginx installed successfully."
-}
-
 deploy_kardinal_manager() {
     log "🚀 Deploying Kardinal Manager..."
 
@@ -182,7 +175,6 @@ main() {
     start_minikube
     install_istio
     setup_kardinal_cli
-    install_nginx
     deploy_kardinal_manager
 
     log "✅ Startup completed! Minikube, Istio, Kontrol, and Kardinal Manager are ready."

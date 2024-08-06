@@ -34,12 +34,12 @@ Follow these steps to explore the Kardinal Playground.
 
 2. 🛍️ Explore the main online boutique deployment:
    ```
-   ./scripts/forward.sh
+   kardinal gateway prod
    ```
-   This script will forward the main demo application port from within Codespaces to a URL you can access
+   This command forwards the main demo application port from within Codespaces to a URL you can access
 
    Now, explore the application:
-   - Use the URL provided by the forward.sh script
+   - Click the URL provided by gateway `http://localhost:9060`
    - Browse through the online store and add items to your cart
    - To see your application architecture, get your dashboard URL by running the following:
      ```
@@ -54,10 +54,10 @@ Follow these steps to explore the Kardinal Playground.
    ```
    This command sets up a development version of the frontend alongside the main version. It will output a URL, but it's not yet accessible because it's inside the Codespace.
 
-   - To interact with the dev version, copy the hostname from the previous command (it should look like `dev-[a-zA-Z0-9]+.app.localhost`)
+   - To interact with the dev version, copy the flow-id from the previous command (it should look like `dev-[a-zA-Z0-9]`)
    - Run the following to forward the dev demo application port from within Codespaces to a URL you can access
      ```
-     ./scripts/forward.sh [your-dev-host-value]
+     kardinal gateway [flow-id]
      ```
    - Access the dev frontend from the forwarded port
    - Notice how two items are already in the cart, as the dev database is configured to be seeded with some dev data
@@ -85,11 +85,13 @@ This guide showcases the power of Kardinal by demonstrating the seamless creatio
 
 ## 🔗 Port Forwarding Explanation
 
-We're using port forwarding in combination with nginx in this Codespace setup to make the various services accessible to you. We use Codespaces to forward URLs over the internet but add an nginx proxy to set the right hostname to hit the right lightweight environment
+We're using port forwarding in combination with a proxy in this Codespace setup to make the various services accessible to you. We use Codespaces to forward URLs over the internet but add an nginx proxy to set the right hostname to hit the right lightweight environment
 
 If you encounter any issues with port forwarding or nginx, you can reset it by running:
 ```
-./scripts/forward.sh
+# make sure all pods are running and 2/2
+kubectl get pods -n prod
+kardinal gateway [flow-id]
 ```
 
 ## 🐘 Neon PostgreSQL Demo
