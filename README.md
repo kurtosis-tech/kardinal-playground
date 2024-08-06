@@ -91,7 +91,7 @@ If you encounter any issues with port forwarding or nginx, you can reset it by r
 ```
 # make sure all pods are running and 2/2
 kubectl get pods -n prod
-kardinal gateway [flow-id]
+kardinal gateway <flow-id>
 ```
 
 ## 🐘 Neon PostgreSQL Demo
