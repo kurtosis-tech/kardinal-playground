@@ -14,7 +14,7 @@ In this demo, you will:
 
 ## 🚀 Codespace
 
-Create a new Codespace from this repository using the button below. Once setup is complete, run through the steps in the "Usage Guide" section.
+Create a new Codespace from this repository using the button below. The default settings for the Codespace will work just fine. Once setup is complete, run through the steps in the "Usage Guide" section.
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=818205437&skip_quickstart=true&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json)
 
