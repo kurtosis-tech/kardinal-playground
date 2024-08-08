@@ -54,7 +54,8 @@ Follow these steps to explore the Kardinal Playground.
    ```
    This command sets up a development version of the frontend alongside the main version. It will output a URL, but it's not yet accessible because it's inside the Codespace.
 
-   - To interact with the dev version, copy the flow-id from the previous command (it should look like `dev-[a-zA-Z0-9]`)
+   - To interact with the dev version, first stop your previous gateway (if it's still running). Currently you can only run one gateway at a time in this demo.
+   - Copy the flow-id from the previous command (it should look like `dev-[a-zA-Z0-9]`)
    - Run the following to forward the dev demo application port from within Codespaces to a URL you can access
      ```
      kardinal gateway <flow-id>
