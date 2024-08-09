@@ -80,7 +80,6 @@ spec:
       targetPort: 8090
       protocol: TCP
       appProtocol: HTTP
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -128,11 +127,12 @@ spec:
             - name: ADDRESS
               value: ":8080"
             - name: FREECURRENCYAPIKEY
-              value: "fca_live_zwpwPHMCCqcbMOUjjlrX4wXVRVl1fu3KSlz647Bh"
+              value: "fca_live_nFVVF8CvfxqJhzMHB4N2x1NH7ffVVPwZr9hg3iNl"
             - name: CARTSERVICEHOST
               value: cartservice
             - name: PRODUCTCATALOGSERVICEHOST
               value: productcatalogservice
+
 ---
 apiVersion: v1
 kind: Service
@@ -143,6 +143,12 @@ metadata:
     version: v1
   annotations:
     kardinal.dev.service/dependencies: "productcatalogservice:http,cartservice:http"
+    kardinal.dev.service/plugins: |
+      - name: github.com/kurtosis-tech/free-currency-api-plugin
+        type: external
+        servicename: free-currency-api
+        args:
+          api_key: fca_live_VKZlykCWEiFcpBHnw74pzd4vLi04q1h9JySbVHDF
 spec:
   type: ClusterIP
   selector:
@@ -228,7 +234,6 @@ metadata:
           db_name: "cart"
           db_user: "postgresuser"
           db_password: "postgrespass"
-
 spec:
   type: ClusterIP
   ports:
@@ -238,7 +243,6 @@ spec:
       protocol: TCP
   selector:
     app: postgres
-
 ---
 apiVersion: apps/v1
 kind: Deployment
