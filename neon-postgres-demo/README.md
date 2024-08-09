@@ -20,11 +20,11 @@ In this demo, you will:
 1. 🏗 Create a new Codespace from this repository.
 2. 🎉 Once setup is complete, run through the steps in the "Usage Guide" section.
 
-## 📊 About the Online Boutique Store with Neon App
+## 📊 About the Online Boutique Store App with Neon DB
 
 While the Online Boutique Store demo at the base of the repo connects to a Postgres DB managed in the cluster, this app is configured to rely on a Neon Postgres DB. 
 
-Anytime Kardinal creates a dev flow that requires creating a "dev" version of the Neon DB, Kardinal will utilize the [neon-db-plugin](https://github.com/kurtosis-tech/neondb-plugin) which contains logic to create a new Neon branch, and update any dev versions of services that depend on the Neon DB to point to the dev branch. 
+Anytime Kardinal creates a dev flow that requires creating a "dev" version of the Neon DB, Kardinal will utilize the [neon-db-plugin](https://github.com/kurtosis-tech/neondb-plugin). This plugin contains logic to create a new Neon branch, and update any dev versions of services that depend on the Neon DB to point to the dev branch. 
 
 To learn more about how Kardinal's plugin mechanism works, refer to or [plugin](https://kardinal.dev/docs/concepts/plugins) documentation. For now, let's see how this works in action!
 
@@ -42,7 +42,7 @@ Follow these steps to explore the Kardinal Playground.
    b. Open the file `obd-demo.yaml` in this directory and fill in the following variables:
       - NEON_API_KEY: Your Neon API key (found in your Neon account settings)
       - NEON_PROJECT_ID: The ID of your Neon project (visible in the project URL)
-      - NEON_MAIN_BRANCH_ID: The ID of the main branch you created
+      - NEON_FORK_FROM_BRANCH_ID: The ID of the main branch you created
       - POSTGRES: The connection string for your Neon database (found in the connection details of your branch)
 
    c. Run the startup script:
@@ -137,7 +137,7 @@ Here's what each field represents:
 
 2. NEON_PROJECT_ID: Each project in Neon has a unique identifier. This ID is used to specify which project the demo should work with.
 
-3. NEON_MAIN_BRANCH_ID: Neon allows you to create branches of your database, similar to git branches. The main branch ID refers to the primary branch of your database that the production version of the app will use.
+3. NEON_FORK_FROM_BRANCH_ID: Neon allows you to create branches of your database, similar to git branches. The main branch ID refers to the primary branch of your database that the production version of the app will use, so we'll fork off of that when creating dev versions.
 
 4. POSTGRES: This is the connection string for your Neon database. It includes all the necessary information (host, port, database name, username, password) for the application to connect to your database.
 

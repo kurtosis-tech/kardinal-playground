@@ -101,7 +101,7 @@ If you'd like to try the demo with Neon instead of vanilla Postgres, you can do 
 
 1. Change to the PostgreSQL demo directory:
    ```
-   cd neon-demo
+   cd neon-postgres-demo
    ```
 2. Follow the instructions in the README file in that directory.
 
