@@ -20,14 +20,13 @@ In this demo, you will:
 1. 🏗 Create a new Codespace from this repository.
 2. 🎉 Once setup is complete, run through the steps in the "Usage Guide" section.
 
-## 📊 About the Voting App
+## 📊 About the Online Boutique Store with Neon App
 
-The voting app is a simple application composed of two main components:
+While the Online Boutique Store demo at the base of the repo connects to a Postgres DB managed in the cluster, this app is configured to rely on a Neon Postgres DB. 
 
-1. A Python Flask web application that allows users to vote between two options.
-2. A Neon PostgreSQL database that stores the votes.
+Anytime Kardinal creates a dev flow that requires creating a "dev" version of the Neon DB, Kardinal will utilize the [neon-db-plugin](https://github.com/kurtosis-tech/neondb-plugin) which contains logic to create a new Neon branch, and update any dev versions of services that depend on the Neon DB to point to the dev branch. 
 
-This setup demonstrates a basic microservices architecture, making it an ideal example for showcasing Kardinal's capabilities in managing development environments.
+To learn more about how Kardinal's plugin mechanism works, refer to or [plugin](https://kardinal.dev/docs/concepts/plugins) documentation. For now, let's see how this works in action!
 
 ## 🗺 Usage Guide
 
@@ -70,12 +69,15 @@ Follow these steps to explore the Kardinal Playground.
      ```
    - Open the URL provided by the command above in your browser
    - Observe the current structure of the deployment
+   - Refer to your Neon console dashboard to verify that the application is connected to your database and data is reflected in the main branch!
 
 3. 🔧 Create the dev flow:
    ```
    kardinal flow create frontend leoporoli/newobd-frontend:dev
    ```
-   This command sets up a development version of the frontend alongside the main version. It will output a URL, but it's not yet accessible because it's inside the Codespace.
+   This command sets up a development version of the frontend alongside the main version. Additionally, it will create any required dev versions of services that are downstream. In this case the frontend depends on the cartservice, that depends on the Neon DB. In order to isolate data from our prod flow, we'll need to create dev version of the cartservice and Neon DB. 
+   
+   The command will output a url, but it's not yet accessible because it's inside the Codespace.
 
    - To interact with the dev version, first stop your previous gateway (if it's still running). Currently you can only run one gateway at a time in this demo.
    - Copy the flow-id from the previous command (it should look like `dev-[a-zA-Z0-9]`)
@@ -84,14 +86,16 @@ Follow these steps to explore the Kardinal Playground.
      kardinal gateway <flow-id>
      ```
    - Access the dev frontend from the forwarded port
-   - Notice how two items are already in the cart, as the dev database is configured to be seeded with some dev data
+   - Notice how two items are already in the cart, as the dev branch is configured to be branched off the main branch
    - Browse through the store and add items to your cart in the dev version
+   - Refer to your Neon console dashboard to verify that a new branch was created and any cart updates are now reflected in the branched DB!
 
 4. 🔍 Compare the new structure on app.kardinal.dev:
    - Go back to the Kardinal dashboard
    - Notice the changes in the environment:
      - A dev version of the frontend is now deployed in the same namespace
-     - Dev traffic is routed to the dev version of the frontend
+     - Dev versions of all downstream services are deployed including the Free Currency API, cartservice, and Neon DB!
+     - Dev traffic is routed to the dev version of the frontend and through corresponding dev versions of downstream services
      - The main version still works independently in the same namespace
 
 1. 🔄 Verify prod functionality:
@@ -108,8 +112,9 @@ Follow these steps to explore the Kardinal Playground.
     - Observe that the environment has been cleaned up and returned to its original state, with only the main services visible.
     - Return to the main online boutique URL (the first nginx URL)
     - Confirm that it still works and has not been impacted by the development workflow
+    - Refer to your Neon console dashboard to see that the forked dev branch has been cleaned up
 
-This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your production setup. You'll experience firsthand how Kardinal enables isolated development without risking production data or disrupting the live environment.🚀
+This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your production setup. Furthermore, it showcases how Kardinal can effectively integrate with services outside the your cluster in a way that maintains isolation for your dev environments. You'll experience firsthand how Kardinal enables isolated development without risking production data or disrupting the live environment.🚀
 
 ## 🔗 Port Forwarding Explanation
 
