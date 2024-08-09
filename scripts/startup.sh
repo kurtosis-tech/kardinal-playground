@@ -87,7 +87,7 @@ setup_kardinal_cli() {
     log "🛠️ Setting up Kardinal CLI..."
 
     # Install Kardinal CLI using curl
-    curl get.kardinal.dev -sL | sh
+    curl get.kardinal.dev -sL | sh || true
 
     # Ensure the Kardinal data directory exists
     mkdir -p "$KARDINAL_DATA_DIR"
