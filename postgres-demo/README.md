@@ -1,9 +1,9 @@
 # 🎡 Kardinal Playground
 
-Welcome to the Kardinal Playground! This codespace contains a demo showing how you can safely test new features in production without risking downtime using Kardinal. 🚀 It takes about 6 minutes, 4 of which are just waiting for the setup script to complete.
+Welcome to the Kardinal Playground! This walkthrough shows how you can test new features in ultra-lightweight development environments using Kardinal. 🚀
 
 In this demo, you will:
-1. Set up a Neon database and configure the Kubernetes cluster with a demo voting app (4 minutes)
+1. Set up a Kubernetes cluster with a demo online boutique app installed on it that stores data in an external Postgres [Neon DB](neon.tech) (4 minutes)
 2. Visualize your production cluster using the Kardinal Dashboard (30 seconds)
 3. Use Kardinal to set up a lightweight "dev environment" inside of your production cluster so you can test on production data (30 seconds)
 4. Visualize your cluster in the Kardinal Dashboard again, to see how the Kardinal "dev environment" is structured (30 seconds)
@@ -37,10 +37,10 @@ Follow these steps to explore the Kardinal Playground.
 
    a. First, you'll need to set up a Neon account and database:
       - Go to https://neon.tech and sign up for an account if you don't have one.
-      - Create a new project in Neon.
+      - Create a new project in Neon with a database named `cart`.
       - In your project, create a new branch (this will be your main branch).
 
-   b. Open the file `voting-app-demo/k8s-manifest.yaml` and fill in the following variables:
+   b. Open the file `obd-demo.yaml` in this directory and fill in the following variables:
       - NEON_API_KEY: Your Neon API key (found in your Neon account settings)
       - NEON_PROJECT_ID: The ID of your Neon project (visible in the project URL)
       - NEON_MAIN_BRANCH_ID: The ID of the main branch you created
@@ -55,88 +55,71 @@ Follow these steps to explore the Kardinal Playground.
 
       This can take around 3 minutes 🕰️.
 
-1. 🔗 Set up port forwarding:
+2. 🛍️ Explore the main online boutique deployment:
    ```
-   ./scripts/forward.sh prod
+   kardinal gateway prod
    ```
+   This command forwards the main demo application port from within Codespaces to a URL you can access
 
-1. 🗳 Explore the production voting app:
-   - Check the "Ports" tab in the Codespaces UI
-   - Look for the port labelled "voting-app-prod" and open it in your browser
-   - Click on the voting buttons to generate some traffic
-
-   **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is forwarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh prod` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait 15 seconds, and open the port in the "ports" tab.
-
-1. 📊 Visualize the production structure on app.kardinal.dev:
-   - Get your Kardinal URL by running:
+   Now, explore the application:
+   - Click the URL provided by gateway `http://localhost:9060`
+   - Browse through the online store and add items to your cart
+   - To see your application architecture, get your dashboard URL by running the following:
      ```
      echo "https://app.kardinal.dev/$(cat ~/.local/share/kardinal/fk-tenant-uuid)/traffic-configuration"
      ```
    - Open the URL provided by the command above in your browser
-   - Observe the current structure of the production environment
+   - Observe the current structure of the deployment
 
-1. 🔧 Create the dev flow:
+3. 🔧 Create the dev flow:
    ```
-   kardinal flow create voting-app-ui voting-app-ui-dev -k voting-app-demo/k8s-manifest.yaml
+   kardinal flow create frontend leoporoli/newobd-frontend:dev
    ```
-   This command sets up a development version of the voting app alongside the production version. Here's what happens behind the scenes:
+   This command sets up a development version of the frontend alongside the main version. It will output a URL, but it's not yet accessible because it's inside the Codespace.
 
-   - Kardinal automatically creates a new branch of your Neon database almost instantly. This new branch is a copy of your production database at the moment of creation.
-   - The dev version of the app is configured to use this new database branch, allowing for isolated writes without affecting the production data.
-   - This setup enables you to make changes and test features using real production data, without any risk to the live environment.
+   - To interact with the dev version, first stop your previous gateway (if it's still running). Currently you can only run one gateway at a time in this demo.
+   - Copy the flow-id from the previous command (it should look like `dev-[a-zA-Z0-9]`)
+   - Run the following to forward the dev demo application port from within Codespaces to a URL you can access
+     ```
+     kardinal gateway <flow-id>
+     ```
+   - Access the dev frontend from the forwarded port
+   - Notice how two items are already in the cart, as the dev database is configured to be seeded with some dev data
+   - Browse through the store and add items to your cart in the dev version
 
-1. 🔄 Update port forwarding:
-   ```
-   ./scripts/forward.sh
-   ```
-   Run this again to ensure all new services are properly forwarded.
-
-1. 🧪 Interact with the dev version:
-   - Check the "Ports" tab in the Codespaces UI
-   - Look for the port labelled "voting-app-dev" and open it in your browser
-   - Click on the voting buttons in the dev version to send traffic through it
-   
-   **Note**: Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is fowarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait 15 seconds, and open the port in the "ports" tab.   
-
-1. 🔍 Compare the new structure on app.kardinal.dev:
-   - Go back to the dashboard
+4. 🔍 Compare the new structure on app.kardinal.dev:
+   - Go back to the Kardinal dashboard
    - Notice the changes in the environment:
-     - A dev version is now deployed in the same namespace
-     - Dev traffic is routed to the dev version, with a database sidecar protecting the data layer
-     - Prod still works independently in the same namespace - go to the prod version and click, it goes to the prod version and speaks to the DB directly
-     - The isolated database writes are managed through Neon's branching feature, which is seamlessly integrated with Kardinal via the sidecar
+     - A dev version of the frontend is now deployed in the same namespace
+     - Dev traffic is routed to the dev version of the frontend
+     - The main version still works independently in the same namespace
 
 1. 🔄 Verify prod functionality:
     - Return to the production voting app URL (ending with -8090)
     - Confirm that it still works and interacts with the database directly in the "prod" namespace
 
-1. 🧹 Clean up the dev flow:
+5. 🧹 Clean up the dev flow:
     ```
-    kardinal flow delete -k voting-app-demo/k8s-manifest.yaml
+    kardinal flow delete <flow_id>
     ```
     This command removes the development version of the app.
-
-1. 🔄 Final port forwarding update:
-    ```
-    ./scripts/forward.sh prod
-    ```
-    Run this one last time to update the port forwarding.
-
-1. 🔎 Final dashboard check
+   
     - Return to the dashboard one last time
-    - Observe that the environment has been cleaned up and returned to its original state, with only the "prod" services visible.
+    - Observe that the environment has been cleaned up and returned to its original state, with only the main services visible.
+    - Return to the main online boutique URL (the first nginx URL)
+    - Confirm that it still works and has not been impacted by the development workflow
 
 This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your production setup. You'll experience firsthand how Kardinal enables isolated development without risking production data or disrupting the live environment.🚀
 
 ## 🔗 Port Forwarding Explanation
 
-We're using port forwarding in this Codespace setup to make the various services accessible to you. Since the Minikube cluster is running inside the Codespace, we need to forward specific ports to allow you to interact with the applications and dashboards through your browser. This is why you'll see multiple forwarded ports in the "Ports" tab of the Codespace UI.
+We're using port forwarding in combination with a proxy in this Codespace setup to make the various services accessible to you. We use Codespaces to forward URLs over the internet but add an nginx proxy to set the right hostname to hit the right lightweight environment
 
-Codespaces port forwarding can be flaky. If you immediately click on the toast that pops up when a port is forwarded, it can be too fast and the port tunnel will shut down. If that happens, just run `./scripts/forward.sh` to set up the forwarding again. Then, don't click on the toast - instead, let it run, wait 15 seconds, and open the port in the "ports" tab.
-
-If you encounter any issues with port forwarding, you can reset it by running:
+If you encounter any issues with port forwarding or nginx, you can reset it by running:
 ```
-./scripts/forward.sh
+# make sure all pods are running and 2/2
+kubectl get pods -n prod
+kardinal gateway <flow-id>
 ```
 
 ## 📘 About Neon and Required Fields
@@ -163,4 +146,4 @@ We are working with a small but selective set of initial users, join the beta [h
 
 If you run into any issues with this playground please create an issue here or email us at `hello@kardinal.dev`.
 
-If you are encountering any issue with the port forwards, simply use `./scripts/forward.sh` to reset the port forwarding.
+If you are encountering any issue with the port forwards, simply use `kardinal gateway prod` to reset the port forwarding.
