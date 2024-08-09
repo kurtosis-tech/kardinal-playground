@@ -87,7 +87,7 @@ setup_kardinal_cli() {
     log "🛠️ Setting up Kardinal CLI..."
 
     # Install Kardinal CLI using curl
-    run_command_with_spinner sh -c 'curl get.kardinal.dev -sL | bash' || log_error "Failed to install Kardinal CLI"
+    curl get.kardinal.dev -sL | sh || true
 
     # Ensure the Kardinal data directory exists
     mkdir -p "$KARDINAL_DATA_DIR"
@@ -131,7 +131,7 @@ deploy_kardinal_manager() {
     log "👩‍💼 Kardinal Manager Deployed"
 
     # Run the kardinal command for voting app deployment with spinner
-    run_command_with_spinner kardinal deploy -k voting-app-demo/k8s-manifest.yaml
+    run_command_with_spinner kardinal deploy -k obd-demo.yaml
 
     log "🗳️ Initial version of voting app deployed"
 
@@ -143,13 +143,6 @@ deploy_kardinal_manager() {
 
     TENANT_UUID=$(cat "$UUID_FILE")
     log_verbose "Kardinal Manager deployed successfully with Tenant UUID: $TENANT_UUID"
-}
-
-build_images() {
-    log "🏗️ Building images..."
-    run_command_with_spinner minikube image build -t voting-app-ui -f ./Dockerfile ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-prod image"
-    run_command_with_spinner minikube image build -t voting-app-ui-dev -f ./Dockerfile-v2 ./voting-app-demo/voting-app-ui/ || log_error "Failed to build voting-app-dev image"
-    log_verbose "Demo images built successfully."
 }
 
 silent_segment_track() {
@@ -181,7 +174,6 @@ main() {
     setup_docker
     start_minikube
     install_istio
-    build_images
     setup_kardinal_cli
     deploy_kardinal_manager
 
