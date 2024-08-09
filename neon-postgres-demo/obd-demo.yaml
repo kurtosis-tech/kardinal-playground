@@ -26,7 +26,7 @@ spec:
                 - all
             privileged: false
             readOnlyRootFilesystem: true
-          image: leoporoli/newobd-cartservice:0.0.3
+          image: tedim52/newobd-cartservice:0.0.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8090
@@ -48,6 +48,10 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 3
           env:
+            # if POSTGRES is set, uses this to connect
+            # otherwise uses environment variables below
+            - name: POSTGRES
+              value: ""
             - name: PORT
               value: "8090"
             - name: DB_USERNAME
@@ -69,7 +73,14 @@ metadata:
     app: cartservice
     version: v1
   annotations:
-    kardinal.dev.service/dependencies: "postgres:tcp"
+    kardinal.dev.service/plugins: | 
+      - name: https://github.com/kurtosis-tech/neondb-plugin.git
+        type: external
+        servicename: neon-postgres-db
+        args:
+          NEON_API_KEY: ""
+          NEON_PROJECT_ID: ""
+          NEON_FORK_FROM_BRANCH_ID: ""
 spec:
   type: ClusterIP
   selector:
@@ -127,12 +138,11 @@ spec:
             - name: ADDRESS
               value: ":8080"
             - name: FREECURRENCYAPIKEY
-              value: "fca_live_nFVVF8CvfxqJhzMHB4N2x1NH7ffVVPwZr9hg3iNl"
+              value: ""
             - name: CARTSERVICEHOST
               value: cartservice
             - name: PRODUCTCATALOGSERVICEHOST
               value: productcatalogservice
-
 ---
 apiVersion: v1
 kind: Service
@@ -144,11 +154,11 @@ metadata:
   annotations:
     kardinal.dev.service/dependencies: "productcatalogservice:http,cartservice:http"
     kardinal.dev.service/plugins: |
-      - name: https://github.com/kurtosis-tech/free-currency-api-plugin.git
+      - name: github.com/kurtosis-tech/free-currency-api-plugin
         type: external
         servicename: free-currency-api
         args:
-          api_key: fca_live_VKZlykCWEiFcpBHnw74pzd4vLi04q1h9JySbVHDF
+          api_key: ""
 spec:
   type: ClusterIP
   selector:
@@ -177,72 +187,6 @@ spec:
       targetPort: 8080
       protocol: TCP
       appProtocol: HTTP
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: postgres-v1
-  labels:
-    app: postgres
-    version: v1
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: postgres
-      version: v1
-  template:
-    metadata:
-      labels:
-        app: postgres
-        version: v1
-    spec:
-      containers:
-        - name: postgres
-          image: 'postgres:14'
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 5432
-          env:
-            - name: POSTGRES_DB
-              value: "cart"
-            - name: POSTGRES_USER
-              value: "postgresuser"
-            - name: POSTGRES_PASSWORD
-              value: "postgrespass"
-          volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: postgres-data
-      volumes:
-        - name: postgres-data
-          emptyDir: {}
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres
-  labels:
-    app: postgres
-    version: v1
-  annotations:
-    kardinal.dev.service/stateful: "true"
-    kardinal.dev.service/plugins: |
-      - name: github.com/kurtosis-tech/postgres-seed-plugin
-        args:
-          seed_script: "create table if not exists public.items( id bigserial primary key, created_at timestamp with time zone, updated_at timestamp with time zone, deleted_at timestamp with time zone, user_id    text, product_id text, quantity   integer); INSERT INTO public.items (id, created_at, updated_at, deleted_at, user_id, product_id, quantity) VALUES (1, '2024-08-02 13:02:07.656104 +00:00', '2024-08-02 13:02:07.656104 +00:00', null, '0494c5e0-dde0-48fa-a6d8-f7962f5476bf', '66VCHSJNUP', 1); INSERT INTO public.items (id, created_at, updated_at, deleted_at, user_id, product_id, quantity) VALUES (2, '2024-08-02 13:02:10.891407 +00:00', '2024-08-02 13:02:10.891407 +00:00', null, '0494c5e0-dde0-48fa-a6d8-f7962f5476bf', '2ZYFJ3GM2N', 1); SELECT setval('items_id_seq', (SELECT MAX(id) FROM items));"
-          db_name: "cart"
-          db_user: "postgresuser"
-          db_password: "postgrespass"
-spec:
-  type: ClusterIP
-  ports:
-    - name: tcp
-      port: 5432
-      targetPort: 5432
-      protocol: TCP
-  selector:
-    app: postgres
 ---
 apiVersion: apps/v1
 kind: Deployment
