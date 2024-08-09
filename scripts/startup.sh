@@ -86,8 +86,8 @@ install_istio() {
 setup_kardinal_cli() {
     log "🛠️ Setting up Kardinal CLI..."
 
-    # Install Kardinal CLI using curl
-    curl get.kardinal.dev -sL | sh || true
+    # Install Kardinal CLI using curl, skip interactive post-install steps
+    curl get.kardinal.dev -sL | env SKIP_KARDINAL_POST_INSTALL=1 sh || true
 
     # Ensure the Kardinal data directory exists
     mkdir -p "$KARDINAL_DATA_DIR"
