@@ -74,7 +74,7 @@ metadata:
     version: v1
   annotations:
     kardinal.dev.service/plugins: | 
-      - name: https://github.com/kurtosis-tech/neondb-plugin.git
+      - name: github.com/kurtosis-tech/neondb-plugin
         type: external
         servicename: neon-postgres-db
         args:

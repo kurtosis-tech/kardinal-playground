@@ -8,6 +8,8 @@ In this demo, you will:
 3. Use Kardinal to set up a lightweight "dev environment" inside of your production cluster so you can test on production data (30 seconds)
 4. Visualize your cluster in the Kardinal Dashboard again, to see how the Kardinal "dev environment" is structured (30 seconds)
 
+Note: make sure you are in the `neon-postgres-demo` directory while following this demo!
+
 ## 🛠 Features
 
 - 🐦 Kardinal: Our developer tool for safely developing in prod
