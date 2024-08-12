@@ -241,12 +241,19 @@ metadata:
                 product_id TEXT,
                 quantity INTEGER
             );
+
             INSERT INTO public.items (id, created_at, updated_at, deleted_at, user_id, product_id, quantity) 
             VALUES (1, '2024-08-02 13:02:07.656104 +00:00', '2024-08-02 13:02:07.656104 +00:00', null, '0494c5e0-dde0-48fa-a6d8-f7962f5476bf', '66VCHSJNUP', 1);
+
             INSERT INTO public.items (id, created_at, updated_at, deleted_at, user_id, product_id, quantity) 
             VALUES (2, '2024-08-02 13:02:10.891407 +00:00', '2024-08-02 13:02:10.891407 +00:00', null, '0494c5e0-dde0-48fa-a6d8-f7962f5476bf', '2ZYFJ3GM2N', 1);
+
             -- Set the sequence to the correct value after inserting records
-            SELECT setval('public.items_id_seq', (SELECT MAX(id) FROM public.items));            
+            SELECT setval('public.items_id_seq', (SELECT MAX(id) FROM public.items));
+          db_name: "cart"
+          db_user: "postgresuser"
+          db_password: "postgrespass"
+
 spec:
   type: ClusterIP
   ports:
@@ -256,6 +263,7 @@ spec:
       protocol: TCP
   selector:
     app: postgres
+
 ---
 apiVersion: apps/v1
 kind: Deployment
