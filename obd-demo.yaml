@@ -26,7 +26,7 @@ spec:
                 - all
             privileged: false
             readOnlyRootFilesystem: true
-          image: leoporoli/newobd-cartservice:0.0.3
+          image: kurtosistech/cartservice:main
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8090
@@ -103,7 +103,7 @@ spec:
     spec:
       containers:
         - name: server
-          image: leoporoli/newobd-frontend:0.0.6
+          image: kurtosistech/frontend:main
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -199,7 +199,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: 'postgres:14'
+          image: "postgres:14"
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5432
@@ -286,7 +286,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
         - name: server
-          image: leoporoli/newobd-productcatalogservice:0.0.3
+          image: kurtosistech/productcatalogservice:main
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8070

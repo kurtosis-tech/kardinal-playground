@@ -73,7 +73,7 @@ metadata:
     app: cartservice
     version: v1
   annotations:
-    kardinal.dev.service/plugins: | 
+    kardinal.dev.service/plugins: |
       - name: github.com/kurtosis-tech/neondb-plugin
         type: external
         servicename: neon-postgres-db
@@ -114,7 +114,7 @@ spec:
     spec:
       containers:
         - name: server
-          image: leoporoli/newobd-frontend:0.0.6
+          image: kurtosistech/frontend:main
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -209,7 +209,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
         - name: server
-          image: leoporoli/newobd-productcatalogservice:0.0.3
+          image: kurtosistech/productcatalogservice:main
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8070
