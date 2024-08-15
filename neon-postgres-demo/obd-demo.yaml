@@ -26,7 +26,7 @@ spec:
                 - all
             privileged: false
             readOnlyRootFilesystem: true
-          image: tedim52/newobd-cartservice:0.0.1
+          image: kurtosistech/cartservice:main
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8090
