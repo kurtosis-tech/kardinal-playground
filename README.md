@@ -121,7 +121,7 @@ This guide showcases the power of Kardinal by demonstrating the seamless creatio
 Kardinal also has supports for `templates`. Templates are overrides on the base manifest that allow you to configure annotations different from the base manifest.
 [Template Example](/template.yaml) is one such template that does the following
 
-1. It adds an extra item to the database compared to the base manifest and it shows how the quantity field is configurable; when used with [example arguments file](/template_args.yaml) an extra item in the cart with quantity set to 3. If you don't supply args it defaults to 1.
+1. It adds an extra item to the database compared to the base manifest and it shows how the quantity field is configurable; when used with [example arguments file](/template_args.yaml) an extra item is added to the cart with quantity set to 3. If you don't supply args the quantity defaults to 1.
 1. It adds an extra annotation `kardinal.dev.service/shared: "true"`. Any flow using this template uses a `shared` instance of Postgres allowing you to use the same instance across flows; making it more resource efficient.
 
 While the plugin annotation replaces any existing plugin annotation on the Postgres service; the `shared` annotation is additive to the base manifest.
