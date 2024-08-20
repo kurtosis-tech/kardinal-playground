@@ -129,7 +129,7 @@ While the plugin annotation replaces any existing plugin annotation on the Postg
 To create a template use the following command
 
 ```bash
-kardinal tempalte create extra-item-shared --template-yaml ./template.yaml --description "Extra item and postgres is shared"
+kardinal template create extra-item-shared --template-yaml ./template.yaml --description "Extra item and postgres is shared"
 ```
 
 You can use the alias `-t` for the `--template-yaml` flag and `-d` for the `--description` flag.
