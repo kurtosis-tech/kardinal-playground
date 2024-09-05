@@ -5,7 +5,7 @@ BOUTIQUE_DEMO_APP_REPO="https://github.com/kurtosis-tech/new-obd.git"
 set -euo pipefail
 
 # Source the common script
-source ./common.sh
+source ./scripts/common.sh
 
 download_boutique_remo() {
   log "⏬ Downloading the frontend project from the boutique demo app repository..."

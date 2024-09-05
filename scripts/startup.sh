@@ -9,7 +9,7 @@ KARDINAL_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/kardinal"
 UUID_FILE="$KARDINAL_DATA_DIR/fk-tenant-uuid"
 
 # Source the common script
-source ./common.sh
+source ./scripts/common.sh
 
 setup_docker() {
     log "🐳 Setting up Docker..."
