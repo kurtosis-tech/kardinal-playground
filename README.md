@@ -69,7 +69,7 @@ Follow these steps to explore the Kardinal Playground.
      kardinal gateway <flow-id>
      ```
    - Access the dev frontend from the forwarded port
-   - Notice how two items are already in the cart, as the dev database is configured to be seeded with some dev data
+   - Notice the dev frontend advertises "hottest products" now
    - Browse through the store and add items to your cart in the dev version
 
 4. 🔧 Create a second and more complex dev flow:
