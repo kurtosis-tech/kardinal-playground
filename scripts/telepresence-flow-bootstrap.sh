@@ -40,6 +40,7 @@ main() {
     # log "🕰️ This can take around 3 minutes! Familiarize yourself with the repository while this happens."
 
     download_boutique_remo
+    install_telepresence
 
     # log "✅ Startup completed! Minikube, Istio, Kontrol, and Kardinal Manager are ready."
     # log "🏠 Tenant UUID: $TENANT_UUID"
