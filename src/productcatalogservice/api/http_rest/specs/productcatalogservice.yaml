@@ -1,0 +1,146 @@
+openapi: 3.0.3
+
+info:
+  title: Product catalog service
+  description: RESTful API specification for the Product catalog service, it's used to auto-generate client SDK's and server-side code
+  version: 0.1.0
+
+servers:
+  - url: https://productcatalogservice/
+    description: Product catalog service API
+
+paths:
+
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the service.
+      responses:
+        default:
+          $ref: "#/components/responses/NotOk"
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /products:
+    get:
+      summary: List products
+      responses:
+        default:
+          $ref: "#/components/responses/NotOk"
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+
+  /products/{id}:
+    get:
+      summary: Get product by id
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        default:
+          $ref: "#/components/responses/NotOk"
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Product"
+
+# =========================================================================================================================
+# =========================================================================================================================
+# > > > > > > > > > > > > > > > > > > > > > > > > Data Models < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < <
+# =========================================================================================================================
+# =========================================================================================================================
+
+components:
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      description: product id
+      schema:
+        type: string
+
+  responses:
+    NotOk:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ResponseInfo"
+            required: true
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "UP"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-07-29T00:00:00Z"
+
+    ResponseType:
+      type: string
+      enum:
+        - ERROR
+        - INFO
+        - WARNING
+
+    ResponseInfo:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/ResponseType"
+        message:
+          type: string
+        code:
+          type: integer
+          format: uint32
+      required:
+        - type
+        - message
+        - code
+
+    Money:
+      type: object
+      properties:
+        currency_code:
+          type: string
+        units:
+          type: integer
+          format: int64
+        nanos:
+          type: integer
+          format: int32
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        picture:
+          type: string
+        price_usd:
+          $ref: "#/components/schemas/Money"
+        categories:
+          type: array
+          items:
+            type: string
