@@ -25,15 +25,6 @@ const (
 	cookieCurrency  = cookiePrefix + "currency"
 )
 
-var whitelistedCurrencies = map[string]bool{
-	"USD": true,
-	"EUR": true,
-	"CAD": true,
-	"JPY": true,
-	"GBP": true,
-	"TRY": true,
-}
-
 type ctxKeySessionID struct{}
 
 type frontendServer struct {
@@ -90,17 +81,9 @@ func main() {
 	r.HandleFunc("/robots.txt", func(w http.ResponseWriter, _ *http.Request) { fmt.Fprint(w, "User-agent: *\nDisallow: /") })
 	r.HandleFunc("/_healthz", func(w http.ResponseWriter, _ *http.Request) { fmt.Fprint(w, "ok") })
 
-	//TODO
-	/*
-		r.HandleFunc("/logout", svc.logoutHandler).Methods(http.MethodGet)
-		r.HandleFunc("/cart/checkout", svc.placeOrderHandler).Methods(http.MethodPost)
-	*/
-
 	var handler http.Handler = r
-	handler = &logHandler{log: log, next: handler} // add logging
-	handler = ensureSessionID(handler)             // add session ID
-	// handler = tracing(handler)                     // add opentelemetry instrumentation
-	// r.Use(otelmux.Middleware(name))
+	handler = &logHandler{log: log, next: handler}
+	handler = ensureSessionID(handler)
 	r.Use(KardinalTracingContextWrapper)
 
 	// Start the server
