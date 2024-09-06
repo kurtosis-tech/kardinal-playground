@@ -123,20 +123,20 @@ Follow these steps to explore the Kardinal Playground.
 8. 🔧 Create a third dev flow to intercept the traffic to a local port with [Telepresence](https://www.telepresence.io/) and test a new change in the UI without having to rebuild and redeploy the container in the cluster.
 
    - Execute the following script to download the frontend project of the boutique demo example, install and connect the Telepresence tool
-   ```bash
-   ./scripts/telepresence-flow-bootstrap.sh
-   ```
+     ```bash
+     ./scripts/telepresence-flow-bootstrap.sh
+     ```
    - Create a dev flow for the frontend service and take note of the flow-id created
-   ```bash
-   kardinal flow create frontend kurtosistech/frontend:demo-frontend
-   ```
+     ```bash
+     kardinal flow create frontend kurtosistech/frontend:demo-frontend
+     ```
    - As already see, to interact with the dev version, first stop your previous gateway (if it's still running).
    - Run the following to forward the dev demo application port from within Codespaces to a URL you can access
      ```bash
      kardinal gateway <flow-id>
      ```
    - Access the dev frontend from the forwarded port
-   - Make a change in the `home` template. Edit the
+   - Make a change in the `home` template. Edit the file inside `./src/frontend/templates/home.html` 
 
 This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your main, stable setup. You'll experience firsthand how Kardinal enables isolated development without risking stability of a shared cluster, or disrupting the live environment. 🚀
 
