@@ -46,3 +46,26 @@ run_command_with_spinner() {
         return $?
     fi
 }
+
+# check if a binary file exists and is executable
+check_binary_file_exists() {
+    if [ -x "$1" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Check if a k8s service exists in a namespace
+check_k8s_service_exists_in_namespace() {
+    local service_name="$1"
+    local namespace="$2"
+
+    if kubectl get service "$service_name" -n "$namespace" > /dev/null 2>&1; then
+        echo "Service '$service_name' exists in namespace '$namespace'."
+        return 0
+    else
+        echo "Service '$service_name' does not exist in namespace '$namespace'."
+        return 1
+    fi
+}

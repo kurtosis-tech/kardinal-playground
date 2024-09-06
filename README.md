@@ -120,7 +120,7 @@ Follow these steps to explore the Kardinal Playground.
    kardinal flow delete <flow_id>
    ```
 
-8. 🔧 Create a third dev flow to intercept the traffic to a local port with Telepresence and test a new change in the UI without having to rebuild and deploy the container in the cluster.
+8. 🔧 Create a third dev flow to intercept the traffic to a local port with [Telepresence](https://www.telepresence.io/) and test a new change in the UI without having to rebuild and redeploy the container in the cluster.
 
    Execute the following script to download the frontend project of the boutique demo example and install the Telepresence tool
    ```bash
