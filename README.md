@@ -75,7 +75,7 @@ Follow these steps to explore the Kardinal Playground.
 4. 🔧 Create a second and more complex dev flow:
 
    Now our demo website is preparing for a big sale, we need to add a new feature to both the backend and the frontend to handle the new sale. This feature is contained into 2 images: `frontend` and `productcatalogservice`.
-   We can rely on support for multiple services to coordinate the deployment in a sigle flow. Using the flag `-s`, we can include multiple services and images:
+   We can rely on support for multiple services to coordinate the deployment in a single flow. Using the flag `-s`, we can include multiple services and images:
 
    ```bash
    kardinal flow create frontend kurtosistech/frontend:demo-on-sale -s productcatalogservice=kurtosistech/productcatalogservice:demo-on-sale
