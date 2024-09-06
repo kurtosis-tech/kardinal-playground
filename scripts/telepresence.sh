@@ -1,26 +1,8 @@
 #!/bin/bash
-
-BOUTIQUE_DEMO_APP_REPO="https://github.com/kurtosis-tech/new-obd.git"
-BOUTIQUE_DEMO_APP_DIRNAME="new-obd"
-
 set -euo pipefail
 
 # Source the common script
 source ./scripts/common.sh
-
-download_boutique_repo() {
-  log "⏬ Downloading the frontend project from the boutique demo app repository..."
-  if [ -d "$BOUTIQUE_DEMO_APP_DIRNAME" ]; then
-    log "The folder '$BOUTIQUE_DEMO_APP_DIRNAME' already exists, so it means the project has bean already downloaded"
-  else
-    run_command_with_spinner git clone --no-checkout $BOUTIQUE_DEMO_APP_REPO || log_error "Failed to download the frontend project"
-    cd $BOUTIQUE_DEMO_APP_DIRNAME
-    git sparse-checkout init --cone
-    git sparse-checkout set src/frontend
-    git checkout main
-    log_verbose "Frontend project successfully downloaded."
-  fi
-}
 
 telepresence_install() {
   log "🗂️ Checking if Telepresence is already installed..."
@@ -57,16 +39,10 @@ main() {
         log "Verbose mode enabled."
     fi
 
-    # log "🕰️ This can take around 3 minutes! Familiarize yourself with the repository while this happens."
-
-    download_boutique_repo
     telepresence_install
     telepresence_connect
 
-    # log "✅ Startup completed! Minikube, Istio, Kontrol, and Kardinal Manager are ready."
-    # log "🏠 Tenant UUID: $TENANT_UUID"
-    # log "📊 Kardinal Dashboard: https://app.kardinal.dev/$(cat ~/.local/share/kardinal/fk-tenant-uuid)/traffic-configuration"
-    # exec bash
+    log "✅ Telepresence installation and connection completed!"
 }
 
 main "$@"
