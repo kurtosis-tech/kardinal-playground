@@ -122,9 +122,9 @@ Follow these steps to explore the Kardinal Playground.
 
 8. 🔧 Create a third dev flow to intercept the traffic to a local port with [Telepresence](https://www.telepresence.io/) and test a new change in the UI without having to rebuild and redeploy the container in the cluster.
 
-   - Execute the following script to download the frontend project of the boutique demo example, install and connect the Telepresence tool
+   - Execute the following script to install and connect the Telepresence tool to the cluster's network
      ```bash
-     ./scripts/telepresence-flow-bootstrap.sh
+     ./scripts/telepresence.sh
      ```
    - Create a dev flow for the frontend service and take note of the flow-id created
      ```bash
@@ -136,7 +136,28 @@ Follow these steps to explore the Kardinal Playground.
      kardinal gateway <flow-id>
      ```
    - Access the dev frontend from the forwarded port
-   - Make a change in the `home` template. Edit the file inside `./src/frontend/templates/home.html` 
+   - Make a change in the frontend `home` template. Edit the file inside `./src/frontend/templates/home.html`
+     - For example, you can replace the line `<h3>Hot Products</h3>` with `<h3>Hot Products - Testing intercepts</h3>`
+   - Leave the terminal were you run the latest gateway command and create a new one to run the next commands
+   - Now you can start the edited frontend version in the host
+   ```bash
+   ./scripts/run-frontend.sh
+   ```
+   - This will open a new port that you can access to see the new version of the frontend
+   - Leave the frontend app running in the terminal and create a new terminal to run the next commands
+   - Execute the Telepresence intercept command to send the traffic to the frontend version running in the host
+   ```bash
+   telepresence intercept frontend-<flow_id> --port 8070:http
+   ```
+   - Go back to the browser's tab where the dev flow app is running and refresh the browser to check the intercept
+   - You should see that the UI has been modified showing the changes you made in the `home` template
+   - The intercept makes it possible to send the cluster's traffic to the app running in the host and, it's able to connect to the other services inside the cluster because it was able to connect to the cluster's network with Telepresence.
+
+9. 🧹 Clean up the dev flow:
+
+   ```bash
+   kardinal flow delete <flow_id>
+   ```
 
 This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your main, stable setup. You'll experience firsthand how Kardinal enables isolated development without risking stability of a shared cluster, or disrupting the live environment. 🚀
 
