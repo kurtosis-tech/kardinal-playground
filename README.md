@@ -69,7 +69,7 @@ Follow these steps to explore the Kardinal Playground.
      kardinal gateway <flow-id>
      ```
    - Access the dev frontend from the forwarded port
-   - Notice how two items are already in the cart, as the dev database is configured to be seeded with some dev data
+   - Notice the dev frontend advertises "hottest products" now
    - Browse through the store and add items to your cart in the dev version
 
 4. 🧹 Clean up the dev flow:
@@ -80,15 +80,16 @@ Follow these steps to explore the Kardinal Playground.
 
    This command removes the development version of the app.
 
-   - Return to the dashboard one last time
-   - Observe that the environment has been cleaned up and returned to its original state, with only the main services visible.
-   - Return to the main online boutique URL (the first nginx URL)
-   - Confirm that it still works and has not been impacted by the development workflow
+    - Return to the dashboard one last time
+    - Observe that the environment has been cleaned up and returned to its original state, with only the main services visible.
+    - Return to the main online boutique URL (the first nginx URL)
+    - Confirm that it still works and has not been impacted by the development workflow
+
 
 5. 🔧 Create a second and more complex dev flow:
 
    Now our demo website is preparing for a big sale, we need to add a new feature to both the backend and the frontend to handle the new sale. This feature is contained into 2 images: `frontend` and `productcatalogservice`.
-   We can rely on support for multiple services to coordinate the deployment in a sigle flow. Using the flag `-s`, we can include multiple services and images:
+   We can rely on support for multiple services to coordinate the deployment in a single flow. Using the flag `-s`, we can include multiple services and images:
 
    ```bash
    kardinal flow create frontend kurtosistech/frontend:demo-on-sale -s productcatalogservice=kurtosistech/productcatalogservice:demo-on-sale
