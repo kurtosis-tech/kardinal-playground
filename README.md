@@ -149,9 +149,14 @@ Follow these steps to explore the Kardinal Playground.
    ```bash
    telepresence intercept frontend-<flow_id> --port 8070:http
    ```
-   - Go back to the browser's tab where the dev flow app is running and refresh the browser to check the intercept
+   - Wait for a couple of second and go back to the browser's tab where the dev flow app is running and refresh the browser to check the intercept
    - You should see that the UI has been modified showing the changes you made in the `home` template
    - The intercept makes it possible to send the cluster's traffic to the app running in the host and, it's able to connect to the other services inside the cluster because it was able to connect to the cluster's network with Telepresence.
+   - Now you can leave the intercept
+   ```bash
+   telepresence leave frontend-<flow_id>
+   ```
+   - Go back to the open tab and check that the UI is back to the previous version without your changes
 
 9. 🧹 Clean up the dev flow:
 
