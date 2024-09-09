@@ -99,15 +99,14 @@ func (fe *frontendServer) homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := templates.ExecuteTemplate(w, "home", map[string]interface{}{
-		"session_id":    sessionID(r),
-		"request_id":    r.Context().Value(ctxKeyRequestID{}),
-		"user_currency": currentCurrency(r),
-		"show_currency": true,
-		"currencies":    currencies,
-		"products":      ps,
-		"cart_size":     cartSize(*cart.Items),
-		"banner_color":  os.Getenv("BANNER_COLOR"), // illustrates canary deployments
-		//"ad":                fe.chooseAd(r.Context(), []string{}, log), //TODO fix
+		"session_id":      sessionID(r),
+		"request_id":      r.Context().Value(ctxKeyRequestID{}),
+		"user_currency":   currentCurrency(r),
+		"show_currency":   true,
+		"currencies":      currencies,
+		"products":        ps,
+		"cart_size":       cartSize(*cart.Items),
+		"banner_color":    os.Getenv("BANNER_COLOR"), // illustrates canary deployments
 		"platform_css":    plat.css,
 		"platform_name":   plat.provider,
 		"is_cymbal_brand": isCymbalBrand,
@@ -302,13 +301,11 @@ func (fe *frontendServer) viewCartHandler(w http.ResponseWriter, r *http.Request
 
 	year := time.Now().Year()
 	if err := templates.ExecuteTemplate(w, "cart", map[string]interface{}{
-		"session_id":    sessionID(r),
-		"request_id":    r.Context().Value(ctxKeyRequestID{}),
-		"user_currency": currentCurrency(r),
-		"currencies":    currencies,
-		//"recommendations":   recommendations,
-		"cart_size": cartSize(*cart.Items),
-		//"shipping_cost":     shippingCost,
+		"session_id":       sessionID(r),
+		"request_id":       r.Context().Value(ctxKeyRequestID{}),
+		"user_currency":    currentCurrency(r),
+		"currencies":       currencies,
+		"cart_size":        cartSize(*cart.Items),
 		"show_currency":    true,
 		"total_cost":       totalPrice,
 		"items":            items,
@@ -316,7 +313,6 @@ func (fe *frontendServer) viewCartHandler(w http.ResponseWriter, r *http.Request
 		"platform_css":     plat.css,
 		"platform_name":    plat.provider,
 		"is_cymbal_brand":  isCymbalBrand,
-		//"deploymentDetails": deploymentDetailsMap,
 	}); err != nil {
 		log.Println(err)
 	}
@@ -417,7 +413,6 @@ func renderHTTPError(r *http.Request, w http.ResponseWriter, err error, code int
 		"error":       errMsg,
 		"status_code": code,
 		"status":      http.StatusText(code),
-		//"deploymentDetails": deploymentDetailsMap,
 	}); templateErr != nil {
 		log.Println(templateErr)
 	}
