@@ -85,7 +85,6 @@ Follow these steps to explore the Kardinal Playground.
     - Return to the main online boutique URL (the first nginx URL)
     - Confirm that it still works and has not been impacted by the development workflow
 
-
 5. 🔧 Create a second and more complex dev flow:
 
    Now our demo website is preparing for a big sale, we need to add a new feature to both the backend and the frontend to handle the new sale. This feature is contained into 2 images: `frontend` and `productcatalogservice`.
@@ -123,7 +122,7 @@ Follow these steps to explore the Kardinal Playground.
 
 8. 🔧 Create a third dev flow to intercept the traffic to a local port with [Telepresence](https://www.telepresence.io/) and test a new change in the UI without having to rebuild and redeploy the container in the cluster.
 
-   - Execute the following script to install and connect the Telepresence tool to the cluster's network
+   - Execute the following script to install the Telepresence CLI and the Traffic Manager's pod in the cluster
      ```bash
      ./scripts/telepresence.sh
      ```
@@ -144,11 +143,11 @@ Follow these steps to explore the Kardinal Playground.
    ```bash
    ./scripts/run-frontend.sh
    ```
-   - This will open a new port that you can access to see the new version of the frontend
+   - This will open a new port (8070 in this example) that you can access to see the new version of the frontend
    - Leave the frontend app running in the terminal and create a new terminal to run the next commands
-   - Execute the Telepresence intercept command to send the traffic to the frontend version running in the host
+   - Execute the `kardinal flow telepresence-intercept` command to send the traffic to the frontend version running in the host
    ```bash
-   telepresence intercept frontend-<flow_id> --port 8070:http
+   kardinal flow telepresence-intercept <flow_id> frontend 8070
    ```
    - Wait for a couple of second and go back to the browser's tab where the dev flow app is running and refresh the browser to check the intercept
    - You should see that the UI has been modified showing the changes you made in the `home` template

@@ -25,13 +25,6 @@ telepresence_install() {
   fi
 }
 
-telepresence_connect() {
-  log "🔌 Connecting Telepresence to Kardinal prod namespace..."
-  run_command_with_spinner sudo telepresence --kubeconfig=/home/codespace/.kube/config connect -n prod || log_error "Failed to connect Telepresence"
-  log_verbose "Telepresence successfully connected."
-}
-
-
 main() {
     # Check if an argument is provided
     if [ $# -gt 0 ] && [ "$1" = "--verbose" ]; then
@@ -40,9 +33,8 @@ main() {
     fi
 
     telepresence_install
-    telepresence_connect
 
-    log "✅ Telepresence installation and connection completed!"
+    log "✅ Telepresence installation completed!"
 }
 
 main "$@"
