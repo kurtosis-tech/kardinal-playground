@@ -87,7 +87,7 @@ Follow these steps to explore the Kardinal Playground.
    kardinal flow create frontend kurtosistech/frontend:demo-frontend
    ```
 
-   This command sets up a development version of the frontend alongside the main version. Additionally, it will create any required dev versions of services that are downstream. In this case the frontend depends on the cartservice, that depends on the Neon DB. In order to isolate data from our prod flow, we'll need to create dev version of the cartservice and Neon DB.
+   This command sets up a development version of the frontend alongside the main version. Additionally, it will create any required dev versions of services that are downstream. In this case the frontend depends on the cartservice, that depends on the Neon DB. In order to isolate data from our baseline flow, we'll need to create dev version of the cartservice and Neon DB.
 
    The command will output a url, but it's not yet accessible because it's inside the Codespace.
 
@@ -111,10 +111,10 @@ Follow these steps to explore the Kardinal Playground.
      - Dev traffic is routed to the dev version of the frontend and through corresponding dev versions of downstream services
      - The main version still works independently in the same namespace
 
-5. 🔄 Verify prod functionality:
+5. 🔄 Verify baseline functionality:
 
    - Return to the production voting app URL (ending with -8090)
-   - Confirm that it still works and interacts with the database directly in the "prod" namespace
+   - Confirm that it still works and interacts with the database directly in the "baseline" namespace
 
 6. 🧹 Clean up the dev flow:
 

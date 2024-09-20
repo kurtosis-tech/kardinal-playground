@@ -170,7 +170,7 @@ metadata:
   name: frontend-external
   annotations:
     kardinal.dev.service/ingress: "true"
-    kardinal.dev.service/host: "prod.app.localhost"
+    kardinal.dev.service/host: "baseline.app.localhost"
 spec:
   type: LoadBalancer
   selector:
