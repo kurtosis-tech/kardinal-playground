@@ -36,7 +36,7 @@ Follow these steps to explore the Kardinal Playground.
 2. 🛍️ Explore the main online boutique deployment:
 
    ```bash
-   kardinal gateway prod
+   kardinal gateway baseline
    ```
 
    This command forwards the main demo application port from within Codespaces to a URL you can access
@@ -150,7 +150,7 @@ If you encounter any issues with port forwarding or nginx, you can reset it by r
 
 ```bash
 # make sure all pods are running and 2/2
-kubectl get pods -n prod
+kubectl get pods -n baseline
 kardinal gateway <flow-id>
 ```
 
@@ -174,4 +174,4 @@ We are working with a small but selective set of initial users, join the beta [h
 
 If you run into any issues with this playground please create an issue here or email us at `hello@kardinal.dev`.
 
-If you are encountering any issue with the port forwards or nginx, simply use `kardinal gateway prod` to reset the setup.
+If you are encountering any issue with the port forwards or nginx, simply use `kardinal gateway baseline` to reset the setup.
