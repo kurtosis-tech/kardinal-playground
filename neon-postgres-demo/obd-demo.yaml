@@ -271,24 +271,3 @@ spec:
       backendRefs:
         - name: frontend
           port: 80
-
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    kardinal.dev.service/ingress: "true"
-  name: ingress
-spec:
-  rules:
-    - host: web.other.localhost
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: frontend
-                port:
-                  number: 80
