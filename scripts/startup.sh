@@ -100,8 +100,9 @@ setup_kardinal_cli() {
 		return 1
 	fi
 
-	log "✅ Kardinal CLI installed successfully. You can now use the 'kardinal' command directly."
-	log_verbose "Kardinal CLI setup completed. The 'kardinal' command is now available at $KARDINAL_CLI_PATH."
+    KARDINAL_PLAYGROUND_USERNAME="${GITHUB_USER}" $KARDINAL_CLI_PATH report-install    
+    log "✅ Kardinal CLI installed successfully. You can now use the 'kardinal' command directly."
+    log_verbose "Kardinal CLI setup completed. The 'kardinal' command is now available at $KARDINAL_CLI_PATH."
 }
 
 deploy_kardinal_manager() {

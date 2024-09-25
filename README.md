@@ -36,7 +36,7 @@ Follow these steps to explore the Kardinal Playground.
 2. 🛍️ Explore the main online boutique deployment:
 
    ```bash
-   kardinal gateway prod
+   kardinal gateway baseline
    ```
 
    This command forwards the main demo application port from within Codespaces to a URL you can access
@@ -69,13 +69,13 @@ Follow these steps to explore the Kardinal Playground.
      kardinal gateway <flow-id>
      ```
    - Access the dev frontend from the forwarded port
-   - Notice how two items are already in the cart, as the dev database is configured to be seeded with some dev data
+   - Notice the dev frontend advertises "hottest products" now
    - Browse through the store and add items to your cart in the dev version
 
 4. 🔧 Create a second and more complex dev flow:
 
    Now our demo website is preparing for a big sale, we need to add a new feature to both the backend and the frontend to handle the new sale. This feature is contained into 2 images: `frontend` and `productcatalogservice`.
-   We can rely on support for multiple services to coordinate the deployment in a sigle flow. Using the flag `-s`, we can include multiple services and images:
+   We can rely on support for multiple services to coordinate the deployment in a single flow. Using the flag `-s`, we can include multiple services and images:
 
    ```bash
    kardinal flow create frontend kurtosistech/frontend:demo-on-sale -s productcatalogservice=kurtosistech/productcatalogservice:demo-on-sale
@@ -116,6 +116,32 @@ Follow these steps to explore the Kardinal Playground.
 
 This guide showcases the power of Kardinal by demonstrating the seamless creation and deletion of a dev environment alongside your main, stable setup. You'll experience firsthand how Kardinal enables isolated development without risking stability of a shared cluster, or disrupting the live environment. 🚀
 
+## 🧠 Advanced
+
+Kardinal also has supports for `templates`. Templates are overrides on the base manifest that allow you to configure annotations different from the base manifest.
+[Template Example](/template.yaml) is one such template that does the following
+
+1. It adds an extra item to the database compared to the base manifest and it shows how the quantity field is configurable; when used with [example arguments file](/template_args.yaml) an extra item is added to the cart with quantity set to 3. If you don't supply args the quantity defaults to 1.
+1. It adds an extra annotation `kardinal.dev.service/shared: "true"`. Any flow using this template uses a `shared` instance of Postgres allowing you to use the same instance across flows; making it more resource efficient.
+
+While the plugin annotation replaces any existing plugin annotation on the Postgres service; the `shared` annotation is additive to the base manifest.
+
+To create a template use the following command
+
+```bash
+kardinal template create extra-item-shared --template-yaml ./template.yaml --description "Extra item and postgres is shared"
+```
+
+You can use the alias `-t` for the `--template-yaml` flag and `-d` for the `--description` flag.
+
+To use the template with a flow
+
+```bash
+kardinal flow create frontend kurtosistech/frontend:demo-frontend  --template-args ./template_args.yaml --template extra-item-shared
+```
+
+You can use the alias `-a` for the `--template-args` flag and `-t` for the `--template` flag.
+
 ## 🔗 Port Forwarding Explanation
 
 We're using port forwarding in combination with a proxy in this Codespace setup to make the various services accessible to you. We use Codespaces to forward URLs over the internet but add an nginx proxy to set the right hostname to hit the right lightweight environment
@@ -124,7 +150,7 @@ If you encounter any issues with port forwarding or nginx, you can reset it by r
 
 ```bash
 # make sure all pods are running and 2/2
-kubectl get pods -n prod
+kubectl get pods -n baseline
 kardinal gateway <flow-id>
 ```
 
@@ -148,4 +174,5 @@ We are working with a small but selective set of initial users, join the beta [h
 
 If you run into any issues with this playground please create an issue here or email us at `hello@kardinal.dev`.
 
-If you are encountering any issue with the port forwards or nginx, simply use `kardinal gateway prod` to reset the setup.
+If you are encountering any issue with the port forwards or nginx, simply use `kardinal gateway baseline` to reset the setup.
+
