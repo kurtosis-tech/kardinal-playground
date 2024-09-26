@@ -35,6 +35,14 @@ Follow these steps to explore the Kardinal Playground.
 
 2. 🛍️ Explore the main online boutique deployment:
 
+   Deploy the demo online boutique shop application:
+   
+   ```bash
+   kardinal deploy -k obd-demo.yaml
+   ```
+
+   Then, to view the demo from your browser, run:
+   
    ```bash
    kardinal gateway baseline
    ```
@@ -52,7 +60,7 @@ Follow these steps to explore the Kardinal Playground.
    - Open the URL provided by the command above in your browser
    - Observe the current structure of the deployment
 
-3. 🔧 Create the first dev flow:
+4. 🔧 Create the first dev flow:
 
    Let's deploy a dev version of the frontend that is adding a more bold style to the website, this modification is contained into a single `frontend` image:
 
@@ -72,7 +80,7 @@ Follow these steps to explore the Kardinal Playground.
    - Notice the dev frontend advertises "hottest products" now
    - Browse through the store and add items to your cart in the dev version
 
-4. 🧹 Clean up the dev flow:
+5. 🧹 Clean up the dev flow:
 
    ```bash
    kardinal flow delete <flow_id>
@@ -85,7 +93,7 @@ Follow these steps to explore the Kardinal Playground.
     - Return to the main online boutique URL (the first nginx URL)
     - Confirm that it still works and has not been impacted by the development workflow
 
-5. 🔧 Create a second and more complex dev flow:
+6. 🔧 Create a second and more complex dev flow:
 
    Now our demo website is preparing for a big sale, we need to add a new feature to both the backend and the frontend to handle the new sale. This feature is contained into 2 images: `frontend` and `productcatalogservice`.
    We can rely on support for multiple services to coordinate the deployment in a single flow. Using the flag `-s`, we can include multiple services and images:
@@ -106,7 +114,7 @@ Follow these steps to explore the Kardinal Playground.
    - Notice how two items are already in the cart, as the dev database is configured to be seeded with some dev data
    - Browse through the store and add items to your cart in the dev version
 
-6. 🔍 Compare the new structure on app.kardinal.dev:
+7. 🔍 Compare the new structure on app.kardinal.dev:
 
    - Go back to the Kardinal dashboard
    - Notice the changes in the environment:
@@ -114,13 +122,13 @@ Follow these steps to explore the Kardinal Playground.
      - Dev traffic is routed to the dev version of the frontend
      - The main version still works independently in the same namespace
 
-7. 🧹 Clean up the dev flow:
+8. 🧹 Clean up the dev flow:
 
    ```bash
    kardinal flow delete <flow_id>
    ```
 
-8. 🔧 Create a third dev flow to intercept the traffic to a local port with [Telepresence](https://www.telepresence.io/) and test a new change in the UI without having to rebuild and redeploy the container in the cluster.
+9. 🔧 Create a third dev flow to intercept the traffic to a local port with [Telepresence](https://www.telepresence.io/) and test a new change in the UI without having to rebuild and redeploy the container in the cluster.
 
    - Execute the following script to install the Telepresence CLI and the Traffic Manager's pod in the cluster
      ```bash
@@ -158,7 +166,7 @@ Follow these steps to explore the Kardinal Playground.
    ```
    - Go back to the open tab and check that the UI is back to the previous version without your changes
 
-9. 🧹 Clean up the dev flow:
+10. 🧹 Clean up the dev flow:
 
    ```bash
    kardinal flow delete <flow_id>
