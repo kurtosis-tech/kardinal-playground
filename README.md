@@ -35,13 +35,7 @@ Follow these steps to explore the Kardinal Playground.
 
 2. 🛍️ Explore the main online boutique deployment:
 
-   Deploy the demo online boutique shop application:
-   
-   ```bash
-   kardinal deploy -k obd-demo.yaml
-   ```
-
-   Then, to view the demo from your browser, run:
+   Run the following command, to view the demo from your browser:
    
    ```bash
    kardinal gateway baseline

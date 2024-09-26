@@ -86,7 +86,7 @@ deploy_kardinal_manager() {
 	log_verbose "About to run kardinal command to deploy manager..."
 
 	# Run the kardinal command with spinner
-	run_command_with_spinner kardinal manager deploy kloud-kontrol
+	run_command_with_spinner kardinal manager deploy kloud-kardinal-kontrol
 
 	log_verbose "Kardinal command to deploy manager completed successfully"
 	log "👩‍💼 Kardinal Manager Deployed"
