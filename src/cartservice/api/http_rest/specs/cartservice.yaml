@@ -1,0 +1,163 @@
+openapi: 3.0.3
+
+info:
+  title: Cart service
+  description: RESTful API specification for the Cart service, it's used to auto-generate client SDK's and server-side code
+  version: 0.1.0
+
+servers:
+  - url: https://cartservice
+    description: Cart service API
+
+paths:
+
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the service.
+      responses:
+        default:
+          $ref: "#/components/responses/NotOk"
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /cart:
+    post:
+      summary: Add item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddItemRequest"
+      responses:
+        default:
+          $ref: "#/components/responses/NotOk"
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /cart/{user_id}:
+    get:
+      summary: Get cart
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        default:
+          $ref: "#/components/responses/NotOk"
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Cart"
+
+    delete:
+      tags:
+      summary: Empty cart
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        default:
+          $ref: "#/components/responses/NotOk"
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+
+# =========================================================================================================================
+# =========================================================================================================================
+# > > > > > > > > > > > > > > > > > > > > > > > > Data Models < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < <
+# =========================================================================================================================
+# =========================================================================================================================
+
+components:
+  parameters:
+    user_id:
+      name: user_id
+      in: path
+      required: true
+      description: user id
+      schema:
+        type: string
+
+  responses:
+    NotOk:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ResponseInfo"
+            required: true
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "UP"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-07-29T00:00:00Z"
+
+    ResponseType:
+      type: string
+      enum:
+        - ERROR
+        - INFO
+        - WARNING
+
+    ResponseInfo:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/ResponseType"
+        message:
+          type: string
+        code:
+          type: integer
+          format: uint32
+      required:
+        - type
+        - message
+        - code
+
+    AddItemRequest:
+      type: object
+      properties:
+        user_id:
+          type: string
+        item:
+          $ref: "#/components/schemas/CartItem"
+
+    Cart:
+      type: object
+      properties:
+        user_id:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CartItem"
+
+
+    CartItem:
+      type: object
+      properties:
+        product_id:
+          type: string
+        quantity:
+          type: integer
+          format: int32
