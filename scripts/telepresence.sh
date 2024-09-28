@@ -25,6 +25,7 @@ telepresence_install() {
   fi
   log "🚀 Starting the Telepresence daemon..."
   sudo telepresence daemon-foreground ~/.cache/telepresence/logs/ ~/.config/telepresence/ &
+  log "Telepresence daemon successfully started."
 }
 
 main() {
