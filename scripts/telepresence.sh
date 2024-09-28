@@ -23,6 +23,8 @@ telepresence_install() {
     run_command_with_spinner telepresence helm install --set trafficManager.serviceMesh.type=istio
     log_verbose "Telepresence traffic manager successfully installed."
   fi
+  log "🚀 Starting the Telepresence daemon..."
+  sudo telepresence daemon-foreground ~/.cache/telepresence/logs/ ~/.config/telepresence/ &
 }
 
 main() {
