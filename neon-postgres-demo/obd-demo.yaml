@@ -73,14 +73,7 @@ metadata:
     app: cartservice
     version: v1
   annotations:
-    kardinal.dev.service/plugins: |
-      - name: github.com/kurtosis-tech/neondb-plugin
-        type: external
-        servicename: neon-postgres-db
-        args:
-          NEON_API_KEY: ""
-          NEON_PROJECT_ID: ""
-          NEON_FORK_FROM_BRANCH_ID: ""
+    kardinal.dev.service/plugins: "neon-postgres-db"
 spec:
   type: ClusterIP
   selector:
@@ -153,12 +146,7 @@ metadata:
     version: v1
   annotations:
     kardinal.dev.service/dependencies: "productcatalogservice:http,cartservice:http"
-    kardinal.dev.service/plugins: |
-      - name: github.com/kurtosis-tech/free-currency-api-plugin
-        type: external
-        servicename: free-currency-api
-        args:
-          api_key: ""
+    kardinal.dev.service/plugins: "neon-postgres-db"
 spec:
   type: ClusterIP
   selector:
@@ -271,3 +259,17 @@ spec:
       backendRefs:
         - name: frontend
           port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: neon-postgres-db
+  annotations:
+    kardinal.dev.service/plugin-definition: |
+      - name: github.com/kurtosis-tech/neondb-plugin
+        type: external
+        servicename: neon-postgres-db
+        args:
+          NEON_API_KEY: ""
+          NEON_PROJECT_ID: ""
+          NEON_FORK_FROM_BRANCH_ID: ""
