@@ -1,5 +1,7 @@
 # 🎡 Kardinal Playground
 
+## Disclaimer: This project is no longer maintained.
+
 Welcome to the Kardinal Playground! This walkthrough shows how you can test new features in ultra-lightweight development environments using Kardinal. 🚀
 
 This repo is designed to run in Github Codespaces. It has 5 steps and takes 5 minutes. 3 of those minutes are just waiting for the startup script to run in Codespaces.
@@ -218,14 +220,3 @@ If you'd like to try the demo with Neon instead of vanilla Postgres, you can do 
 2. Follow the instructions in the README file in that directory.
 
 This alternative demo showcases Kardinal's ability to handle stateful services managed outside the cluster by leveraging Kardinal [plugins](https://kardinal.dev/docs/concepts/plugins).
-
-## ⏩ What's Next?
-
-We are working with a small but selective set of initial users, join the beta [here](https://kardinal.dev/?utm_source=github). Or even better email us at `hello@kardinal.dev`.
-
-## 🐛 Issues
-
-If you run into any issues with this playground please create an issue here or email us at `hello@kardinal.dev`.
-
-If you are encountering any issue with the port forwards or nginx, simply use `kardinal gateway baseline` to reset the setup.
-
